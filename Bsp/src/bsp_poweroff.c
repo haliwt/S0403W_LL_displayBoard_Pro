@@ -120,8 +120,8 @@ static void power_off_breath_Led(void)
 	  vTaskDelay(pdMS_TO_TICKS(500));
 	  POWER_OFF_LED();
 	  vTaskDelay(pdMS_TO_TICKS(500));
-      counter_flag ++;
-	  printf("power_off_led !!!\r\n");
+      //counter_flag ++;
+	  //printf("power_off_led !!!\r\n");
 
 }
 

@@ -28,6 +28,11 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
 
+#define RX_BUFFER_SIZE 20
+volatile uint8_t  usart1_rx_buffer[RX_BUFFER_SIZE];
+volatile uint16_t usart1_rx_index = 0;
+
+
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
@@ -173,10 +178,33 @@ void TIM17_IRQHandler(void)
 void USART1_IRQHandler(void)
 {
   /* USER CODE BEGIN USART1_IRQn 0 */
+    volatile uint8_t data;
+   if(LL_USART_IsActiveFlag_RXNE(USART1)){
+   
+      data = LL_USART_ReceiveData8(USART1);
+	   // 存入缓冲区（简单环形缓冲）
+        usart1_rx_buffer[usart1_rx_index++] = data;
+       if (usart1_rx_index >= RX_BUFFER_SIZE)
+       {
+          usart1_rx_index = 0; // 环回
+        }
+
+      HAL_UART1_Callback_Handler(data);
+
+   }
 
   /* USER CODE END USART1_IRQn 0 */
   /* USER CODE BEGIN USART1_IRQn 1 */
+   if(LL_USART_IsActiveFlag_ORE(USART1)){
 
+       LL_USART_ClearFlag_ORE(USART1);
+   }
+   if(LL_USART_IsActiveFlag_FE(USART1)){
+       LL_USART_ClearFlag_FE(USART1);
+   }
+   if(LL_USART_IsActiveFlag_NE(USART1)){
+      LL_USART_ClearFlag_NE(USART1);
+   }
   /* USER CODE END USART1_IRQn 1 */
 }
 

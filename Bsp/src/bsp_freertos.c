@@ -66,10 +66,10 @@ void freeRTOS_Handler(void)
      /* ĺĺťşäťťĺĄ */
 	  AppTaskCreate();
 	  
-	  /* ĺĺťşäťťĺĄéäżĄćşĺś */
+	  /*  */
 	  // AppObjCreate();
 	  
-	  /* ĺŻĺ¨č°ĺşŚďźĺźĺ§ć§čĄäťťĺ1¤71ďż1¤771ďż1¤71ďż1¤777 */
+	  /*  */
 	   vTaskStartScheduler();
 
 
@@ -77,7 +77,7 @@ void freeRTOS_Handler(void)
 /**********************************************************************************************************
 *	
 *   Function Name:
-*	Funciton: (ć°ďż˝ďż˝čśĺ°äźĺçş§čśä˝ďźčżä¸ŞčˇuCOSç¸ĺ) proritiy class is small and protity is low
+*	Funciton:  proritiy class is small and protity is low
 *	Input Ref:
 *   Return Ref:
 *
@@ -96,7 +96,7 @@ static void vTaskRunPro(void *pvParameters)
 		
 	xResult = xTaskNotifyWait(0x00000000,      
 						          0xFFFFFFFF,      
-						          &ulValue,        /* äżĺ­ulNotifiedValueĺ°ĺéulValueä¸1¤71ďż1¤77 */
+						          &ulValue,        /*  */
 						          xMaxBlockTime);  /* block times,releas cpu power right */
 		
 	if( xResult == pdPASS )
@@ -325,6 +325,7 @@ static void vTaskStart(void *pvParameters)
         }
         else{
             gpro_t.key_power_flag = 1;
+			printf("key_power_on !!! \r\n");
 
         }
         

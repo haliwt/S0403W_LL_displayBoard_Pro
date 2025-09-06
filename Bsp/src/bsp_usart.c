@@ -77,10 +77,11 @@ MSG_T   gl_tMsg;
 	*Return Ref:NO
 	*
 *******************************************************************************/
-void HAL_UART1_Callback_Handler(void)
+void HAL_UART1_Callback_Handler(uint8_t data)
 {
      static uint8_t state;
      BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+	 inputBuf[0] = data;
      switch(state)
 		{
 		case UART_STATE_WAIT_HEADER:  //#0

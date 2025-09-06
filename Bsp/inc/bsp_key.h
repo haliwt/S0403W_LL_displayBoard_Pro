@@ -7,13 +7,13 @@
 
 //#define KEY_POWER_GetValue()          sys_gpio_pin_get(KEY_POWER_GPIO_Port,KEY_POWER_Pin)    //HAL_GPIO_ReadPin(KEY_POWER_GPIO_Port ,KEY_POWER_Pin)
 
-#define KEY_POWER_GetValue()      (((KEY_POWER_GPIO_Port->IDR & KEY_POWER_Pin)==0U)? 1U:0U)
+#define KEY_POWER_GetValue()      LL_GPIO_IsInputPinSet(KEY_POWER_GPIO_Port,KEY_POWER_Pin)//(((KEY_POWER_GPIO_Port->IDR & KEY_POWER_Pin)==0U)? 1U:0U)
 
-#define KEY_MODE_GetValue()           sys_gpio_pin_get(KEY_MODE_GPIO_Port,KEY_MODE_Pin)   // HAL_GPIO_ReadPin(KEY_MODE_GPIO_Port,KEY_MODE_Pin)
+#define KEY_MODE_GetValue()         LL_GPIO_IsInputPinSet(KEY_MODE_GPIO_Port,KEY_MODE_Pin) //sys_gpio_pin_get(KEY_MODE_GPIO_Port,KEY_MODE_Pin)   // HAL_GPIO_ReadPin(KEY_MODE_GPIO_Port,KEY_MODE_Pin)
 
 
-#define KEY_DEC_GetValue()              sys_gpio_pin_get(KEY_DEC_GPIO_Port,KEY_DEC_Pin)// HAL_GPIO_ReadPin(KEY_DEC_GPIO_Port,KEY_DEC_Pin)
-#define KEY_ADD_GetValue()              sys_gpio_pin_get(KEY_ADD_GPIO_Port,KEY_ADD_Pin)// HAL_GPIO_ReadPin(KEY_ADD_GPIO_Port,KEY_ADD_Pin)
+#define KEY_DEC_GetValue()        LL_GPIO_IsInputPinSet(KEY_DEC_GPIO_Port,KEY_DEC_Pin)      //sys_gpio_pin_get(KEY_DEC_GPIO_Port,KEY_DEC_Pin)// HAL_GPIO_ReadPin(KEY_DEC_GPIO_Port,KEY_DEC_Pin)
+#define KEY_ADD_GetValue()        LL_GPIO_IsInputPinSet(KEY_ADD_GPIO_Port,KEY_ADD_Pin)      //sys_gpio_pin_get(KEY_ADD_GPIO_Port,KEY_ADD_Pin)// HAL_GPIO_ReadPin(KEY_ADD_GPIO_Port,KEY_ADD_Pin)
 
 //#define VK36N4D_INT_VALUE()          HAL_GPIO_ReadPin(VK36N4D_INT_GPIO_Port,VK36N4D_INT_Pin) 
 
