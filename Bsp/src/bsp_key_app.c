@@ -1,0 +1,287 @@
+#include "bsp.h"
+
+uint16_t k;
+uint8_t keyvalue;
+uint8_t decade_hour;
+uint8_t unit_hour;
+uint8_t decade_temp;
+uint8_t decade_minute;
+uint8_t unit_minute;
+uint8_t decade_second;
+uint8_t unit_second;
+uint8_t unit_temp ;
+
+uint8_t keyvalue;
+
+uint8_t rx_data_from_main_flag ;
+
+
+
+void (*single_ai_fun)(uint8_t cmd);
+void (*single_add_fun)(void);
+void (*single_buzzer_fun)(void);
+void (*sendAi_usart_fun)(uint8_t senddat);
+void (*beijing_time_fun)(void);
+
+
+
+
+//static void Beijing_Time_Display(void);
+
+
+
+
+/************************************************************************
+	*
+	*Function Name: void Process_Key_Handler(uint8_t keylabel)
+	*Function : key by pressed which is key numbers process 
+	*Input Ref: key be pressed value 
+	*Return Ref:No
+	*
+************************************************************************/
+void Beijing_Time_Init(void)
+{
+
+	//Beijing_Time_Display_Handler(Beijing_Time_Display);
+
+}
+/**************************************************************************
+ * 
+ *Function Name:void mode_key_short_fun(void)
+ *Function:
+ *Input Ref:
+ *Return Ref:
+ * 
+*****************************************************************************/
+void mode_key_short_fun(void)
+{
+   if(run_t.ptc_warning ==0 && run_t.fan_warning ==0){
+		if(run_t.display_set_timer_or_works_mode == works_time){
+	
+			//timer time + don't has ai item
+			run_t.display_set_timer_or_works_mode = timer_time;
+			run_t.gModel=2;
+            run_t.gTimer_again_switch_works = 0;
+
+		}
+		else if(run_t.display_set_timer_or_works_mode == timer_time){
+			//beijing time + ai item
+			run_t.display_set_timer_or_works_mode = works_time;
+			
+			run_t.gModel=1;
+
+		
+		}
+			
+	}		
+}
+
+
+void mode_key_ai_mode_handler(void)
+{
+    if(run_t.ptc_warning ==0 && run_t.fan_warning ==0){
+		if(run_t.display_set_timer_or_works_mode == works_time){
+	
+			//timer time + don't has ai item
+			//run_t.display_set_timer_or_works_mode = timer_time;
+			//run_t.gModel=2;
+            //run_t.gTimer_again_switch_works = 0;
+            run_t.gTimer_again_switch_works = 0;
+           
+			if(wifi_link_net_state() == 1){
+				SendData_Set_Command(0x27,0x01); //MODE_NOT AI,BUR NO_BUZZER);
+				//HAL_Delay(10);
+			}
+            
+		}
+		else if(run_t.display_set_timer_or_works_mode == timer_time){
+			//beijing time + ai item
+			//run_t.display_set_timer_or_works_mode = works_time;
+			
+			//run_t.gModel=1;
+			
+    			if(wifi_link_net_state() ==1){
+    				SendData_Set_Command(0x27,0x02); //MODE_AI,BUR NO_BUZZER);
+    				//HAL_Delay(10);
+    			}
+
+            }
+		
+		
+			
+	}		
+
+
+
+}
+/**************************************************************************
+ * 
+ *Function Name:
+ *Function:
+ *Input Ref:
+ *Return Ref:
+ * 
+*****************************************************************************/
+void add_key_fun(void)
+{
+     static uint8_t power_on_fisrt_flag ;
+    
+	switch(run_t.display_set_timer_or_works_mode){//switch(run_t.setup_timer_timing_item){
+
+    case works_time: //set temperature value add number
+    
+    case timer_time: //set  
+
+		
+		run_t.wifi_set_temperature= run_t.wifi_set_temperature+1;
+
+		if(run_t.wifi_set_temperature > 40)run_t.wifi_set_temperature= 20;
+
+		
+	    decade_temp =  run_t.wifi_set_temperature / 10 ;
+		unit_temp =  run_t.wifi_set_temperature % 10; //
+        
+		lcd_t.number1_low=decade_temp;
+		lcd_t.number1_high =decade_temp;
+
+		lcd_t.number2_low = unit_temp;
+		lcd_t.number2_high = unit_temp;
+
+        gpro_t.temp_key_set_value = 1;
+        gpro_t.gTimer_set_temp_times = 0;
+        gpro_t.smart_phone_turn_off_ptc_flag =0;
+			
+	
+	   break;
+
+	   case setup_timer:
+		  
+			run_t.gTimer_key_timing =0;
+         
+			run_t.timer_time_hours++ ;//run_t.dispTime_minutes = run_t.dispTime_minutes + 60;
+		    if(run_t.timer_time_hours > 24){ //if(run_t.dispTime_minutes > 59){
+
+                 run_t.timer_time_hours=0;//run_t.dispTime_hours =0;
+                
+
+			}
+		
+      
+		break;
+		}	
+	
+}
+
+/**************************************************************************
+ * 
+ *Function Name:void dec_key_fun(void)
+ *Function: 1. direct key is adjust temperature value  
+ *          2 .combination is set timer value
+ *Input Ref:
+ *Return Ref:
+ * 
+*****************************************************************************/
+void dec_key_fun(void)
+{
+    static uint8_t power_on_fisrt_flag;
+  
+    if(run_t.power_on==1){
+	   	if(run_t.ptc_warning ==0){
+	
+	     switch(run_t.display_set_timer_or_works_mode){//switch(run_t.setup_timer_timing_item){
+
+
+          case works_time:
+
+		  case timer_time: 
+	
+	   
+			run_t.wifi_set_temperature--;
+			if(run_t.wifi_set_temperature<20) run_t.wifi_set_temperature=40;
+	      
+
+
+	        decade_temp =  run_t.wifi_set_temperature / 10;
+			unit_temp =  run_t.wifi_set_temperature % 10; //
+       
+			lcd_t.number1_low=decade_temp;
+			lcd_t.number1_high =decade_temp;
+
+			lcd_t.number2_low = unit_temp;
+			lcd_t.number2_high = unit_temp;
+			
+             gpro_t.temp_key_set_value = 1;
+             gpro_t.gTimer_set_temp_times = 0;
+             gpro_t.smart_phone_turn_off_ptc_flag =0;
+	
+		    break;
+
+			case setup_timer:
+	    
+			 
+				run_t.gTimer_key_timing =0;
+           
+				run_t.timer_time_hours -- ;//run_t.dispTime_minutes = run_t.dispTime_minutes - 1;
+				if(run_t.timer_time_hours < 0){//if(run_t.dispTime_minutes < 0){
+
+				    run_t.timer_time_hours =24;//run_t.dispTime_hours --;
+					
+					
+				}
+                
+        
+             break;
+
+	    	}
+	   	  }
+
+    }
+}
+
+/*********************************************************************************
+ * 
+ * Function Name:static void Beijing_Time_Dispaly(void)
+ * Function :
+ * Input Ref:
+ * Return Ref:
+ * 
+**********************************************************************************/
+void Beijing_Time_Display_Handler(void(*beijing_time_handler)(void))
+{
+	beijing_time_fun = beijing_time_handler;
+
+}
+
+/****************************************************************
+ * 
+ * Function Name:
+ * Function :function of pointer 
+ * 
+ * 
+****************************************************************/
+void Single_Add_RunCmd(void(*addHandler)(void))
+{
+    single_add_fun = addHandler;   
+
+}
+
+void Single_SendBuzzer_RunCmd(void(*buzzerHandler)(void))
+{
+	single_buzzer_fun = buzzerHandler;
+
+}
+void Single_SendAi_Usart_RunCmd(void(*sendaiHandler)(uint8_t seddat))
+{
+    sendAi_usart_fun = sendaiHandler;
+
+}
+
+
+
+
+
+
+
+
+
+
