@@ -75,12 +75,16 @@ void Error_Handler(void);
 #define LED_INFO_POWER_Pin 						LL_GPIO_PIN_3
 #define LED_INFO_POWER_GPIO_Port 				GPIOA
 
-#define TM1723_STB_Pin LL_GPIO_PIN_4
-#define TM1723_STB_GPIO_Port GPIOA
-#define TM1723_SCLK_Pin LL_GPIO_PIN_5
-#define TM1723_SCLK_GPIO_Port GPIOA
-#define TM1723_DIO_Pin LL_GPIO_PIN_6
-#define TM1723_DIO_GPIO_Port GPIOA
+#define TM1723_STB_Pin                LL_GPIO_PIN_4
+#define TM1723_STB_GPIO_Port          GPIOA
+
+
+#define TM1723_SCLK_Pin 					LL_GPIO_PIN_5
+#define TM1723_SCLK_GPIO_Port 				GPIOA
+
+#define TM1723_DIO_Pin 						LL_GPIO_PIN_6
+#define TM1723_DIO_GPIO_Port 				GPIOA
+
 #define KEY_ADD_Pin LL_GPIO_PIN_2
 #define KEY_ADD_GPIO_Port GPIOB
 #define KEY_POWER_Pin LL_GPIO_PIN_10
@@ -89,8 +93,9 @@ void Error_Handler(void);
 #define KEY_MODE_GPIO_Port GPIOB
 #define KEY_DEC_Pin LL_GPIO_PIN_12
 #define KEY_DEC_GPIO_Port GPIOB
-#define BACK_LIGHT_Pin LL_GPIO_PIN_9
-#define BACK_LIGHT_GPIO_Port GPIOB
+
+#define BACK_LIGHT_Pin 								LL_GPIO_PIN_9
+#define BACK_LIGHT_GPIO_Port 						GPIOB
 
 /* USER CODE BEGIN Private defines */
 
