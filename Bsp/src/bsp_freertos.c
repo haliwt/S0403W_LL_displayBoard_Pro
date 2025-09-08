@@ -312,7 +312,7 @@ static void vTaskRunPro(void *pvParameters)
        set_temperature_compare_value_fun();
 
 	   
-        power_on_display_temp_handler();//WT.EDIT 2025.03.28
+      
 	
        printf("xTaskRunPro !!!\r\n");
        }
