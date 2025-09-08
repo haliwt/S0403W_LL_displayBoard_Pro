@@ -14,6 +14,24 @@ void tim16_int_callback_handler(void)
   static uint8_t tm1,tm2;
   tm0++;
 
+	tm1++;
+    tm2++;
+
+    if(tm2> 9){
+        tm2=0;
+    lcd_t.gTimer_wifi_500ms++;
+	lcd_t.gTimer_fan_10ms++;
+
+     }
+	
+    if(tm1>99){ //100ms 
+       tm1=0;
+       lcd_t.gTimer_colon_ms++ ;
+	   run_t.gTimer_numbers_one_two_blink++;
+	   run_t.gTimer_digital5678_ms++;
+       run_t.gTimer_ptc_fan_blink_warning++ ;
+    }
+
   if(tm0>999){ //1000 *1ms = 1000ms = 1s
 		tm0=0;
 		

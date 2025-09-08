@@ -149,12 +149,12 @@ static void TM1723_Write_OneByte(uint8_t data)
 		  
 	 }
    
-    delay_us(100);
+    //delay_us(100);
     data =data>>1;//
 	 
 	 TM1723_CLK_SetHigh();
 	 //data =data>>1;//
-	  delay_us(2);
+	 // delay_us(2);
 	// data >>=1;//
 	
   
