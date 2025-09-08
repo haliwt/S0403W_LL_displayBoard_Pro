@@ -314,7 +314,7 @@ static void vTaskRunPro(void *pvParameters)
 	   
       
 	
-       printf("xTaskRunPro !!!\r\n");
+      // printf("xTaskRunPro !!!\r\n");
        }
        else if(run_t.power_on== power_off){
           gpro_t.long_key_power_counter =0;

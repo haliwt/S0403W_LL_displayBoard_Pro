@@ -224,7 +224,7 @@ void disp_fan_leaf_run_icon(void)
   {
 
    if(run_t.display_set_timer_or_works_mode != setup_timer){
-   if(lcd_t.gTimer_leaf_counter > 0){
+   if(lcd_t.gTimer_leaf_counter > 4){//4*100
        lcd_t.gTimer_leaf_counter=0;
 	   switch_flag = switch_flag ^ 0x01;
        if(switch_flag ==1){
@@ -246,7 +246,7 @@ void disp_fan_leaf_run_icon(void)
        }
        else{
         
-       gpro_t.disp_time_colon_flag =0;
+      
 
      works_timer_disp_numaber();
 

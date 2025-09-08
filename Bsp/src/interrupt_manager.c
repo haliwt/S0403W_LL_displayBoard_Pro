@@ -31,6 +31,7 @@ void tim16_int_callback_handler(void)
 	   run_t.gTimer_numbers_one_two_blink++;
 	   run_t.gTimer_digital5678_ms++;
        run_t.gTimer_ptc_fan_blink_warning++ ;
+	    lcd_t.gTimer_leaf_counter++;
 	  
     }
 
@@ -54,7 +55,7 @@ void tim16_int_callback_handler(void)
         run_t.gTimer_timing++;
 	    run_t.gTimer_work_break_times++;
         run_t.gTimer_again_switch_works ++ ;
-		 lcd_t.gTimer_leaf_counter++;
+		
 		 lcd_t.gTimer_colon_counter++;
        
 		 
