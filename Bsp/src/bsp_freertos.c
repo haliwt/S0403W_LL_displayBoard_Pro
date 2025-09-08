@@ -24,13 +24,13 @@
 											暮聡藵膰聲掳暮艁掳膰聵聨
 ***********************************************************************************************************/
 static void vTaskRunPro(void *pvParameters);
-//static void vTaskDecoderPro(void *pvParameters);
+static void vTaskDecoderPro(void *pvParameters);
 static void vTaskStart(void *pvParameters);
-static void AppTaskCreate (void);
+static void AppTaskCreate(void);
 
 
 
-/* 暮聢聸暮钮艧盲钮钮暮聤膭茅聙職盲偶膭膰聹艧暮聢艣 */
+/* creat task communication  */
 //static void AppObjCreate(void);
 
 
@@ -38,7 +38,7 @@ static void AppTaskCreate (void);
 											暮聫聵茅聡聫暮艁掳膰聵聨
 ***********************************************************************************************************/
 static TaskHandle_t xHandleTaskRunPro = NULL;
-//static TaskHandle_t xHandleTaskDecoderPro= NULL;
+static TaskHandle_t xHandleTaskDecoderPro= NULL;
 static TaskHandle_t xHandleTaskStart = NULL;
 
 
@@ -47,12 +47,17 @@ static TaskHandle_t xHandleTaskStart = NULL;
 
 //void Timer1Callback(TimerHandle_t xTimer);  /* 暮沤職膰聴艣暮聶聞1陇71膷艣聟膰聴艣暮聸聻膷掳聝暮聡藵膰聲掳 */
 //void Timer2Callback(TimerHandle_t xTimer);  /* 暮沤職膰聴艣暮聶聞1陇72膷艣聟膰聴艣暮聸聻膷掳聝暮聡藵膰聲掳 */
+//static  QueueHandle_t xUartRxQueue = NULL;
+
 
 uint8_t mode_sound,key_long_mode_flag;
 
 uint8_t long_key_mode_counter,long_key_mode_counter;
 
 uint8_t dc_power_on_first;
+
+uint8_t ucQueueMsgValue[20];
+
 /**********************************************************************************************************
 *	
 *   Function Name:
@@ -67,13 +72,47 @@ void freeRTOS_Handler(void)
 	  AppTaskCreate();
 	  
 	  /*  */
-	  // AppObjCreate();
+	 //  AppObjCreate();
 	  
 	  /*  */
 	   vTaskStartScheduler();
 
 
 }
+/**********************************************************************************************************
+*	
+*   Function Name:
+*	Funciton:  proritiy class is small and protity is low
+*	Input Ref:
+*   Return Ref:
+*
+**********************************************************************************************************/
+static void vTaskDecoderPro(void *pvParameters)
+{
+	BaseType_t xResult;
+	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(300); /* ÉèÖÃ×î´óµÈ´ýÊ±¼äÎª300ms */
+	//uint8_t ucQueueMsgValue[10];
+	 uint32_t ulValue;
+	
+    while(1)
+    {
+	  xResult = xTaskNotifyWait(0x00000000,      
+						          0xFFFFFFFF,      
+						          &ulValue,        /*  */
+						          portMAX_DELAY);  /* block times,releas cpu power right */
+		
+	if( xResult == pdPASS )
+	{
+    	
+     
+        if((ulValue & DECODER_BIT_9) != 0){
+             parse_recieve_data_handler();
+        }
+	}
+		
+    }
+}
+
 /**********************************************************************************************************
 *	
 *   Function Name:
@@ -121,9 +160,9 @@ static void vTaskRunPro(void *pvParameters)
 
 
         }
-        else if((ulValue & DECODER_BIT_9) != 0){
-             parse_recieve_data_handler();
-        }
+//        else if((ulValue & DECODER_BIT_9) != 0){
+//             parse_recieve_data_handler();
+//        }
 
 
     }
@@ -142,7 +181,7 @@ static void vTaskRunPro(void *pvParameters)
                  gpro_t.gTimer_again_send_power_on_off =0;
                  SendData_Set_Command(0x05,0x01); // link wifi of command .
                  osDelay(3);
-                  gpro_t.gTimer_mode_key_long=0;
+                 gpro_t.gTimer_mode_key_long=0;
 
 
              }
@@ -215,7 +254,7 @@ static void vTaskRunPro(void *pvParameters)
                  //   gl_tMsg.long_key_mode_counter =0;
                    SendData_Buzzer_Has_Ack();//SendData_Buzzer();
                    osDelay(3);
-                  // HAL_Delay(10);
+   
                 
                    dec_key_fun();
                 }
@@ -383,6 +422,13 @@ static void vTaskStart(void *pvParameters)
 **********************************************************************************************************/
 void AppTaskCreate (void)
 {
+   xTaskCreate( vTaskDecoderPro,    		/* fucntion name  */
+                 "vTaskDecoderPro",  		/* alias name   */
+                 128,         		    /* stack heap capacity */
+                 NULL,        		    /* param  */
+                 3,           		    /* priority  */
+                 &xHandleTaskDecoderPro);   /* task handler  */
+
 
 	xTaskCreate( vTaskRunPro,    		/* fucntion name  */
                  "vTaskRunPro",  		/* alias name   */
@@ -401,7 +447,26 @@ void AppTaskCreate (void)
 }
  
 
-
+/*
+*********************************************************************************************************
+*	Funtion Name: AppObjCreate
+*	Function: 
+*	Input Ref: 
+*	Return Ref: 
+*********************************************************************************************************
+*/
+//static void AppObjCreate (void)
+//{
+//	/* ´´½¨10¸öuint8_tÐÍÏûÏ¢¶ÓÁÐ */
+//	xUartRxQueue = xQueueCreate(20, sizeof(uint8_t));
+//    if(xUartRxQueue == 0 )
+//    {
+//        /* creat quenu is fail !!! */
+//    }
+//	
+//	/* ´´½¨10¸ö´æ´¢Ö¸Õë±äÁ¿µÄÏûÏ¢¶ÓÁÐ£¬ÓÉÓÚCM3/CM4ÄÚºËÊÇ32Î»»ú£¬Ò»¸öÖ¸Õë±äÁ¿Õ¼ÓÃ4¸ö×Ö½Ú */
+//
+//}
 
 
 /****************************************************************************
@@ -435,7 +500,7 @@ void App_PowerOn_Handler(void)
 void app_decoder_task_isr_handler(void)
 {
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-	xTaskNotifyFromISR(xHandleTaskRunPro,  /*  */
+	xTaskNotifyFromISR(xHandleTaskDecoderPro,  /*  */
 						DECODER_BIT_9,     /*   */
 						eSetBits,  /*  */
 						&xHigherPriorityTaskWoken);
@@ -443,6 +508,18 @@ void app_decoder_task_isr_handler(void)
 }
 
 
+//void app_xusart1_queue_isr_handler(uint8_t data)
+//{
+//	 BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+//    
+//    // 生产者：将接收到的字节放入队列
+//    xQueueSendFromISR(xUartRxQueue, &data, &xHigherPriorityTaskWoken);
+//    
+//    // 如果有更高优先级的任务被唤醒，则进行上下文切换
+//    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+//
+//}
+//
 
 
 

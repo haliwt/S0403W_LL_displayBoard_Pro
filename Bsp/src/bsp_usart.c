@@ -11,6 +11,8 @@
 #define ACK_SUCCESS 0x00U
 #define ACK_FAILURE 0x01U
 
+//extern QueueHandle_t xUartRxQueue = NULL;
+
 typedef enum {
     UART_STATE_WAIT_HEADER = 0,
     UART_STATE_NUM=1,
@@ -47,10 +49,11 @@ typedef enum{
 
 typedef struct Msg
 {
-    
+    uint8_t   tx_data_success;
 	uint8_t   cmd_notice;
 	uint8_t   copy_cmd_notice;
     uint8_t   execuite_cmd_notice;
+	uint8_t   rx_data_flag;
     uint8_t   bcc_check_code;
     uint8_t   receive_data_length;
     uint8_t   data_length;
@@ -71,17 +74,19 @@ MSG_T   gl_tMsg;
 
 /********************************************************************************
 	**
-	*Function Name:void HAL_UART1_Callback_Handler(void)
+	*Function Name:void usart1_isr_callback_handler(void)
 	*Function :  this is receive data from mainboard.
 	*Input Ref:NO
 	*Return Ref:NO
 	*
 *******************************************************************************/
-void HAL_UART1_Callback_Handler(uint8_t data)
+#if 1
+void usart1_isr_callback_handler(uint8_t data)
 {
      static uint8_t state;
-     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    // BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 	 inputBuf[0] = data;
+	 if(gl_tMsg.tx_data_success ==0){
      switch(state)
 		{
 		case UART_STATE_WAIT_HEADER:  //#0
@@ -89,6 +94,8 @@ void HAL_UART1_Callback_Handler(uint8_t data)
                rx_data_counter=0;
                gl_tMsg.usData[rx_data_counter] = inputBuf[0];
 				state=UART_STATE_NUM; //=1
+				gl_tMsg.copy_cmd_notice=0;
+				 gl_tMsg.cmd_notice=0;
 
              }
             
@@ -101,12 +108,14 @@ void HAL_UART1_Callback_Handler(uint8_t data)
                gl_tMsg.usData[rx_data_counter] = inputBuf[0];
 			   if(inputBuf[0] == FRAME_ACK_NUM){
                   gl_tMsg.copy_cmd_notice  = 0x80; //new version protocol is copy cmd notice.
+                   state=UART_STATE_CMD_NOTICE; //=1
 			   }
-			   else 
-			   	  gl_tMsg.copy_cmd_notice = 0x10;
-			   state=UART_STATE_CMD_NOTICE; //=1
+			   else{ 
+			   	  gl_tMsg.copy_cmd_notice = 0;
+			      state=UART_STATE_CMD_NOTICE; //=1
+			   	}
 
-             }
+            }
             else{
                 state=0;
                 rx_data_counter=0;
@@ -137,7 +146,7 @@ void HAL_UART1_Callback_Handler(uint8_t data)
 
             }
             else if(gl_tMsg.usData[rx_data_counter] ==0x0F){
-              gl_tMsg.execuite_cmd_notice =  0x0F;
+               gl_tMsg.rx_data_flag =  0x0F;
                state = UART_STATE_DATA_LEN; //receive data.
            }
 		   else if(gl_tMsg.copy_cmd_notice == 0xFF){ //this is older compatibility 
@@ -152,7 +161,7 @@ void HAL_UART1_Callback_Handler(uint8_t data)
         case  UART_STATE_FRAME_END: //receive comd and notice frame  end
             rx_data_counter++;
             gl_tMsg.usData[rx_data_counter] = inputBuf[0];
-            if(inputBuf[0] == 0xFE){  // 0x5A --main board singla
+            if(inputBuf[0] == 0xFE){  // frame is tail of end "0xFE"
              
 			   state=UART_STATE_BCC_CHECK; //=1
 
@@ -184,7 +193,8 @@ void HAL_UART1_Callback_Handler(uint8_t data)
 	            if(gl_tMsg.bcc_check_code == bcc_check(gl_tMsg.usData, gl_tMsg.data_length))
 	            {
 	                state=0;
-	                rx_data_counter=0;  
+	                rx_data_counter=0; 
+					 gl_tMsg.tx_data_success = 1;
 	                app_decoder_task_isr_handler();
 
 	            }
@@ -205,6 +215,7 @@ void HAL_UART1_Callback_Handler(uint8_t data)
 			{
 				state=0;
 				rx_data_counter=0;  
+				 gl_tMsg.tx_data_success = 1;
 				app_decoder_task_isr_handler();
 
 			}
@@ -278,12 +289,15 @@ void HAL_UART1_Callback_Handler(uint8_t data)
            // gl_tMsg.data_length = rx_data_counter;
             gl_tMsg.usData[rx_data_counter] = inputBuf[0];
             gl_tMsg.bcc_check_code = inputBuf[0];
-				gl_tMsg.data_length = rx_data_counter;
-            if(gl_tMsg.bcc_check_code == bcc_check(gl_tMsg.usData,rx_data_counter))
+			gl_tMsg.data_length = rx_data_counter;
+			
+            if(gl_tMsg.bcc_check_code == bcc_check(gl_tMsg.usData,gl_tMsg.data_length ))
             {
                 state=0;
                 rx_data_counter=0; 
+				 gl_tMsg.tx_data_success = 1;
                 app_decoder_task_isr_handler();
+				
                
 
             }
@@ -294,15 +308,15 @@ void HAL_UART1_Callback_Handler(uint8_t data)
 
 
        break;
-
+     	}
 
 	}
 }
 
-
+#endif 
 /********************************************************************************
 	**
-	*Function Name:void HAL_UART1_Callback_Handler(void)
+	*Function Name:void usart1_isr_callback_handler(void)
 	*Function : parse this is receive data from mainboard.
 	*Input Ref:NO
 	*Return Ref:NO
@@ -314,16 +328,20 @@ void parse_recieve_data_handler(void)
     
 	switch(gl_tMsg.copy_cmd_notice){ //cmd or notice .
 
-	case 0x10:
+	case 0:
       
        receive_cmd_or_data_handler();
+	   gl_tMsg.tx_data_success = 0;
 
    break;
 
-   case 0x0FF: //copy cmd or notice
+   case 0x0FF: //copy cmd or notice,this is older version protocol.
+		receive_copy_cmd_or_data_handler();
+		 gl_tMsg.tx_data_success = 0;
 
    case 0x80:
        receive_copy_cmd_or_data_handler();
+	    gl_tMsg.tx_data_success = 0;
    break;
 
     }
@@ -622,6 +640,7 @@ static void receive_copy_cmd_or_data_handler(void)
         case power_on_off:
 			
 		if(gl_tMsg.execuite_cmd_notice == 0x01){//power on
+			run_t.power_on = power_on;
 			if(run_t.power_on == power_on){
 			
 			   gpro_t.receive_copy_cmd  = ok;
@@ -633,6 +652,7 @@ static void receive_copy_cmd_or_data_handler(void)
 
 		}
 		else{//power off 
+			run_t.power_on = power_off;
 			if(run_t.power_on == power_off){
 			gpro_t.receive_copy_cmd = ok;
 
@@ -811,3 +831,18 @@ static void receive_copy_cmd_or_data_handler(void)
 //        return false;
 //    }
 //}
+
+// 假设这些在你的主文件中已经定义
+//extern QueueHandle_t xUartRxQueue;
+//extern uint8_t inputBuf[1];
+
+/**
+ * @brief  UART中断服务程序（ISR）
+ * @param  data 接收到的数据字节
+ */
+//void usart1_isr_callback_handler(uint8_t data) {
+//   app_xusart1_queue_isr_handler(data);
+//}
+
+
+

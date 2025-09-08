@@ -2,7 +2,8 @@
 #define __BSP_LCD_H_
 #include "main.h"
 
-#define TM1723_POWER_ON()				HAL_GPIO_WritePin(LCD_POWER_GPIO_Port, LCD_POWER_Pin,GPIO_PIN_SET)
+#if 0
+#define TM1723_POWER_ON()			   HAL_GPIO_WritePin(LCD_POWER_GPIO_Port, LCD_POWER_Pin,GPIO_PIN_SET)
 #define TM1723_POWER_OFF()             HAL_GPIO_WritePin(LCD_POWER_GPIO_Port, LCD_POWER_Pin,GPIO_PIN_RESET)
 
 
@@ -21,7 +22,12 @@
 #define TM1723_STB_SetHigh()            HAL_GPIO_WritePin(TM1723_STB_GPIO_Port,TM1723_STB_Pin,GPIO_PIN_SET)
 #define TM1723_STB_SetLow()             HAL_GPIO_WritePin(TM1723_STB_GPIO_Port,TM1723_STB_Pin,GPIO_PIN_RESET)
 
+#endif 
 //extern volatile uint8_t DispData[3];//??LED??
+
+#define LCD_BACK_LIGHT_ON()				LL_GPIO_SetOutputPin(BACK_LIGHT_GPIO_Port,BACK_LIGHT_Pin)
+#define LCD_BACK_LIGHT_OFF()            LL_GPIO_ResetOutputPin(BACK_LIGHT_GPIO_Port,BACK_LIGHT_Pin)
+
 #define		BitSET(x,y)		x|=(1<<y)				//?1
 #define		BitCLR(x,y)		x&=~(1<<y)				//?0
 

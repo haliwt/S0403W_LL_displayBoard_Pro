@@ -15,7 +15,9 @@ static const uint8_t seg_code[10] = {
     0x6F  // 9
 };
 
-void Delay_us(uint32_t us)
+static void TM1723_WriteByte(uint8_t data);
+
+static void Delay_us(uint32_t us)
 {
     SysTick->LOAD = us * (SYSTEM_CORE_CLOCK / 1000000) - 1;
     SysTick->VAL = 0;
@@ -69,7 +71,8 @@ void TM1723_DisplayDigit(uint8_t pos, uint8_t num)
 
 
 // 显示数字(0-9999)
-void TM1723_DisplayNumber(uint16_t number) {
+void TM1723_DisplayNumber(uint16_t number) 
+{
     if (number > 9999) number = 9999;
     
     uint8_t digits[4];

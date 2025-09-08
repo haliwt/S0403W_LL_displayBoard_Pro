@@ -182,6 +182,8 @@ void USART1_IRQHandler(void)
    if(LL_USART_IsActiveFlag_RXNE(USART1)){
    
       data = LL_USART_ReceiveData8(USART1);
+
+        usart1_isr_callback_handler(data);
 	   // 存入缓冲区（简单环形缓冲）
         usart1_rx_buffer[usart1_rx_index++] = data;
        if (usart1_rx_index >= RX_BUFFER_SIZE)
@@ -189,7 +191,7 @@ void USART1_IRQHandler(void)
           usart1_rx_index = 0; // 环回
         }
 
-      HAL_UART1_Callback_Handler(data);
+     
 
    }
 

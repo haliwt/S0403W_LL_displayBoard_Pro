@@ -40,6 +40,7 @@
 	#include "FreeRTOS.h"
     #include "task.h"
     #include "cmsis_os.h"
+	#include "queue.h"
 	#define DISABLE_INT()    taskENTER_CRITICAL()
 	#define ENABLE_INT()     taskEXIT_CRITICAL()
 #else
