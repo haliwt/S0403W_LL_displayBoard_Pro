@@ -11,6 +11,8 @@ void power_on_ref_init(void)
       run_t.disp_wind_speed_grade =100;//WT.EDIT 2025.04.16
       run_t.wifi_set_temperature=40; //WT.EDIT 2025.04.16
       LCD_BACK_LIGHT_ON();
+	  POWER_ON_LED() ;
+	  LED_MODEL_ON() ;
       display_lcd_Icon_init();
       power_on_display_temp_handler();//WT.EDIT 2025.03.28
 

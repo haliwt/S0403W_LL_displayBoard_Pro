@@ -69,11 +69,11 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define LED_INFO_MODE_Pin 					LL_GPIO_PIN_2
-#define LED_INFO_MODE_GPIO_Port 			GPIOA
+#define LED_MODE_Pin 					LL_GPIO_PIN_2
+#define LED_MODE_GPIO_Port 			GPIOA
 
-#define LED_INFO_POWER_Pin 						LL_GPIO_PIN_3
-#define LED_INFO_POWER_GPIO_Port 				GPIOA
+#define LED_POWER_Pin 						LL_GPIO_PIN_3
+#define LED_POWER_GPIO_Port 				GPIOA
 
 #define TM1723_STB_Pin                LL_GPIO_PIN_4
 #define TM1723_STB_GPIO_Port          GPIOA

@@ -436,7 +436,7 @@ void AppTaskCreate (void)
 
 	xTaskCreate( vTaskRunPro,    		/* fucntion name  */
                  "vTaskRunPro",  		/* alias name   */
-                 128,         		    /* stack heap capacity */
+                 256,         		    /* stack heap capacity */
                  NULL,        		    /* param  */
                  1,           		    /* priority  */
                  &xHandleTaskRunPro);   /* task handler  */

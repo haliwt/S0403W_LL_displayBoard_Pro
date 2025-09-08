@@ -49,10 +49,10 @@ void MX_GPIO_Init(void)
   LL_IOP_GRP1_EnableClock(LL_IOP_GRP1_PERIPH_GPIOB);
 
   /**/
-  LL_GPIO_ResetOutputPin(LED_INFO_MODE_GPIO_Port, LED_INFO_MODE_Pin);
+  LL_GPIO_ResetOutputPin(LED_MODE_GPIO_Port, LED_MODE_Pin);
 
   /**/
-  LL_GPIO_ResetOutputPin(LED_INFO_POWER_GPIO_Port, LED_INFO_POWER_Pin);
+  LL_GPIO_ResetOutputPin(LED_POWER_GPIO_Port, LED_POWER_Pin);
 
   /**/
   LL_GPIO_ResetOutputPin(TM1723_STB_GPIO_Port, TM1723_STB_Pin);
@@ -67,20 +67,20 @@ void MX_GPIO_Init(void)
   LL_GPIO_ResetOutputPin(BACK_LIGHT_GPIO_Port, BACK_LIGHT_Pin);
 
   /**/
-  GPIO_InitStruct.Pin = LED_INFO_MODE_Pin;
+  GPIO_InitStruct.Pin = LED_MODE_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-  LL_GPIO_Init(LED_INFO_MODE_GPIO_Port, &GPIO_InitStruct);
+  LL_GPIO_Init(LED_MODE_GPIO_Port, &GPIO_InitStruct);
 
   /**/
-  GPIO_InitStruct.Pin = LED_INFO_POWER_Pin;
+  GPIO_InitStruct.Pin = LED_POWER_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-  LL_GPIO_Init(LED_INFO_POWER_GPIO_Port, &GPIO_InitStruct);
+  LL_GPIO_Init(LED_POWER_GPIO_Port, &GPIO_InitStruct);
 
   /**/
   GPIO_InitStruct.Pin = TM1723_STB_Pin;
