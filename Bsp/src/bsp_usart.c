@@ -45,7 +45,7 @@ typedef enum{
     ack_ptc_on_off = 0x12,
     ack_plasma_on_ff= 0x13,
     ack_ultrasonic_on_off = 0x14,
-   }signal_parase_t;
+}signal_parase_t;
 
 typedef struct Msg
 {

@@ -181,7 +181,7 @@ void USART1_IRQHandler(void)
     volatile uint8_t data;
    if(LL_USART_IsActiveFlag_RXNE(USART1)){
    
-      data = LL_USART_ReceiveData8(USART1);
+    data = LL_USART_ReceiveData8(USART1);
 
         usart1_isr_callback_handler(data);
 	   // 存入缓冲区（简单环形缓冲）
