@@ -3,7 +3,7 @@
 process_state gpro_t;
 
 
-static void  disp_set_timer_timing_value_fun(void);
+//static void  disp_set_timer_timing_value_fun(void);
 
 static void disp_normal_timing_handler(void);
 
@@ -39,7 +39,7 @@ void mode_key_long_fun(void)
 
        run_t.gModel=2;
        gpro_t.gTimer_disp_temp_humi_value=0;
-       run_t.display_set_timer_or_works_mode = setup_timer;
+       run_t.display_set_timer_or_works_time_mode = setup_timer;
       
        run_t.gTimer_key_timing=0;
        gpro_t.gTimer_disp_temp_humi_value=0;
@@ -61,7 +61,7 @@ void display_timer_and_beijing_time_handler(void)
    
   static uint8_t not_ai_mode_flag,not_ai_default=0xff;
   static uint8_t ai_mode_flag,ai_default = 0xff;
-   switch(run_t.display_set_timer_or_works_mode){//switch(run_t.setup_timer_timing_item){
+   switch(run_t.display_set_timer_or_works_time_mode){
 
     case works_time:
 
@@ -121,8 +121,9 @@ void display_timer_and_beijing_time_handler(void)
 
 
     case setup_timer:
-
+		
       disp_set_timer_timing_value_fun();
+      
 
     break;
 
@@ -151,9 +152,8 @@ void display_timer_and_beijing_time_handler(void)
 
                    gpro_t.gTimer_fan_to_ptc_warning = 0;
                
-               //run_t.setup_timer_timing_item = PTC_WARNING ;
 
-                 run_t.display_set_timer_or_works_mode = PTC_WARNING;
+                 run_t.display_set_timer_or_works_time_mode = PTC_WARNING;
 
             }
 
@@ -170,8 +170,8 @@ void display_timer_and_beijing_time_handler(void)
 
                    gpro_t.gTimer_fan_to_ptc_warning = 0;
                
-               //run_t.setup_timer_timing_item = FAN_WARNING ;
-               run_t.display_set_timer_or_works_mode =FAN_WARNING;
+
+               run_t.display_set_timer_or_works_time_mode =FAN_WARNING;
 
             }
 
@@ -246,6 +246,7 @@ static void power_on_init_disp_time_numbers(void)
 *
 *
 *****************************************************************************************************/
+#if 0
 static void disp_set_timer_timing_value_fun(void)
 {
   
@@ -336,7 +337,7 @@ static void disp_set_timer_timing_value_fun(void)
                if(run_t.timer_time_hours !=0){  
                      
                       run_t.timer_timing_define_flag = timing_success;
-                      run_t.display_set_timer_or_works_mode = timer_time;
+                      run_t.display_set_timer_or_works_time_mode = timer_time;
                       run_t.gModel =2 ; //WT.EDIT 2024.11.08
                       if(wifi_link_net_state()==1){
                         gpro_t.receive_copy_cmd = ack_not_ai_mode; //WT.EDIT .2025.01.03
@@ -348,7 +349,7 @@ static void disp_set_timer_timing_value_fun(void)
                 else{
                      run_t.timer_timing_define_flag = timing_not_definition ;
 
-                     run_t.display_set_timer_or_works_mode = works_time;
+                     run_t.display_set_timer_or_works_time_mode = works_time;
                      run_t.gModel =1 ;  //WT.EDIT 2024.11.08
                      
                      
@@ -361,6 +362,7 @@ static void disp_set_timer_timing_value_fun(void)
     TIM1723_Write_Cmd(LUM_VALUE);//(0x97);//(0x94);//(0x9B);
 
  }
+#endif 
 /**************************************************************************************************
 *
 *Function Name:void set_temperature_compare_value_fun(void)

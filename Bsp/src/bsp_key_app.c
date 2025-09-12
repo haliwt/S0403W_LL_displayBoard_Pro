@@ -56,17 +56,17 @@ void Beijing_Time_Init(void)
 void mode_key_short_fun(void)
 {
    if(run_t.ptc_warning ==0 && run_t.fan_warning ==0){
-		if(run_t.display_set_timer_or_works_mode == works_time){
+		if(run_t.display_set_timer_or_works_time_mode == works_time){
 	
 			//timer time + don't has ai item
-			run_t.display_set_timer_or_works_mode = timer_time;
+			run_t.display_set_timer_or_works_time_mode = timer_time;
 			run_t.gModel=2;
             run_t.gTimer_again_switch_works = 0;
 
 		}
-		else if(run_t.display_set_timer_or_works_mode == timer_time){
+		else if(run_t.display_set_timer_or_works_time_mode == timer_time){
 			//beijing time + ai item
-			run_t.display_set_timer_or_works_mode = works_time;
+			run_t.display_set_timer_or_works_time_mode = works_time;
 			
 			run_t.gModel=1;
 
@@ -80,10 +80,10 @@ void mode_key_short_fun(void)
 void mode_key_ai_mode_handler(void)
 {
     if(run_t.ptc_warning ==0 && run_t.fan_warning ==0){
-		if(run_t.display_set_timer_or_works_mode == works_time){
+		if(run_t.display_set_timer_or_works_time_mode == works_time){
 	
 			//timer time + don't has ai item
-			run_t.display_set_timer_or_works_mode = timer_time;
+			run_t.display_set_timer_or_works_time_mode = timer_time;
 			run_t.gModel=2;
             run_t.gTimer_again_switch_works = 0;
          
@@ -94,9 +94,9 @@ void mode_key_ai_mode_handler(void)
 			}
             
 		}
-		else if(run_t.display_set_timer_or_works_mode == timer_time){
+		else if(run_t.display_set_timer_or_works_time_mode == timer_time){
 			//beijing time + ai item
-			//run_t.display_set_timer_or_works_mode = works_time;
+			//run_t.display_set_timer_or_works_time_mode = works_time;
 			
 			run_t.gModel=1;
 			
@@ -126,7 +126,7 @@ void add_key_fun(void)
 {
      static uint8_t power_on_fisrt_flag ;
     
-	switch(run_t.display_set_timer_or_works_mode){//switch(run_t.setup_timer_timing_item){
+	switch(run_t.display_set_timer_or_works_time_mode){
 
     case works_time: //set temperature value add number
     
@@ -188,7 +188,7 @@ void dec_key_fun(void)
     if(run_t.power_on==1){
 	   	if(run_t.ptc_warning ==0){
 	
-	     switch(run_t.display_set_timer_or_works_mode){//switch(run_t.setup_timer_timing_item){
+	     switch(run_t.display_set_timer_or_works_time_mode){//switch(run_t.setup_timer_timing_item){
 
 
           case works_time:

@@ -382,7 +382,7 @@ static void receive_cmd_or_data_handler(void)
 
 		run_t.ptc_warning = 1;
 		//run_t.setup_timer_timing_item =  PTC_WARNING; //ptc warning 
-		run_t.display_set_timer_or_works_mode = PTC_WARNING;
+		run_t.display_set_timer_or_works_time_mode = PTC_WARNING;
 
 		run_t.dry=0;
 		SendData_Set_Command(0x22,0x0); //close ptc ,but don't buzzer sound .
@@ -405,7 +405,7 @@ static void receive_cmd_or_data_handler(void)
 
 		run_t.fan_warning = 1;
 
-		run_t.display_set_timer_or_works_mode =FAN_WARNING;  //run_t.display_set_timer_or_works_mode
+		run_t.display_set_timer_or_works_time_mode =FAN_WARNING;  //run_t.display_set_timer_or_works_time_mode
 
 		run_t.dry =0;
 		SendData_Set_Command(0x22,0x0); //close ptc ,but don't buzzer sound .
@@ -513,13 +513,13 @@ static void receive_cmd_or_data_handler(void)
 
 	if(gl_tMsg.execuite_cmd_notice==2){
 		//timer time + don't has ai item
-		run_t.display_set_timer_or_works_mode = timer_time;
+		run_t.display_set_timer_or_works_time_mode = timer_time;
 		run_t.gTimer_again_switch_works = 0; //WT.EDIT ,if don't define timer_time,wait 3s switch to works_time.
 		run_t.gModel=2;
 	}
 	else{
 		//beijing time + ai item
-		run_t.display_set_timer_or_works_mode = works_time;
+		run_t.display_set_timer_or_works_time_mode = works_time;
 
 		run_t.gModel=1;
 

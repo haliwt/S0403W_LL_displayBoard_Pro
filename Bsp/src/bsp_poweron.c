@@ -50,7 +50,7 @@ void power_on_key_short_fun(void)
     
 	
 
-   run_t.display_set_timer_or_works_mode =works_time;
+   run_t.display_set_timer_or_works_time_mode =works_time;
 
 	
      run_t.gTimer_timing=0;
@@ -89,7 +89,7 @@ void power_on_key_short_fun(void)
    
 
     run_t.gModel =1; //AI mode
-    run_t.display_set_timer_or_works_mode=works_time ;
+    run_t.display_set_timer_or_works_time_mode=works_time ;
   
   
      Lcd_PowerOn_Fun();
@@ -136,7 +136,7 @@ void power_on_off_handler(void)
         gpro_t.send_ack_cmd = ack_power_on;
         gpro_t.gTimer_again_send_power_on_off =0;
         run_t.wifi_set_temperature=40; //WT.EDIT 2025.01.15
-        run_t.display_set_timer_or_works_mode = works_time;//WT.EDIT 2025.01.15
+        run_t.display_set_timer_or_works_time_mode = works_time;//WT.EDIT 2025.01.15
         run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
         gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
        

@@ -6,7 +6,7 @@
 static void works_timer_disp_numaber(void)
 {
 
-     switch(run_t.display_set_timer_or_works_mode){//switch(run_t.setup_timer_timing_item){
+     switch(run_t.display_set_timer_or_works_time_mode){//switch(run_t.setup_timer_timing_item){
 
       case works_time:
         
@@ -224,7 +224,7 @@ void disp_fan_leaf_run_icon(void)
   if(run_t.fan_warning ==0 &&  run_t.ptc_warning== 0)
   {
 
-   if(run_t.display_set_timer_or_works_mode != setup_timer){
+   if(run_t.display_set_timer_or_works_time_mode != setup_timer){
    if(lcd_t.gTimer_leaf_counter > 4){//4*100
        lcd_t.gTimer_leaf_counter=0;
 	   switch_flag = switch_flag ^ 0x01;
@@ -274,17 +274,17 @@ void disp_fan_leaf_run_icon(void)
 
 }
 
-   if(lcd_t.gTimer_colon_counter > 1){
+   if(lcd_t.gTimer_colon_counter > 0){
    	   lcd_t.gTimer_colon_counter=0;
        colon_flag = colon_flag ^ 0x01;
        if(colon_flag ==1){
        gpro_t.disp_time_colon_flag =1;
-       TM1723_Write_Display_Data(0xCB,TIME_COLON+lcdNumber6_Low[lcd_t.number6_low]+lcdNumber7_High[lcd_t.number7_high]);//d
+      // TM1723_Write_Display_Data(0xCB,TIME_COLON+lcdNumber6_Low[lcd_t.number6_low]+lcdNumber7_High[lcd_t.number7_high]);//d
        }
 	   else{
 		 gpro_t.disp_time_colon_flag =0;
 
-         TM1723_Write_Display_Data(0xCB,TIME_NO_COLON+lcdNumber6_Low[lcd_t.number6_low]+lcdNumber7_High[lcd_t.number7_high]);//d
+         //TM1723_Write_Display_Data(0xCB,TIME_NO_COLON+lcdNumber6_Low[lcd_t.number6_low]+lcdNumber7_High[lcd_t.number7_high]);//d
 	   }
 	   
 

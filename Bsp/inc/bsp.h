@@ -20,6 +20,7 @@
 #include "bsp_sendack.h"
 #include "bsp_wifi.h"
 #include "bsp_lcd_app.h"
+#include "bsp_smg_blink.h"
 #include "bsp_freertos.h"
 #include "bsp_tm1723.h"
 #include "bsp_usart.h"

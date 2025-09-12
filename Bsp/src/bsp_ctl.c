@@ -62,7 +62,7 @@ void disp_timer_run_times(void)
      
                      run_t.timer_time_hours =0;
                      run_t.timer_time_minutes =0;
-				     run_t.display_set_timer_or_works_mode=works_time;
+				     run_t.display_set_timer_or_works_time_mode=works_time;
                      run_t.gModel=1;
                     
                  }
@@ -78,7 +78,7 @@ void disp_timer_run_times(void)
           if(run_t.gTimer_again_switch_works > 3){
              run_t.timer_time_hours =0;
              run_t.timer_time_minutes =0;
-		     run_t.display_set_timer_or_works_mode=works_time;
+		     run_t.display_set_timer_or_works_time_mode=works_time;
              run_t.gModel=1;
              if(wifi_link_net_state()==1){
                   gpro_t.send_ack_cmd = ack_ai_mode;

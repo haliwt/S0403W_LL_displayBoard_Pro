@@ -142,12 +142,7 @@ typedef struct __RUN{
    uint8_t auto_model_shut_off_ptc_flag;
 
    //iwdg ref
-
-   
-
-
- 
-   uint8_t key_read_value;
+    uint8_t key_read_value;
 
    uint8_t gPower_repeat_times_flag;
    //timer 
@@ -161,7 +156,7 @@ typedef struct __RUN{
    uint8_t gmt_time_hours;
    uint8_t  gmt_time_minutes;
    uint8_t  gmt_time_seconds;
-   uint8_t display_set_timer_or_works_mode;
+   uint8_t display_set_timer_or_works_time_mode;
 
    
  
