@@ -185,12 +185,12 @@ void USART1_IRQHandler(void)
 
         usart1_isr_callback_handler(data);
 	   // 存入缓冲区（简单环形缓冲）
-        usart1_rx_buffer[usart1_rx_index++] = data;
-       if (usart1_rx_index >= RX_BUFFER_SIZE)
-       {
-          usart1_rx_index = 0; // 环回
-        }
-
+//        usart1_rx_buffer[usart1_rx_index++] = data;
+//       if (usart1_rx_index >= RX_BUFFER_SIZE)
+//       {
+//          usart1_rx_index = 0; // 环回
+//        }
+        
      
 
    }
@@ -201,12 +201,12 @@ void USART1_IRQHandler(void)
 
        LL_USART_ClearFlag_ORE(USART1);
    }
-   if(LL_USART_IsActiveFlag_FE(USART1)){
-       LL_USART_ClearFlag_FE(USART1);
-   }
-   if(LL_USART_IsActiveFlag_NE(USART1)){
-      LL_USART_ClearFlag_NE(USART1);
-   }
+//   if(LL_USART_IsActiveFlag_FE(USART1)){
+//       LL_USART_ClearFlag_FE(USART1);
+//   }
+//   if(LL_USART_IsActiveFlag_NE(USART1)){
+//      LL_USART_ClearFlag_NE(USART1);
+//   }
   /* USER CODE END USART1_IRQn 1 */
 }
 

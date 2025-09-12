@@ -6,7 +6,7 @@
 #include "cmsis_os.h"
 
 
-#define POWER_KEY_BIT_0	        (1 << 0)
+#define POWER_KEY_BIT_0	       (1 << 0)
 #define MODE_KEY_1	        (1 << 1)
 #define DEC_KEY_2           (1 << 2)
 #define ADD_KEY_3           (1 << 3)
@@ -56,7 +56,8 @@ uint8_t long_key_mode_counter,long_key_mode_counter;
 
 uint8_t dc_power_on_first;
 
-uint8_t ucQueueMsgValue[20];
+//uint8_t ucQueueMsgValue[20];
+uint8_t smart_phone_app_timer_power_on_flag,app_power_off_flag;
 
 /**********************************************************************************************************
 *	
@@ -90,7 +91,7 @@ void freeRTOS_Handler(void)
 static void vTaskDecoderPro(void *pvParameters)
 {
 	BaseType_t xResult;
-	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(300); /* 0‡7¨¨0‰00‡1¡Á0Š60…7¨®0…80‡60…70‹50‡8¡À0†40Š10ˆ20„9300ms */
+	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(300); /* ï¿½0ï¿½7ï¿½ï¿½ï¿½0ï¿½0ï¿½0ï¿½1ï¿½ï¿½ï¿½0ï¿½6ï¿½0ï¿½7ï¿½ï¿½ï¿½0ï¿½8ï¿½0ï¿½6ï¿½0ï¿½7ï¿½0ï¿½5ï¿½0ï¿½8ï¿½ï¿½ï¿½0ï¿½4ï¿½0ï¿½1ï¿½0ï¿½2ï¿½0ï¿½9300ms */
 	//uint8_t ucQueueMsgValue[10];
 	 uint32_t ulValue;
 	
@@ -101,17 +102,36 @@ static void vTaskDecoderPro(void *pvParameters)
 						          &ulValue,        /*  */
 						          portMAX_DELAY);  /* block times,releas cpu power right */
 		
-	if( xResult == pdPASS )
-	{
-    	
-     
-        if((ulValue & DECODER_BIT_9) != 0){
-             parse_recieve_data_handler();
+        if( xResult == pdPASS )
+        {
+            if((ulValue & POWER_KEY_BIT_0) != 0)
+            {
+
+            gpro_t.smart_phone_power_on = 1;
+            gpro_t.key_long_power_flag=0;
+            gpro_t.long_key_power_counter=0;
+
+            }
+            else if((ulValue & POWER_ON_BIT_5) != 0){
+
+                smart_phone_app_timer_power_on_flag=1;
+
+            }
+            else if((ulValue & POWER_OFF_BIT_4) != 0){
+
+                app_power_off_flag =1;
+
+
+            }
+            else if((ulValue & DECODER_BIT_9) != 0){
+               parse_recieve_data_handler();
+            }
+         
         }
 	}
 		
-    }
 }
+
 
 /**********************************************************************************************************
 *	
@@ -123,55 +143,19 @@ static void vTaskDecoderPro(void *pvParameters)
 **********************************************************************************************************/
 static void vTaskRunPro(void *pvParameters)
 {
-    BaseType_t xResult;
-	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(30); //40//30/* ÄÅ½Å¾Ã§ËÅ½Ä‡ÂœË˜ÄÅ¼ËÄºÂ¤Â§Ã§Â­Â‰ÄºÅ¾Â…Ä‡Â—Å›Ã©Â—Â´Ã¤Â¸ÅŸ30ms */
-	uint32_t ulValue;
+   // BaseType_t xResult;
+	//const TickType_t xMaxBlockTime = pdMS_TO_TICKS(30); //40//30/* ÄÅ½Å¾Ã§ËÅ½Ä‡ÂœË˜ÄÅ¼ËÄºÂ¤Â§Ã§Â­Â‰ÄºÅ¾Â…Ä‡Â—Å›Ã©Â—Â´Ã¤Â¸ÅŸ30ms */
+	//uint32_t ulValue;
     
     static volatile uint8_t power_on_off_flag,fan_on_off_flag,dc_power_on ;
-    static uint8_t smart_phone_app_timer_power_on_flag,app_power_off_flag;
+  
   //  static uint8_t mode_sound;
     while(1)
     {
-		
-	xResult = xTaskNotifyWait(0x00000000,      
-						          0xFFFFFFFF,      
-						          &ulValue,        /*  */
-						          xMaxBlockTime);  /* block times,releas cpu power right */
-		
-	if( xResult == pdPASS )
-	{
-    	
-        if((ulValue & POWER_KEY_BIT_0) != 0)
-        {
-
-            gpro_t.smart_phone_power_on = 1;
-            gpro_t.key_long_power_flag=0;
-            gpro_t.long_key_power_counter=0;
-
-        }
-        else if((ulValue & POWER_ON_BIT_5) != 0){
-
-            smart_phone_app_timer_power_on_flag=1;
-
-        }
-        else if((ulValue & POWER_OFF_BIT_4) != 0){
-
-            app_power_off_flag =1;
-
-
-        }
-//        else if((ulValue & DECODER_BIT_9) != 0){
-//             parse_recieve_data_handler();
-//        }
-
-
-    }
-    else{ 
-
-        if( gpro_t.key_power_flag == 1){ //key power key
+		if( gpro_t.key_power_flag == 1){ //key power key
 
             if(KEY_POWER_GetValue()  ==KEY_UP){
-                gpro_t.key_power_flag++;
+               gpro_t.key_power_flag++;
                 
 
              if(gpro_t.key_long_power_flag ==1){ //WIFI KEY FUNCTION
@@ -182,16 +166,18 @@ static void vTaskRunPro(void *pvParameters)
                  SendData_Set_Command(0x05,0x01); // link wifi of command .
                  osDelay(3);
                  gpro_t.gTimer_mode_key_long=0;
+               
 
 
              }
              else{
-			 	gpro_t.long_key_power_counter=0; //WT.EDIT 2025.05.10
-                power_on_off_handler();
+                 gpro_t.long_key_power_counter=0;
+                 power_on_off_handler();
              }
-         }
-        }
-        else if(gpro_t.key_mode_flag == 1){
+
+            }
+            }
+            else if(gpro_t.key_mode_flag == 1){
                 
                   if(KEY_MODE_GetValue() == KEY_UP){
                       gpro_t.key_mode_flag++;
@@ -325,11 +311,12 @@ static void vTaskRunPro(void *pvParameters)
        }
        send_cmd_ack_hanlder() ; 
      
-
+         vTaskDelay(10);
+         
+          //}
     }
+ }
 
-   }
-}
 /**********************************************************************************************************
 *	Function Name: vTaskStart
 *	Function: 
@@ -353,27 +340,21 @@ static void vTaskStart(void *pvParameters)
            long_key_mode_counter =0;
            gpro_t.long_key_power_counter++;
 
-         if(gpro_t.long_key_power_counter > 60 && run_t.power_on== power_on ){
+         if(gpro_t.long_key_power_counter > 80 && run_t.power_on== power_on ){
             gpro_t.long_key_power_counter =0;
             gpro_t.key_long_power_flag =1;
             gpro_t.gTimer_mode_key_long = 0;
             
              SendData_Buzzer();
          }
-
-        if(dc_power_on_first==0){
-
-          dc_power_on_first++;
-
-        }
         else{
-            gpro_t.key_power_flag = 1;
-			printf("key_power_on !!! \r\n");
-
+           
+               gpro_t.key_power_flag = 1;
+            
+			//printf("key_power_on !!! \r\n");
+             }
         }
-        
      }
-    }
     else if(KEY_MODE_GetValue() ==KEY_DOWN){
 
            gpro_t.long_key_power_counter=0;
@@ -413,7 +394,7 @@ static void vTaskStart(void *pvParameters)
          }
 
     }
-    vTaskDelay(10);
+    vTaskDelay(20);
      
     }
 
@@ -461,14 +442,14 @@ void AppTaskCreate (void)
 */
 //static void AppObjCreate (void)
 //{
-//	/* 0…70…70†5¡§100†00‹2uint8_t0ˆ40ˆ10ˆ30‹40ˆ30„40…90ˆ70†90ˆ4 */
+//	/* ï¿½0ï¿½7ï¿½0ï¿½7ï¿½0ï¿½5ï¿½ï¿½10ï¿½0ï¿½0ï¿½0ï¿½2uint8_tï¿½0ï¿½4ï¿½0ï¿½1ï¿½0ï¿½3ï¿½0ï¿½4ï¿½0ï¿½3ï¿½0ï¿½4ï¿½0ï¿½9ï¿½0ï¿½7ï¿½0ï¿½9ï¿½0ï¿½4 */
 //	xUartRxQueue = xQueueCreate(20, sizeof(uint8_t));
 //    if(xUartRxQueue == 0 )
 //    {
 //        /* creat quenu is fail !!! */
 //    }
 //	
-//	/* 0…70…70†5¡§100†00‹20…70Š30…70„40‰00†00ˆ90Š5¡À0Š10†90†70…80‡20ˆ30‹40ˆ30„40…90ˆ70†90ˆ40„50…10ˆ70‡70ˆ70‰3CM3/CM40‡20‰30†20‡90‡80‡5320ˆ20†30†3¨²0„50…10ˆ60†30†00‹20‰00†00ˆ90Š5¡À0Š10†90†70ˆ90†40ˆ70‡140†00‹2¡Á0‰00†50‰3 */
+//	/* ï¿½0ï¿½7ï¿½0ï¿½7ï¿½0ï¿½5ï¿½ï¿½10ï¿½0ï¿½0ï¿½0ï¿½2ï¿½0ï¿½7ï¿½0ï¿½3ï¿½0ï¿½7ï¿½0ï¿½4ï¿½0ï¿½0ï¿½0ï¿½0ï¿½0ï¿½9ï¿½0ï¿½5ï¿½ï¿½ï¿½0ï¿½1ï¿½0ï¿½9ï¿½0ï¿½7ï¿½0ï¿½8ï¿½0ï¿½2ï¿½0ï¿½3ï¿½0ï¿½4ï¿½0ï¿½3ï¿½0ï¿½4ï¿½0ï¿½9ï¿½0ï¿½7ï¿½0ï¿½9ï¿½0ï¿½4ï¿½0ï¿½5ï¿½0ï¿½1ï¿½0ï¿½7ï¿½0ï¿½7ï¿½0ï¿½7ï¿½0ï¿½3CM3/CM4ï¿½0ï¿½2ï¿½0ï¿½3ï¿½0ï¿½2ï¿½0ï¿½9ï¿½0ï¿½8ï¿½0ï¿½532ï¿½0ï¿½2ï¿½0ï¿½3ï¿½0ï¿½3ï¿½ï¿½ï¿½0ï¿½5ï¿½0ï¿½1ï¿½0ï¿½6ï¿½0ï¿½3ï¿½0ï¿½0ï¿½0ï¿½2ï¿½0ï¿½0ï¿½0ï¿½0ï¿½0ï¿½9ï¿½0ï¿½5ï¿½ï¿½ï¿½0ï¿½1ï¿½0ï¿½9ï¿½0ï¿½7ï¿½0ï¿½9ï¿½0ï¿½4ï¿½0ï¿½7ï¿½0ï¿½14ï¿½0ï¿½0ï¿½0ï¿½2ï¿½ï¿½ï¿½0ï¿½0ï¿½0ï¿½5ï¿½0ï¿½3 */
 //
 //}
 
@@ -484,7 +465,7 @@ void AppTaskCreate (void)
 void App_PowerOff_Handler(void)
 {
      
-     xTaskNotify(xHandleTaskRunPro, /*  */
+     xTaskNotify(xHandleTaskDecoderPro, /*  */
 	 POWER_OFF_BIT_4 ,            /* bit0  */
 	 eSetBits);             /* BIT_*/
      
@@ -494,7 +475,7 @@ void App_PowerOff_Handler(void)
 void App_PowerOn_Handler(void)
 {
      
-     xTaskNotify(xHandleTaskRunPro, /*  */
+     xTaskNotify(xHandleTaskDecoderPro,  
 	 POWER_KEY_BIT_0 ,            /*  */
 	 eSetBits);             /* */
      
@@ -516,10 +497,10 @@ void app_decoder_task_isr_handler(void)
 //{
 //	 BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 //    
-//    // Éú²úÕß£º½«½ÓÊÕµ½µÄ×Ö½Ú·ÅÈë¶ÓÁÐ
+//    // ï¿½ï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½Ö½Ú·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //    xQueueSendFromISR(xUartRxQueue, &data, &xHigherPriorityTaskWoken);
 //    
-//    // Èç¹ûÓÐ¸ü¸ßÓÅÏÈ¼¶µÄÈÎÎñ±»»½ÐÑ£¬Ôò½øÐÐÉÏÏÂÎÄÇÐ»»
+//    // ï¿½ï¿½ï¿½ï¿½Ð¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ñ±»»ï¿½ï¿½Ñ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½
 //    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 //
 //}

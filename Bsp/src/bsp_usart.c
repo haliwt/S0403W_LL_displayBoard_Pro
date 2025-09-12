@@ -18,9 +18,9 @@ typedef enum {
     UART_STATE_NUM=1,
     UART_STATE_CMD_NOTICE=2,
     UART_STATE_EXEC_CMD_OR_LEN=3,
-    UART_STATE_FRAME_END=4,
+	 UART_STATE_FRAME_CMD_0X0=4,
+    UART_STATE_FRAME_END=5,
     UART_STATE_BCC_CHECK,
-    UART_STATE_OLDER_BCC_CHECK,
     UART_STATE_DATA_LEN,
     UART_STATE_DATA,
     UART_STATE_DATA_END,
@@ -86,7 +86,7 @@ void usart1_isr_callback_handler(uint8_t data)
      static uint8_t state;
     // BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 	 inputBuf[0] = data;
-	 if(gl_tMsg.tx_data_success ==0){
+	 //if(gl_tMsg.tx_data_success ==0){
      switch(state)
 		{
 		case UART_STATE_WAIT_HEADER:  //#0
@@ -101,7 +101,7 @@ void usart1_isr_callback_handler(uint8_t data)
             
 		break;
 
-        case UART_STATE_NUM:
+        case UART_STATE_NUM: //0x01
 
              if(inputBuf[0] == FRAME_NUM ||inputBuf[0] == FRAME_ACK_NUM){  // 0x5A --main board singla or copy cmd
                rx_data_counter++;
@@ -123,12 +123,13 @@ void usart1_isr_callback_handler(uint8_t data)
 
         break;
 
-        case UART_STATE_CMD_NOTICE://2
+        case UART_STATE_CMD_NOTICE://2 -> odler version 1. 0xFF ->COPY CMD
                rx_data_counter++;
                gl_tMsg.usData[rx_data_counter] = inputBuf[0];
 			   gl_tMsg.cmd_notice = inputBuf[0];
 			   if(gl_tMsg.cmd_notice == 0xFF){//this is older version protocol 0x02 -> copy command.
 				   gl_tMsg.copy_cmd_notice = 0xFF;
+				   gl_tMsg.cmd_notice=0;
 				   state=UART_STATE_EXEC_CMD_OR_LEN; //1
 			   }
 			   else{
@@ -137,28 +138,46 @@ void usart1_isr_callback_handler(uint8_t data)
     
         break;
 
-        case UART_STATE_EXEC_CMD_OR_LEN:
+        case UART_STATE_EXEC_CMD_OR_LEN://3 -> 1. execuite cmd or ontice . 2. copy cmd or notice .3. data id = 0x0F
             rx_data_counter++;
             gl_tMsg.usData[rx_data_counter] = inputBuf[0];
             if(gl_tMsg.usData[rx_data_counter] !=0x0F && gl_tMsg.copy_cmd_notice != 0xFF){
                 gl_tMsg.execuite_cmd_notice =  gl_tMsg.usData[rx_data_counter];
-                state = UART_STATE_FRAME_END;
+				gl_tMsg.rx_data_flag =  0x0;
+				gl_tMsg.copy_cmd_notice = 0;
+                state = UART_STATE_FRAME_CMD_0X0;
 
             }
-            else if(gl_tMsg.usData[rx_data_counter] ==0x0F){
+            else if(gl_tMsg.usData[rx_data_counter] ==0x0F){ //is data frame
                gl_tMsg.rx_data_flag =  0x0F;
+			   gl_tMsg.copy_cmd_notice = 0;
                state = UART_STATE_DATA_LEN; //receive data.
            }
 		   else if(gl_tMsg.copy_cmd_notice == 0xFF){ //this is older compatibility 
 		        gl_tMsg.cmd_notice = gl_tMsg.usData[rx_data_counter];
+				gl_tMsg.rx_data_flag =  0x0;
                 state = UART_STATE_DATA_LEN; //receive data.
             }
 
 
         break;
 
+		case UART_STATE_FRAME_CMD_0X0: //0x04 //receive comd and notice frame  0x00
+			rx_data_counter++;
+			gl_tMsg.usData[rx_data_counter] = inputBuf[0];
+			if(inputBuf[0] == 0x0){  // frame is tail of end "0xFE"
 
-        case  UART_STATE_FRAME_END: //receive comd and notice frame  end
+				state=UART_STATE_FRAME_END; //=1
+
+			}
+			else{
+				state=0;
+				rx_data_counter=0;
+			}
+
+		break;
+
+    case  UART_STATE_FRAME_END://5 //receive comd and notice frame  end
             rx_data_counter++;
             gl_tMsg.usData[rx_data_counter] = inputBuf[0];
             if(inputBuf[0] == 0xFE){  // frame is tail of end "0xFE"
@@ -166,11 +185,6 @@ void usart1_isr_callback_handler(uint8_t data)
 			   state=UART_STATE_BCC_CHECK; //=1
 
              }
-		     else if(inputBuf[0] == 0x0){ //this is older version cmd[3]= 0 -> is cmd or notice don't "data"
-		     
-			    state=UART_STATE_BCC_CHECK; //=1
-
-		     }
 			 else{
                 state=0;
                 rx_data_counter=0;
@@ -180,67 +194,49 @@ void usart1_isr_callback_handler(uint8_t data)
         break;
 
 
-        case UART_STATE_BCC_CHECK: //frem
+        case UART_STATE_BCC_CHECK: //frem end bcc check code
             rx_data_counter++;
             gl_tMsg.usData[rx_data_counter] = inputBuf[0];
-		    if(gl_tMsg.usData[rx_data_counter]==0xFE){
-                  state = UART_STATE_OLDER_BCC_CHECK;
-
-			}
-			else{
-                gl_tMsg.bcc_check_code =  gl_tMsg.usData[rx_data_counter];
-				gl_tMsg.data_length = rx_data_counter;
-	            if(gl_tMsg.bcc_check_code == bcc_check(gl_tMsg.usData, gl_tMsg.data_length))
-	            {
+	        gl_tMsg.bcc_check_code =  gl_tMsg.usData[rx_data_counter];
+			gl_tMsg.data_length = rx_data_counter;
+	        if(gl_tMsg.bcc_check_code == bcc_check(gl_tMsg.usData, gl_tMsg.data_length))
+	        {
 	                state=0;
 	                rx_data_counter=0; 
-					 gl_tMsg.tx_data_success = 1;
-	                app_decoder_task_isr_handler();
+					// gl_tMsg.tx_data_success = 1;
+					// memset(gl_tMsg.usData,0,(gl_tMsg.data_length+1));
 
-	            }
-	            else{
+	                // app_decoder_task_isr_handler();
+				 gl_tMsg.usData[0] = 0;
+				 gl_tMsg.usData[1] = 0;
+				 parse_recieve_data_handler();
+
+	        }
+	        else{
 	                state=0;
 	                rx_data_counter=0;
-	            }
-			}
+					 gl_tMsg.usData[0] = 0;
+				    gl_tMsg.usData[1] = 0;
+	        }
+			
 
         break;
 
-		case UART_STATE_OLDER_BCC_CHECK:
-			rx_data_counter++;
-            gl_tMsg.usData[rx_data_counter] = inputBuf[0];
-            gl_tMsg.bcc_check_code = inputBuf[0];
-			gl_tMsg.data_length = rx_data_counter;
-			if(gl_tMsg.bcc_check_code == bcc_check(gl_tMsg.usData, gl_tMsg.data_length))
-			{
-				state=0;
-				rx_data_counter=0;  
-				 gl_tMsg.tx_data_success = 1;
-				app_decoder_task_isr_handler();
 
-			}
-			else{
-				state=0;
-				rx_data_counter=0;
-			}
-
-
-		break;
-
-        //this is receive data 
+        //this is receive data or copy command or notice
 		case UART_STATE_DATA_LEN: //receive is data ->"0x04"
 
              rx_data_counter++;
              gl_tMsg.usData[rx_data_counter] = inputBuf[0];
 
               gl_tMsg.receive_data_length = gl_tMsg.usData[rx_data_counter];
-              gl_tMsg.data_length=0;
+             
            // 根据数据长度判断是否需要接收载荷
             if(gl_tMsg.receive_data_length > 0 && gl_tMsg.copy_cmd_notice != 0xFF) {
-				 gl_tMsg.rc_data_length=0;
+				  gl_tMsg.data_length=0;
                  state = UART_STATE_DATA;
             } 
-            else if(gl_tMsg.copy_cmd_notice == 0xFF){ //this is older compatibility 
+            else if(gl_tMsg.copy_cmd_notice == 0xFF){ //this is older compatibility copy command
                  gl_tMsg.execuite_cmd_notice =  gl_tMsg.usData[rx_data_counter];
 				 state = UART_STATE_FRAME_END; //receive data.
 			}
@@ -254,64 +250,29 @@ void usart1_isr_callback_handler(uint8_t data)
         case UART_STATE_DATA:
 
         rx_data_counter++;
-        gl_tMsg.data_length ++;
         gl_tMsg.usData[rx_data_counter] = inputBuf[0];
-		gl_tMsg.rx_data[gl_tMsg.rc_data_length]=inputBuf[0];
-		gl_tMsg.rc_data_length++;
+		gl_tMsg.rx_data[gl_tMsg.data_length]=inputBuf[0]; //receive data be save rx_data[]
+		 gl_tMsg.data_length ++;
+		//gl_tMsg.rc_data_length++;
          
-        if(gl_tMsg.data_length == gl_tMsg.receive_data_length){
+        if(gl_tMsg.data_length >= gl_tMsg.receive_data_length){
               
-             state = UART_STATE_DATA_END;
+             //state = UART_STATE_DATA_END;
+			 state = UART_STATE_FRAME_END;
 
         }
+		else{
+			state=UART_STATE_DATA;
+		}
+
 
         break;
 
-        case UART_STATE_DATA_END:
-
-        rx_data_counter++;
-        gl_tMsg.usData[rx_data_counter] = inputBuf[0];
-        if(gl_tMsg.usData[rx_data_counter]==0xFE){
-             
-             state = UART_STATE_DATA_BCC;
-
-        }
-        else{
-            state=0;
-            rx_data_counter=0;
-
-        }
-       break;
-
-       case UART_STATE_DATA_BCC:
-
-            rx_data_counter++;
-           // gl_tMsg.data_length = rx_data_counter;
-            gl_tMsg.usData[rx_data_counter] = inputBuf[0];
-            gl_tMsg.bcc_check_code = inputBuf[0];
-			gl_tMsg.data_length = rx_data_counter;
-			
-            if(gl_tMsg.bcc_check_code == bcc_check(gl_tMsg.usData,gl_tMsg.data_length ))
-            {
-                state=0;
-                rx_data_counter=0; 
-				 gl_tMsg.tx_data_success = 1;
-                app_decoder_task_isr_handler();
-				
-               
-
-            }
-            else{
-                state=0;
-                rx_data_counter=0;
-            }
-
-
-       break;
+      
      	}
 
-	}
 }
+
 
 #endif 
 /********************************************************************************
@@ -331,17 +292,17 @@ void parse_recieve_data_handler(void)
 	case 0:
       
        receive_cmd_or_data_handler();
-	   gl_tMsg.tx_data_success = 0;
+	  // gl_tMsg.tx_data_success = 0;
 
    break;
 
    case 0x0FF: //copy cmd or notice,this is older version protocol.
 		receive_copy_cmd_or_data_handler();
-		 gl_tMsg.tx_data_success = 0;
+		// gl_tMsg.tx_data_success = 0;
 
    case 0x80:
        receive_copy_cmd_or_data_handler();
-	    gl_tMsg.tx_data_success = 0;
+//gl_tMsg.tx_data_success = 0;
    break;
 
     }
@@ -362,10 +323,10 @@ static void receive_cmd_or_data_handler(void)
 	case power_on_off:
 
 	if(gl_tMsg.execuite_cmd_notice == 0x01){//power on
-		run_t.power_on = power_on;
+		//run_t.power_on = power_on;
 		}
 		else{//power off 
-		run_t.power_on = power_off;
+		//run_t.power_on = power_off;
 
 		}
 	break;

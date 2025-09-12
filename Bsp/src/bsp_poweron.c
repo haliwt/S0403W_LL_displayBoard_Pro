@@ -128,7 +128,9 @@ void power_key_long_fun(void)
 void power_on_off_handler(void)
 {
     if(run_t.power_on== power_off){
-       // run_t.power_on= power_on;
+        run_t.power_on= power_on;
+        SendData_PowerOnOff(1);
+		osDelay(5);
         gpro_t.long_key_power_counter =0; 
         run_t.power_on_disp_smg_number = 1;
         gpro_t.send_ack_cmd = ack_power_on;
@@ -138,7 +140,7 @@ void power_on_off_handler(void)
         run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
         gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
        
-        SendData_PowerOnOff(1);
+       
          gpro_t.power_on_every_times=1;
 		 run_t.plasma =1;
 		 run_t.ultrasonic =1;
@@ -146,11 +148,19 @@ void power_on_off_handler(void)
 		 run_t.gModel = 1;
 
         gpro_t.gTimer_mode_key_long=0;
-        //osDelay(3);//HAL_Delay(10);
+         LCD_BACK_LIGHT_ON();
+	  POWER_ON_LED() ;
+	  LED_MODEL_ON() ;
+      display_lcd_Icon_init();
+      power_on_display_temp_handler();//WT.EDIT 2025.03.28
+        //printf("power on !!!\r\n");
       
 
     }
-    else{ //power off .
+    else if(run_t.power_on== power_on){ //power off .
+        run_t.power_on= power_off;
+        SendData_PowerOnOff(0);
+		osDelay(5);
         gpro_t.long_key_power_counter=0; //WT.2024.11.05
         gpro_t.key_long_power_flag=0;
         gpro_t.send_ack_cmd = ack_power_off;
@@ -158,9 +168,10 @@ void power_on_off_handler(void)
         run_t.wifi_set_temperature =40;//WT.EDIT 2025.01.15
         run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
         gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
-        SendData_PowerOnOff(0);
+        Lcd_PowerOff_Fun();
         //osDelay(3);//HAL_Delay(10);
         /* run_t.power_on= power_off; */
+        //printf("power off !!!\r\n");
 
 
     }

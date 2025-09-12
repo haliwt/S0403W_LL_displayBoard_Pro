@@ -60,7 +60,7 @@ void power_off_handler(void)
       
 	}
     
-	lcd_power_off_light_off();
+	
    
     power_off_breath_Led();
 	if(run_t.gFan_RunContinue == 1){
@@ -116,10 +116,15 @@ static void power_off_breath_Led(void)
  {
 
       //POWER_LED_TOGGLE() ;
-      POWER_ON_LED();
-	  vTaskDelay(pdMS_TO_TICKS(500));
-	  POWER_OFF_LED();
-	  vTaskDelay(pdMS_TO_TICKS(500));
+     // static uint8_t counter;
+	  if(gpro_t.gTimer_disp_temp_humi_value> 1){
+            gpro_t.gTimer_disp_temp_humi_value=0;
+//		    counter = counter ^ 0x01;
+//		    if(counter ==1)POWER_ON_LED() ;
+//            else POWER_OFF_LED() ;
+		     POWER_LED_TOGGLE();
+            lcd_power_off_light_off();
+      }
       //counter_flag ++;
 	  //printf("power_off_led !!!\r\n");
 

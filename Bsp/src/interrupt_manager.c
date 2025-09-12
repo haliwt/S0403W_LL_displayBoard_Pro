@@ -44,6 +44,7 @@ void tim16_int_callback_handler(void)
          gpro_t.gTimer_fan_to_ptc_warning++ ;
          gpro_t.gTimer_again_send_power_on_off ++;
 		 gpro_t.gTimer_disp_temp_humi_value++;
+    // gpro_t.gTimer_power_key_counter++;
      
          //
 

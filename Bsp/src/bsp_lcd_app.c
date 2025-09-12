@@ -361,22 +361,22 @@ static void display_temperture_humidity_value(void)
 
 void power_on_display_temp_handler(void)
 {
-                Display_Kill_Dry_Ster_Icon();
-			
-				 //display address 0xC3
-				  if(run_t.gModel==1){
-				   TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high])& 0xff);//display	"AI icon"
-				  }
-				 else { 
-				  TM1723_Write_Display_Data(0xC3,((lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//don't display "AI icon"
-				  
-				  }
-				 
-				 //display address 0xC4
-				  TM1723_Write_Display_Data(0xC4,((0x01+lcdNumber2_Low[lcd_t.number2_low])+lcdNumber3_High[lcd_t.number3_high])&0xff);
-	
-			      wifi_icon_blink_reg0xc5_handler();//TM1723_Write_Display_Data(0xC5,((0x01+lcdNumber2_Low[lcd_t.number2_low])+lcdNumber3_High[lcd_t.number3_high])&0xff);
-                  display_lowbit_lunmber4_reg0xc9_handler();
+	Display_Kill_Dry_Ster_Icon();
+
+	//display address 0xC3
+	if(run_t.gModel==1){
+	TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high])& 0xff);//display	"AI icon"
+	}
+	else { 
+	TM1723_Write_Display_Data(0xC3,((lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//don't display "AI icon"
+
+	}
+
+	//display address 0xC4
+	TM1723_Write_Display_Data(0xC4,((0x01+lcdNumber2_Low[lcd_t.number2_low])+lcdNumber3_High[lcd_t.number3_high])&0xff);
+
+	wifi_icon_blink_reg0xc5_handler();//TM1723_Write_Display_Data(0xC5,((0x01+lcdNumber2_Low[lcd_t.number2_low])+lcdNumber3_High[lcd_t.number3_high])&0xff);
+	display_lowbit_lunmber4_reg0xc9_handler();
 
 
 

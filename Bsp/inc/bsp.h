@@ -3,6 +3,7 @@
 #include "main.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
 
 #include "bsp_cmd_link.h"
@@ -32,6 +33,7 @@
 
 
 
+
 #define  USE_FreeRTOS      1
 	
 #define Enable_EventRecorder 1  
@@ -44,9 +46,9 @@
 	#define DISABLE_INT()    taskENTER_CRITICAL()
 	#define ENABLE_INT()     taskEXIT_CRITICAL()
 #else
-	/* ����ȫ���жϵĺ� */
-	#define ENABLE_INT()	__set_PRIMASK(0)	/* ʹ��ȫ���ж� */
-	#define DISABLE_INT()	__set_PRIMASK(1)	/* ��ֹȫ���ж� */
+	/* interrupt enable or disable */
+	#define ENABLE_INT()	__set_PRIMASK(0)	/**/
+	#define DISABLE_INT()	__set_PRIMASK(1)	/**/
 #endif
 
 
