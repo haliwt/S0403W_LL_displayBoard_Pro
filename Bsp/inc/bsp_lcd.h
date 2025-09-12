@@ -58,7 +58,7 @@
 #define TWO_DOT_Symbol           0x01       //addr 0xCB
 
 
-#define HUM_T8                  0x01
+#define T8_HUM                  0x01
 
 #define TIME_COLON              0x01
 #define TIME_NO_COLON           0X0
@@ -70,12 +70,14 @@
 #define T16                      0x01     //addr 0xCF
  
 #define T13                      0x01      //addr 0xCE
-#define T13_NO
+#define T13_NO                   0
 #define T14                      0x01      //addr 0xCC
-#define T14_NO
+#define T14_NO                   0
 #define T15                      0x01      //addr 0xCA
-#define T15_NO
+#define T15_NO                   0X0
 #define WIND_T16                 0x01      //addr 0xCF
+#define WIND_T16_NO              0x0      //addr 0xCF
+
  
 #define T17_T18_T19				 0xE0  
 #define WIND_SPEED_ONE           0x20

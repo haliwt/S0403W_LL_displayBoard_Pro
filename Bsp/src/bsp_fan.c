@@ -161,7 +161,7 @@ void disp_fan_leaf_init(void)
     	 lcd_t.number8_low = (run_t.dispTime_minutes )%10;
     	 lcd_t.number8_high = lcd_t.number8_low ;//(run_t.dispTime_minutes )%10;
     	 
-           TM1723_Write_Display_Data(0xC9,(HUM_T8+lcdNumber4_Low[lcd_t.number4_low]+lcdNumber5_High[lcd_t.number5_high]) & 0xff);
+           TM1723_Write_Display_Data(0xC9,(T8_HUM+lcdNumber4_Low[lcd_t.number4_low]+lcdNumber5_High[lcd_t.number5_high]) & 0xff);
     
            if(fan_blink_full == 1){
                TM1723_Write_Display_Data(0xCA,T15+lcdNumber5_Low[lcd_t.number5_low]+lcdNumber6_High[lcd_t.number6_high]);//display digital '5,6'
@@ -217,6 +217,7 @@ void disp_fan_leaf_init(void)
     *
     *
 **************************************************************************************/
+#if 0 
 void disp_fan_leaf_run_icon(void)
 {
 
@@ -291,5 +292,5 @@ void disp_fan_leaf_run_icon(void)
    	}
 
 }
-
+#endif 
 

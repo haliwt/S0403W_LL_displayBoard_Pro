@@ -20,7 +20,7 @@ void disp_fan_leaf_init(void);
 
 
 
-void disp_fan_leaf_run_icon(void);
+
 
 
 

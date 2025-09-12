@@ -14,6 +14,9 @@
 volatile bool blink_on = true;       // 闪烁状态
 volatile uint16_t blink_counter = 0; // 闪烁计数
 
+static void works_time_fun(void);
+
+
 // ====== 定时器中断（10ms周期） ======
 //if (run_t.gTimer_digital5678_ms>= 4) { // 50*10ms = 500ms
 //		 run_t.gTimer_digital5678_ms=0;
@@ -21,7 +24,13 @@ volatile uint16_t blink_counter = 0; // 闪烁计数
 //	}
 
 
-// ====== 风速显示 ======
+
+/**
+* @brief 
+* @note // ====== 风速显示 ======
+* @param
+* @return
+*/
 static void update_wind_speed_display(uint8_t mask) 
 {
     uint8_t base = lcdNumber8_Low[lcd_t.number8_low];
@@ -34,7 +43,12 @@ static void update_wind_speed_display(uint8_t mask)
     }
 }
 
-// ====== 数码管显示 ======
+/**
+* @brief 
+* @note // ====== 数码管显示 ======
+* @param
+* @return
+*/
 #if 0
 static void display_digits(uint8_t mask, bool blink) 
 {
@@ -88,11 +102,17 @@ static void display_digits(uint8_t mask, bool blink) {
             (lcdNumber7_Low[lcd_t.number7_low] + lcdNumber8_High[lcd_t.number8_high]) & mask);
     }
 
-    update_wind_speed_display(mask);
+    //update_wind_speed_display(mask);
 
    
 }
 #endif 
+/**
+* @brief 
+* @note
+* @param
+* @return
+*/
 
 // ====== 主函数 ======
 void disp_set_timer_timing_value_fun(void) 
@@ -141,9 +161,129 @@ void disp_set_timer_timing_value_fun(void)
 
     TIM1723_Write_Cmd(LUM_VALUE);
 }
+/**
+* @brief 
+* @note
+* @param
+* @return
+*/
+#if 0
+void disp_fan_leaf_run_icon(void)
+{
+    static uint8_t switch_flag;
+
+    // 检查是否有风扇或PTC警告
+    if (run_t.fan_warning != 0 || run_t.ptc_warning != 0) return;
+
+    // 检查是否处于非定时器模式
+    if (run_t.display_set_timer_or_works_time_mode == setup_timer) return;
+
+    // 控制风扇动画切换频率
+    if (lcd_t.gTimer_leaf_counter <= 4) return;
+
+    lcd_t.gTimer_leaf_counter = 0;
+    switch_flag ^= 0x01;
+
+    // 显示通用部分
+    works_timer_disp_numaber();
+
+    TM1723_Write_Display_Data(0xC9, (HUM_T8 + lcdNumber4_Low[lcd_t.number4_low] + lcdNumber5_High[lcd_t.number5_high]) & 0xff);
+
+    uint8_t ca_data = lcdNumber5_Low[lcd_t.number5_low] + lcdNumber6_High[lcd_t.number6_high];
+    if (switch_flag == 1) {
+        ca_data += T15;  // 特殊偏移用于动画效果
+    }
+    TM1723_Write_Display_Data(0xCA, ca_data);
+
+    uint8_t colon_base = gpro_t.disp_time_colon_flag ? TIME_COLON : TIME_NO_COLON;
+    TM1723_Write_Display_Data(0xCB, colon_base + lcdNumber6_Low[lcd_t.number6_low] + lcdNumber7_High[lcd_t.number7_high]);
+
+    // 控制风扇叶片显示状态
+    fan_disp_speed_leaf(switch_flag == 1 ? 0 : 1);
+
+	 /* 冒号闪烁计数器（与上面独立，保持原行为） */
+    if (lcd_t.gTimer_colon_counter > 0) {
+        lcd_t.gTimer_colon_counter = 0;
+        colon_flag ^= 1;
+        gpro_t.disp_time_colon_flag = (colon_flag != 0) ? 1 : 0;
+    }
+	
+}
+#else 
+void disp_fan_leaf_run_icon(void)
+{
+    static uint8_t switch_flag;
+    static uint8_t colon_flag;
+    const uint8_t LEAF_TOGGLE_THRESHOLD = 4;
+	static uint8_t colon_base,t15_base ;
+
+    /* 主显示更新：仅当无风扇/ptc 报警时执行 */
+    if (run_t.fan_warning == 0 && run_t.ptc_warning == 0) {
+        if (run_t.display_set_timer_or_works_time_mode != setup_timer &&
+            lcd_t.gTimer_leaf_counter > LEAF_TOGGLE_THRESHOLD) {
+
+            lcd_t.gTimer_leaf_counter = 0;
+            switch_flag ^= 1;
+
+            /* 更新要显示的数字（小时/分钟）并写入公共位,数字5678 */
+            works_time_fun();
+            TM1723_Write_Display_Data(0xC9,
+                (T8_HUM + lcdNumber4_Low[lcd_t.number4_low] + lcdNumber5_High[lcd_t.number5_high]) & 0xFF);
+
+            /* 位置 CA 的不同位（闪烁效果） */
+             t15_base = switch_flag ? T15 : T15_NO;
+             TM1723_Write_Display_Data(0xCA,
+                    t15_base + lcdNumber5_Low[lcd_t.number5_low] + lcdNumber6_High[lcd_t.number6_high]);
+          
+
+            /* 冒号根据全局标志显示/隐藏 */
+			colon_base = gpro_t.disp_time_colon_flag ? TIME_COLON : TIME_NO_COLON;
+            TM1723_Write_Display_Data(0xCB,
+                    colon_base + lcdNumber6_Low[lcd_t.number6_low] + lcdNumber7_High[lcd_t.number7_high]);
+           
+
+            /* 风速显示由 fan_disp_speed_leaf 处理，注意保持原有参数关系 */
+            fan_disp_speed_leaf(switch_flag ? 0 : 1);
+        }
+	}
+
+    /* 冒号闪烁计数器（与上面独立，保持原行为） */
+    if (lcd_t.gTimer_colon_counter > 0) {
+        lcd_t.gTimer_colon_counter = 0;
+        colon_flag ^= 1;
+        gpro_t.disp_time_colon_flag = (colon_flag != 0) ? 1 : 0;
+    }
+
+}
 
 
+#endif 
 
+/**
+* @brief 
+* @note
+* @param
+* @return
+*/
+static void works_time_fun(void)
+{
+      
+    if(run_t.display_set_timer_or_works_time_mode ==works_time){//switch(run_t.setup_timer_timing_item){
 
+    
+        
+         lcd_t.number5_low=(run_t.dispTime_hours ) /10;
+         lcd_t.number5_high =lcd_t.number5_low;//(run_t.dispTime_hours) /10;
 
+    	 lcd_t.number6_low = (run_t.dispTime_hours ) %10;;
+    	 lcd_t.number6_high =  lcd_t.number6_low ;//(run_t.dispTime_hours ) %10;
+         
+         lcd_t.number7_low = (run_t.dispTime_minutes )/10;
+    	 lcd_t.number7_high = lcd_t.number7_low;//(run_t.dispTime_minutes )/10;
 
+    	 lcd_t.number8_low = (run_t.dispTime_minutes )%10;
+    	 lcd_t.number8_high = lcd_t.number8_low ;//(run_t.dispTime_minutes )%10;
+
+    }
+
+}

@@ -317,7 +317,7 @@ static void display_lowbit_lunmber4_reg0xc9_handler(void)
 {
     if(run_t.display_set_timer_or_works_time_mode != setup_timer){
 
-       TM1723_Write_Display_Data(0xC9,((HUM_T8 +lcdNumber4_Low[lcd_t.number4_low])+lcdNumber5_High[lcd_t.number5_high])&0xff);
+       TM1723_Write_Display_Data(0xC9,((T8_HUM +lcdNumber4_Low[lcd_t.number4_low])+lcdNumber5_High[lcd_t.number5_high])&0xff);
 
    }
 }
