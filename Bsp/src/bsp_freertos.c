@@ -153,9 +153,6 @@ static void vTaskRunPro(void *pvParameters)
 	//const TickType_t xMaxBlockTime = pdMS_TO_TICKS(30); //40//30/* čŽžç˝Žć˘ďż˝ĺ¤§ç­ĺžćśé´ä¸ş30ms */
 	//uint32_t ulValue;
     
-    static volatile uint8_t power_on_off_flag,fan_on_off_flag,dc_power_on ;
-  
-  
     while(1)
     {
 		if( gpro_t.key_power_flag == 1){ //key power key
@@ -478,7 +475,7 @@ void AppTaskCreate (void)
  * Return Ref: NO
  * 
 *****************************************************************************/
-void App_PowerOff_Handler(void)
+void xTask_PowerOff_Handler(void)
 {
      
      xTaskNotify(xHandleTaskDecoderPro, /*  */
@@ -488,7 +485,7 @@ void App_PowerOff_Handler(void)
 
 }
 
-void App_PowerOn_Handler(void)
+void xTask_PowerOn_Handler(void)
 {
      
      xTaskNotify(xHandleTaskDecoderPro,  
@@ -498,7 +495,7 @@ void App_PowerOn_Handler(void)
 
 }
 
-void app_decoder_task_isr_handler(void)
+void xtask_decoder_task_isr_handler(void)
 {
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 	xTaskNotifyFromISR(xHandleTaskDecoderPro,  /*  */
@@ -509,18 +506,6 @@ void app_decoder_task_isr_handler(void)
 }
 
 
-//void app_xusart1_queue_isr_handler(uint8_t data)
-//{
-//	 BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-//    
-//    // �����ߣ������յ����ֽڷ������?
-//    xQueueSendFromISR(xUartRxQueue, &data, &xHigherPriorityTaskWoken);
-//    
-//    // ����и������ȼ������񱻻��ѣ�������������л�
-//    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-//
-//}
-//
 
 
 

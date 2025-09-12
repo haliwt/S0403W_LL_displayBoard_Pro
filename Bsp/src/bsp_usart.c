@@ -206,7 +206,7 @@ void usart1_isr_callback_handler(uint8_t data)
 					// gl_tMsg.tx_data_success = 1;
 					// memset(gl_tMsg.usData,0,(gl_tMsg.data_length+1));
 
-	                // app_decoder_task_isr_handler();
+	                // xtask_decoder_task_isr_handler();
 				 gl_tMsg.usData[0] = 0;
 				 gl_tMsg.usData[1] = 0;
 				 parse_recieve_data_handler();
@@ -537,13 +537,13 @@ static void receive_cmd_or_data_handler(void)
 	if(gl_tMsg.execuite_cmd_notice == 0x01){ //open
 		run_t.wifi_link_net_success=1;
 		SendWifiData_Answer_Cmd(0x31,0x01);
-		App_PowerOn_Handler() ; 
+		xTask_PowerOn_Handler() ; 
 
 	}
 	else if(gl_tMsg.execuite_cmd_notice == 0x0){ //close 
 		run_t.wifi_link_net_success=1;
 		SendWifiData_Answer_Cmd(0x031,0x0);
-		App_PowerOff_Handler() ; 
+		xTask_PowerOff_Handler() ; 
 
 
 	}
@@ -555,12 +555,12 @@ static void receive_cmd_or_data_handler(void)
 		gpro_t.smart_phone_app_timer_power_on_flag =1;
 		run_t.wifi_link_net_success=1;
 
-		App_PowerOn_Handler() ; 
+		xTask_PowerOn_Handler() ; 
 
 	}
 	else{  //power off by smart phone APP
 		run_t.wifi_link_net_success=1;
-		App_PowerOff_Handler() ;     
+		xTask_PowerOff_Handler() ;     
 	}
 
 	break; 

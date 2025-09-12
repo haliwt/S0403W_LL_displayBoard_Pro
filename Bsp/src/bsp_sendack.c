@@ -24,13 +24,13 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
         if(pdata[3] == 0x01){ //open
            run_t.wifi_link_net_success=1;
             SendWifiData_Answer_Cmd(0x31,0x01);
-            App_PowerOn_Handler() ; 
+            xTask_PowerOn_Handler() ; 
 
         }
         else if(pdata[3] == 0x0){ //close 
             run_t.wifi_link_net_success=1;
             SendWifiData_Answer_Cmd(0x031,0x0);
-            App_PowerOff_Handler() ; 
+            xTask_PowerOff_Handler() ; 
 
 
         }
@@ -42,12 +42,12 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
             gpro_t.smart_phone_app_timer_power_on_flag =1;
             run_t.wifi_link_net_success=1;
              
-             App_PowerOn_Handler() ; 
+             xTask_PowerOn_Handler() ; 
         
          }
          else{  //power off by smart phone APP
              run_t.wifi_link_net_success=1;
-             App_PowerOff_Handler() ;     
+             xTask_PowerOff_Handler() ;     
          }
        
      break; 
