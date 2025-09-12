@@ -56,6 +56,10 @@ typedef struct GL_TASK{
    uint8_t  long_key_power_counter;
    uint8_t  key_long_power_flag;
    uint8_t  key_long_mode_flag;
+   uint8_t  key_power_flag;
+   uint8_t  key_mode_flag ;
+   uint8_t  key_dec_flag;
+   uint8_t  key_add_flag;
    uint8_t  mode_sound;
    uint8_t smart_phone_app_timer_power_on_flag;
    uint8_t app_power_off_flag;
@@ -155,10 +159,10 @@ static void vTaskRunPro(void *pvParameters)
     
     while(1)
     {
-		if( gpro_t.key_power_flag == 1){ //key power key
+		if( gl_ref.key_power_flag == 1){ //key power key
 
             if(KEY_POWER_GetValue()  ==KEY_UP){
-               gpro_t.key_power_flag++;
+               gl_ref.key_power_flag++;
                 
 
              if(gl_ref.key_long_power_flag ==1){ //WIFI KEY FUNCTION
@@ -180,10 +184,10 @@ static void vTaskRunPro(void *pvParameters)
 
             	}
             }
-            else if(gpro_t.key_mode_flag == 1){
+            else if(gl_ref.key_mode_flag == 1){
                 
                   if(KEY_MODE_GetValue() == KEY_UP){
-                      gpro_t.key_mode_flag++;
+                      gl_ref.key_mode_flag++;
 
                     if(gl_ref.key_long_mode_flag ==1){
 
@@ -228,14 +232,14 @@ static void vTaskRunPro(void *pvParameters)
                
                 run_t.power_on= power_off;
         }
-        else if((gpro_t.key_add_flag ==1 || gpro_t.key_dec_flag ==1)&&run_t.power_on== power_on){
+        else if((gl_ref.key_add_flag ==1 || gl_ref.key_dec_flag ==1)&&run_t.power_on== power_on){
                 
 
-              if(gpro_t.key_add_flag == 1){
+              if(gl_ref.key_add_flag == 1){
 
                  
                if(KEY_ADD_GetValue() == KEY_UP){
-                  gpro_t.key_add_flag ++;
+                  gl_ref.key_add_flag ++;
               
                   
                    SendData_Buzzer_Has_Ack();//SendData_Buzzer();
@@ -245,10 +249,10 @@ static void vTaskRunPro(void *pvParameters)
               
 
               }
-              else if(gpro_t.key_dec_flag == 1){
+              else if(gl_ref.key_dec_flag == 1){
                
                 if(KEY_DEC_GetValue()==KEY_UP){
-                    gpro_t.key_dec_flag ++;
+                    gl_ref.key_dec_flag ++;
                
                    SendData_Buzzer_Has_Ack();//SendData_Buzzer();
                    osDelay(3);
@@ -326,7 +330,7 @@ static void vTaskRunPro(void *pvParameters)
      
          vTaskDelay(10);
          
-          //}
+          
     }
  }
 
@@ -362,7 +366,7 @@ static void vTaskStart(void *pvParameters)
          }
         else{
            
-               gpro_t.key_power_flag = 1;
+               gl_ref.key_power_flag = 1;
             
 			//printf("key_power_on !!! \r\n");
              }
@@ -384,7 +388,7 @@ static void vTaskStart(void *pvParameters)
            }
 
          if(run_t.power_on== power_on){
-            gpro_t.key_mode_flag  =  1;
+            gl_ref.key_mode_flag  =  1;
 
           }
 
@@ -394,7 +398,7 @@ static void vTaskStart(void *pvParameters)
           gl_ref.long_key_power_counter=0;
           gl_ref.long_key_mode_counter =0 ;
            if(run_t.power_on== power_on){ //WT.EDIT .2025.01.15
-               gpro_t.key_dec_flag = 1;
+               gl_ref.key_dec_flag = 1;
             }
      }
      else if(KEY_ADD_GetValue() ==KEY_DOWN){
@@ -403,7 +407,7 @@ static void vTaskStart(void *pvParameters)
          
           gl_ref.long_key_mode_counter =0 ;
          if(run_t.power_on== power_on){ //WT.EDIT .2025.01.15
-             gpro_t.key_add_flag = 1;
+             gl_ref.key_add_flag = 1;
          }
 
     }

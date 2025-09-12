@@ -144,7 +144,8 @@ void display_lcd_Icon_init(void)
 **************************************************************************************/
 void disp_fan_leaf_init(void)
 {
-      static uint8_t colon_flag_toggle,fan_blink_full;
+    //  static uint8_t colon_flag_toggle,
+	   static uint8_t fan_blink_full;
 
           fan_blink_full++;
       
