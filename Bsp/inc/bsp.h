@@ -73,8 +73,8 @@ typedef struct _process_state{
    uint8_t receive_copy_cmd;
    uint8_t disp_time_colon_flag;
    
-   uint8_t long_key_power_counter;
-   uint8_t key_long_power_flag; 
+
+ 
   
 
 

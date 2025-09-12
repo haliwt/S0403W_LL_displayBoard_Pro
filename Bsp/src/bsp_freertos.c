@@ -50,14 +50,20 @@ static TaskHandle_t xHandleTaskStart = NULL;
 //static  QueueHandle_t xUartRxQueue = NULL;
 
 
-uint8_t mode_sound,key_long_mode_flag;
+typedef struct GL_TASK{
 
-uint8_t long_key_mode_counter,long_key_mode_counter;
+   uint8_t  long_key_mode_counter;
+   uint8_t  long_key_power_counter;
+   uint8_t  key_long_power_flag;
+   uint8_t  key_long_mode_flag;
+   uint8_t  mode_sound;
+   uint8_t smart_phone_app_timer_power_on_flag;
+   uint8_t app_power_off_flag;
 
-uint8_t dc_power_on_first;
 
-//uint8_t ucQueueMsgValue[20];
-uint8_t smart_phone_app_timer_power_on_flag,app_power_off_flag;
+}gl_task;
+
+gl_task gl_ref;
 
 /**********************************************************************************************************
 *	
@@ -91,7 +97,7 @@ void freeRTOS_Handler(void)
 static void vTaskDecoderPro(void *pvParameters)
 {
 	BaseType_t xResult;
-	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(300); /* ï¿½0ï¿½7ï¿½ï¿½ï¿½0ï¿½0ï¿½0ï¿½1ï¿½ï¿½ï¿½0ï¿½6ï¿½0ï¿½7ï¿½ï¿½ï¿½0ï¿½8ï¿½0ï¿½6ï¿½0ï¿½7ï¿½0ï¿½5ï¿½0ï¿½8ï¿½ï¿½ï¿½0ï¿½4ï¿½0ï¿½1ï¿½0ï¿½2ï¿½0ï¿½9300ms */
+	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(300); /* ï¿?0ï¿?7ï¿½ï¿½ï¿?0ï¿?0ï¿?0ï¿?1ï¿½ï¿½ï¿?0ï¿?6ï¿?0ï¿?7ï¿½ï¿½ï¿?0ï¿?8ï¿?0ï¿?6ï¿?0ï¿?7ï¿?0ï¿?5ï¿?0ï¿?8ï¿½ï¿½ï¿?0ï¿?4ï¿?0ï¿?1ï¿?0ï¿?2ï¿?0ï¿?9300ms */
 	//uint8_t ucQueueMsgValue[10];
 	 uint32_t ulValue;
 	
@@ -108,18 +114,18 @@ static void vTaskDecoderPro(void *pvParameters)
             {
 
             gpro_t.smart_phone_power_on = 1;
-            gpro_t.key_long_power_flag=0;
-            gpro_t.long_key_power_counter=0;
+            gl_ref.key_long_power_flag=0;
+            gl_ref.long_key_power_counter=0;
 
             }
             else if((ulValue & POWER_ON_BIT_5) != 0){
 
-                smart_phone_app_timer_power_on_flag=1;
+                gl_ref.smart_phone_app_timer_power_on_flag=1;
 
             }
             else if((ulValue & POWER_OFF_BIT_4) != 0){
 
-                app_power_off_flag =1;
+                gl_ref.app_power_off_flag =1;
 
 
             }
@@ -149,7 +155,7 @@ static void vTaskRunPro(void *pvParameters)
     
     static volatile uint8_t power_on_off_flag,fan_on_off_flag,dc_power_on ;
   
-  //  static uint8_t mode_sound;
+  
     while(1)
     {
 		if( gpro_t.key_power_flag == 1){ //key power key
@@ -158,9 +164,9 @@ static void vTaskRunPro(void *pvParameters)
                gpro_t.key_power_flag++;
                 
 
-             if(gpro_t.key_long_power_flag ==1){ //WIFI KEY FUNCTION
+             if(gl_ref.key_long_power_flag ==1){ //WIFI KEY FUNCTION
                 //  power_key_long_fun();
-                 gpro_t.long_key_power_counter=0; //WT.EDIT 2025.05.10
+                 gl_ref.long_key_power_counter=0; //WT.EDIT 2025.05.10
                  gpro_t.send_ack_cmd = ack_wifi_on;
                  gpro_t.gTimer_again_send_power_on_off =0;
                  SendData_Set_Command(0x05,0x01); // link wifi of command .
@@ -171,18 +177,18 @@ static void vTaskRunPro(void *pvParameters)
 
              }
              else{
-                 gpro_t.long_key_power_counter=0;
+                 gl_ref.long_key_power_counter=0;
                  power_on_off_handler();
              }
 
-            }
+            	}
             }
             else if(gpro_t.key_mode_flag == 1){
                 
                   if(KEY_MODE_GetValue() == KEY_UP){
                       gpro_t.key_mode_flag++;
 
-                    if(key_long_mode_flag ==1){
+                    if(gl_ref.key_long_mode_flag ==1){
 
                         gpro_t.gTimer_mode_key_long=0;
                       
@@ -191,6 +197,15 @@ static void vTaskRunPro(void *pvParameters)
 
 
                     }
+					else{
+					    gl_ref.long_key_mode_counter=0;
+										
+					    SendData_Buzzer();
+										 
+						gl_ref.mode_sound =1;
+
+                              
+					}
                
 
                  }
@@ -201,18 +216,18 @@ static void vTaskRunPro(void *pvParameters)
                 power_on_key_short_fun();
 
         }
-        else if(smart_phone_app_timer_power_on_flag ==1){
-                smart_phone_app_timer_power_on_flag++;
+        else if(gl_ref.smart_phone_app_timer_power_on_flag ==1){
+                gl_ref.smart_phone_app_timer_power_on_flag++;
                  run_t.power_on= power_on;
-                gpro_t.long_key_power_counter =0;
+                gl_ref.long_key_power_counter =0;
                 run_t.power_on_disp_smg_number = 0;
                 gpro_t.gTimer_again_send_power_on_off =0;
                 power_on_key_short_fun();
                  
 
         }
-        else if(app_power_off_flag ==1){
-                app_power_off_flag++;
+        else if(gl_ref.app_power_off_flag ==1){
+                gl_ref.app_power_off_flag++;
                
                 run_t.power_on= power_off;
         }
@@ -224,7 +239,7 @@ static void vTaskRunPro(void *pvParameters)
                  
                if(KEY_ADD_GetValue() == KEY_UP){
                   gpro_t.key_add_flag ++;
-               //   gl_tMsg.long_key_mode_counter =0;
+              
                   
                    SendData_Buzzer_Has_Ack();//SendData_Buzzer();
                    osDelay(3);//HAL_Delay(5);
@@ -237,7 +252,7 @@ static void vTaskRunPro(void *pvParameters)
                
                 if(KEY_DEC_GetValue()==KEY_UP){
                     gpro_t.key_dec_flag ++;
-                 //   gl_tMsg.long_key_mode_counter =0;
+               
                    SendData_Buzzer_Has_Ack();//SendData_Buzzer();
                    osDelay(3);
    
@@ -252,37 +267,38 @@ static void vTaskRunPro(void *pvParameters)
 
          //  test_n++;
 
-           if(mode_sound == 1){
-               mode_sound++;
+           if(gl_ref.mode_sound == 1){
+               gl_ref.mode_sound++;
 
-              SendData_Buzzer_Has_Ack();//SendData_Buzzer(); 
-              gpro_t.send_ack_cmd = ack_buzzer_sound;
+              //SendData_Buzzer_Has_Ack();//SendData_Buzzer(); 
+              //osDelay(5);//20
+             // gpro_t.send_ack_cmd = ack_buzzer_sound;
               gpro_t.gTimer_again_send_power_on_off=0;
               
-              osDelay(10);//20
+             
             
               mode_key_short_fun();//SendData_Buzzer();
 
            }
-           else if(mode_sound==2){
-                 mode_sound ++ ;
+           else if(gl_ref.mode_sound==2){
+                 gl_ref.mode_sound ++ ;
                   
                  mode_key_ai_mode_handler();
 
            }
          
 
-           if( gpro_t.gTimer_mode_key_long > 1 && (key_long_mode_flag  ==1 ||gpro_t.key_long_power_flag ==1)){
-                 long_key_mode_counter =0;
-                 gpro_t.long_key_power_counter =0;
+           if( gpro_t.gTimer_mode_key_long > 1 && (gl_ref.key_long_mode_flag  ==1 ||gl_ref.key_long_power_flag ==1)){
+                 gl_ref.long_key_mode_counter =0;
+                 gl_ref.long_key_power_counter =0;
          
-                if(gpro_t.key_long_power_flag ==1){
+                if(gl_ref.key_long_power_flag ==1){
 
-                     gpro_t.key_long_power_flag=0;
+                     gl_ref.key_long_power_flag=0;
                      
                 }
-                if(key_long_mode_flag==1){
-                    key_long_mode_flag=0;
+                if(gl_ref.key_long_mode_flag==1){
+                    gl_ref.key_long_mode_flag=0;
 
                  }
 
@@ -303,8 +319,8 @@ static void vTaskRunPro(void *pvParameters)
       // printf("xTaskRunPro !!!\r\n");
        }
        else if(run_t.power_on== power_off){
-          gpro_t.long_key_power_counter =0;
-           gpro_t.key_long_power_flag =0;
+          gl_ref.long_key_power_counter =0;
+           gl_ref.key_long_power_flag =0;
            run_t.power_on_disp_smg_number = 0;
            power_off_handler();
 
@@ -337,12 +353,12 @@ static void vTaskStart(void *pvParameters)
              
           }
           else{
-           long_key_mode_counter =0;
-           gpro_t.long_key_power_counter++;
+           gl_ref.long_key_mode_counter =0;
+           gl_ref.long_key_power_counter++;
 
-         if(gpro_t.long_key_power_counter > 80 && run_t.power_on== power_on ){
-            gpro_t.long_key_power_counter =0;
-            gpro_t.key_long_power_flag =1;
+         if(gl_ref.long_key_power_counter > 80 && run_t.power_on== power_on ){
+            gl_ref.long_key_power_counter =0;
+            gl_ref.key_long_power_flag =1;
             gpro_t.gTimer_mode_key_long = 0;
             
              SendData_Buzzer();
@@ -357,14 +373,14 @@ static void vTaskStart(void *pvParameters)
      }
     else if(KEY_MODE_GetValue() ==KEY_DOWN){
 
-           gpro_t.long_key_power_counter=0;
+           gl_ref.long_key_power_counter=0;
          
-          long_key_mode_counter ++ ;
+          gl_ref.long_key_mode_counter ++ ;
 
-          if(long_key_mode_counter > 60  && run_t.power_on== power_on &&  run_t.ptc_warning ==0 && run_t.fan_warning ==0){
-             long_key_mode_counter=0;   
+          if(gl_ref.long_key_mode_counter > 80  && run_t.power_on== power_on &&  run_t.ptc_warning ==0 && run_t.fan_warning ==0){
+             gl_ref.long_key_mode_counter=0;   
          
-             key_long_mode_flag =1;
+             gl_ref.key_long_mode_flag =1;
                gpro_t.gTimer_mode_key_long = 0;
             
                 SendData_Buzzer();
@@ -378,17 +394,17 @@ static void vTaskStart(void *pvParameters)
 
      }
      else if(KEY_DEC_GetValue() == KEY_DOWN){
-          gpro_t.long_key_power_counter=0;
-          long_key_mode_counter =0 ;
+          gl_ref.long_key_power_counter=0;
+          gl_ref.long_key_mode_counter =0 ;
            if(run_t.power_on== power_on){ //WT.EDIT .2025.01.15
                gpro_t.key_dec_flag = 1;
             }
      }
      else if(KEY_ADD_GetValue() ==KEY_DOWN){
 
-          gpro_t.long_key_power_counter=0;
+          gl_ref.long_key_power_counter=0;
          
-          long_key_mode_counter =0 ;
+          gl_ref.long_key_mode_counter =0 ;
          if(run_t.power_on== power_on){ //WT.EDIT .2025.01.15
              gpro_t.key_add_flag = 1;
          }
@@ -442,14 +458,14 @@ void AppTaskCreate (void)
 */
 //static void AppObjCreate (void)
 //{
-//	/* ï¿½0ï¿½7ï¿½0ï¿½7ï¿½0ï¿½5ï¿½ï¿½10ï¿½0ï¿½0ï¿½0ï¿½2uint8_tï¿½0ï¿½4ï¿½0ï¿½1ï¿½0ï¿½3ï¿½0ï¿½4ï¿½0ï¿½3ï¿½0ï¿½4ï¿½0ï¿½9ï¿½0ï¿½7ï¿½0ï¿½9ï¿½0ï¿½4 */
+//	/* ï¿?0ï¿?7ï¿?0ï¿?7ï¿?0ï¿?5ï¿½ï¿½10ï¿?0ï¿?0ï¿?0ï¿?2uint8_tï¿?0ï¿?4ï¿?0ï¿?1ï¿?0ï¿?3ï¿?0ï¿?4ï¿?0ï¿?3ï¿?0ï¿?4ï¿?0ï¿?9ï¿?0ï¿?7ï¿?0ï¿?9ï¿?0ï¿?4 */
 //	xUartRxQueue = xQueueCreate(20, sizeof(uint8_t));
 //    if(xUartRxQueue == 0 )
 //    {
 //        /* creat quenu is fail !!! */
 //    }
 //	
-//	/* ï¿½0ï¿½7ï¿½0ï¿½7ï¿½0ï¿½5ï¿½ï¿½10ï¿½0ï¿½0ï¿½0ï¿½2ï¿½0ï¿½7ï¿½0ï¿½3ï¿½0ï¿½7ï¿½0ï¿½4ï¿½0ï¿½0ï¿½0ï¿½0ï¿½0ï¿½9ï¿½0ï¿½5ï¿½ï¿½ï¿½0ï¿½1ï¿½0ï¿½9ï¿½0ï¿½7ï¿½0ï¿½8ï¿½0ï¿½2ï¿½0ï¿½3ï¿½0ï¿½4ï¿½0ï¿½3ï¿½0ï¿½4ï¿½0ï¿½9ï¿½0ï¿½7ï¿½0ï¿½9ï¿½0ï¿½4ï¿½0ï¿½5ï¿½0ï¿½1ï¿½0ï¿½7ï¿½0ï¿½7ï¿½0ï¿½7ï¿½0ï¿½3CM3/CM4ï¿½0ï¿½2ï¿½0ï¿½3ï¿½0ï¿½2ï¿½0ï¿½9ï¿½0ï¿½8ï¿½0ï¿½532ï¿½0ï¿½2ï¿½0ï¿½3ï¿½0ï¿½3ï¿½ï¿½ï¿½0ï¿½5ï¿½0ï¿½1ï¿½0ï¿½6ï¿½0ï¿½3ï¿½0ï¿½0ï¿½0ï¿½2ï¿½0ï¿½0ï¿½0ï¿½0ï¿½0ï¿½9ï¿½0ï¿½5ï¿½ï¿½ï¿½0ï¿½1ï¿½0ï¿½9ï¿½0ï¿½7ï¿½0ï¿½9ï¿½0ï¿½4ï¿½0ï¿½7ï¿½0ï¿½14ï¿½0ï¿½0ï¿½0ï¿½2ï¿½ï¿½ï¿½0ï¿½0ï¿½0ï¿½5ï¿½0ï¿½3 */
+//	/* ï¿?0ï¿?7ï¿?0ï¿?7ï¿?0ï¿?5ï¿½ï¿½10ï¿?0ï¿?0ï¿?0ï¿?2ï¿?0ï¿?7ï¿?0ï¿?3ï¿?0ï¿?7ï¿?0ï¿?4ï¿?0ï¿?0ï¿?0ï¿?0ï¿?0ï¿?9ï¿?0ï¿?5ï¿½ï¿½ï¿?0ï¿?1ï¿?0ï¿?9ï¿?0ï¿?7ï¿?0ï¿?8ï¿?0ï¿?2ï¿?0ï¿?3ï¿?0ï¿?4ï¿?0ï¿?3ï¿?0ï¿?4ï¿?0ï¿?9ï¿?0ï¿?7ï¿?0ï¿?9ï¿?0ï¿?4ï¿?0ï¿?5ï¿?0ï¿?1ï¿?0ï¿?7ï¿?0ï¿?7ï¿?0ï¿?7ï¿?0ï¿?3CM3/CM4ï¿?0ï¿?2ï¿?0ï¿?3ï¿?0ï¿?2ï¿?0ï¿?9ï¿?0ï¿?8ï¿?0ï¿?532ï¿?0ï¿?2ï¿?0ï¿?3ï¿?0ï¿?3ï¿½ï¿½ï¿?0ï¿?5ï¿?0ï¿?1ï¿?0ï¿?6ï¿?0ï¿?3ï¿?0ï¿?0ï¿?0ï¿?2ï¿?0ï¿?0ï¿?0ï¿?0ï¿?0ï¿?9ï¿?0ï¿?5ï¿½ï¿½ï¿?0ï¿?1ï¿?0ï¿?9ï¿?0ï¿?7ï¿?0ï¿?9ï¿?0ï¿?4ï¿?0ï¿?7ï¿?0ï¿?14ï¿?0ï¿?0ï¿?0ï¿?2ï¿½ï¿½ï¿?0ï¿?0ï¿?0ï¿?5ï¿?0ï¿?3 */
 //
 //}
 
@@ -497,7 +513,7 @@ void app_decoder_task_isr_handler(void)
 //{
 //	 BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 //    
-//    // ï¿½ï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½Ö½Ú·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//    // ï¿½ï¿½ï¿½ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½Ö½Ú·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
 //    xQueueSendFromISR(xUartRxQueue, &data, &xHigherPriorityTaskWoken);
 //    
 //    // ï¿½ï¿½ï¿½ï¿½Ð¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ñ±»»ï¿½ï¿½Ñ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½

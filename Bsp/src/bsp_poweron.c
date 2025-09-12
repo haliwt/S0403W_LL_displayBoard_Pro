@@ -131,7 +131,7 @@ void power_on_off_handler(void)
         run_t.power_on= power_on;
         SendData_PowerOnOff(1);
 		osDelay(5);
-        gpro_t.long_key_power_counter =0; 
+       // gpro_t.long_key_power_counter =0; 
         run_t.power_on_disp_smg_number = 1;
         gpro_t.send_ack_cmd = ack_power_on;
         gpro_t.gTimer_again_send_power_on_off =0;
@@ -161,8 +161,8 @@ void power_on_off_handler(void)
         run_t.power_on= power_off;
         SendData_PowerOnOff(0);
 		osDelay(5);
-        gpro_t.long_key_power_counter=0; //WT.2024.11.05
-        gpro_t.key_long_power_flag=0;
+       // gpro_t.long_key_power_counter=0; //WT.2024.11.05
+       // gpro_t.key_long_power_flag=0;
         gpro_t.send_ack_cmd = ack_power_off;
         gpro_t.gTimer_again_send_power_on_off =0;
         run_t.wifi_set_temperature =40;//WT.EDIT 2025.01.15
