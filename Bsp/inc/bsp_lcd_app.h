@@ -19,7 +19,7 @@ void power_on_display_temp_handler(void);
 
 void power_off_disp_fan_run_handler(void);
 
-void fan_disp_speed_leaf(uint8_t dsip);
+
 
 
 #endif 

@@ -15,6 +15,10 @@ volatile bool blink_on = true;       // 闪烁状态
 volatile uint16_t blink_counter = 0; // 闪烁计数
 
 static void works_time_fun(void);
+static void disp_fan_speed_level(void);
+static void donot_disp_T13_icon_fan_speed_level(void);
+
+
 
 
 // ====== 定时器中断（10ms周期） ======
@@ -68,8 +72,11 @@ static void display_digits(uint8_t mask, bool blink)
 }
 
 #else 
-static void display_digits(uint8_t mask, bool blink) {
-    // DIGIT45
+static void display_digits(uint8_t mask, bool blink) 
+{
+   uint8_t colon ;
+
+   // DIGIT45
     if (!blink) {
         TM1723_Write_Display_Data(ADDR_DIGIT45, (T8_HUM+lcdNumber4_Low[lcd_t.number4_low])& 0x0F); // 共阴空白
     } else {
@@ -86,20 +93,26 @@ static void display_digits(uint8_t mask, bool blink) {
     }
 
     // DIGIT67
-    uint8_t colon = gpro_t.disp_time_colon_flag ? TIME_COLON : TIME_NO_COLON;
+     colon = gpro_t.disp_time_colon_flag ? TIME_COLON : TIME_NO_COLON;
     if (!blink) {
         TM1723_Write_Display_Data(ADDR_DIGIT67, 0x0);
     } else {
         TM1723_Write_Display_Data(ADDR_DIGIT67,
-            (colon + lcdNumber6_Low[lcd_t.number6_low] + lcdNumber7_High[lcd_t.number7_high]) & mask);
+            (TIME_COLON + lcdNumber6_Low[lcd_t.number6_low] + lcdNumber7_High[lcd_t.number7_high]) & mask);
     }
 
     // DIGIT78
     if (!blink) {
         TM1723_Write_Display_Data(ADDR_DIGIT78, 0x0);
     } else {
-        TM1723_Write_Display_Data(ADDR_DIGIT78,
-            (lcdNumber7_Low[lcd_t.number7_low] + lcdNumber8_High[lcd_t.number8_high]) & mask);
+        TM1723_Write_Display_Data(ADDR_DIGIT78,(lcdNumber7_Low[lcd_t.number7_low] + lcdNumber8_High[lcd_t.number8_high]) & mask);
+    }
+
+	//DIGIT8T
+	if (!blink) {
+        TM1723_Write_Display_Data(0xCE, 0x0+WIND_SPEED_FULL);
+    } else {
+        TM1723_Write_Display_Data(0xCE,(lcdNumber8_Low[lcd_t.number8_low] + WIND_SPEED_FULL) & mask);
     }
 
     //update_wind_speed_display(mask);
@@ -212,18 +225,18 @@ void disp_fan_leaf_run_icon(void)
 #else 
 void disp_fan_leaf_run_icon(void)
 {
-    static uint8_t switch_flag;
+    
     static uint8_t colon_flag;
-    const uint8_t LEAF_TOGGLE_THRESHOLD = 4;
+    const uint8_t LEAF_TOGGLE_THRESHOLD = 3;
 	static uint8_t colon_base,t15_base ;
 
     /* 主显示更新：仅当无风扇/ptc 报警时执行 */
     if (run_t.fan_warning == 0 && run_t.ptc_warning == 0) {
         if (run_t.display_set_timer_or_works_time_mode != setup_timer &&
-            lcd_t.gTimer_leaf_counter > LEAF_TOGGLE_THRESHOLD) {
+            lcd_t.gTimer_leaf_counter > LEAF_TOGGLE_THRESHOLD) {//3*100ms
 
             lcd_t.gTimer_leaf_counter = 0;
-            switch_flag ^= 1;
+            gpro_t.disp_fan_switch_flag  ^= 1;
 
             /* 更新要显示的数字（小时/分钟）并写入公共位,数字5678 */
             works_time_fun();
@@ -231,7 +244,7 @@ void disp_fan_leaf_run_icon(void)
                 (T8_HUM + lcdNumber4_Low[lcd_t.number4_low] + lcdNumber5_High[lcd_t.number5_high]) & 0xFF);
 
             /* 位置 CA 的不同位（闪烁效果） */
-             t15_base = switch_flag ? T15 : T15_NO;
+             t15_base = gpro_t.disp_fan_switch_flag ? T15 : T15_NO;
              TM1723_Write_Display_Data(0xCA,
                     t15_base + lcdNumber5_Low[lcd_t.number5_low] + lcdNumber6_High[lcd_t.number6_high]);
           
@@ -243,7 +256,7 @@ void disp_fan_leaf_run_icon(void)
            
 
             /* 风速显示由 fan_disp_speed_leaf 处理，注意保持原有参数关系 */
-            fan_disp_speed_leaf(switch_flag ? 0 : 1);
+            fan_disp_speed_leaf(gpro_t.disp_fan_switch_flag ? 0 : 1);
         }
 	}
 
@@ -287,3 +300,88 @@ static void works_time_fun(void)
     }
 
 }
+
+
+/************************************************************
+*
+*Funtion Name:void fan_disp_speed_leaf(uint8_t disp)
+*
+*
+*
+************************************************************/
+void fan_disp_speed_leaf(uint8_t disp)
+{
+
+    if(disp==0){
+
+      TM1723_Write_Display_Data(0xCC,T14_NO+lcdNumber7_Low[lcd_t.number7_low]+lcdNumber8_High[lcd_t.number8_high]);//display "7,8'
+      disp_fan_speed_level();
+      TM1723_Write_Display_Data(0xCF,((T11+T16)& 0x05));//
+
+    }
+    else{
+
+       TM1723_Write_Display_Data(0xCC,T14+lcdNumber7_Low[lcd_t.number7_low]+lcdNumber8_High[lcd_t.number8_high]);//display "t,c
+       donot_disp_T13_icon_fan_speed_level();
+       TM1723_Write_Display_Data(0xCF,((T16+T12+T10)&0x0B));//
+
+    }
+
+
+
+}
+
+
+/******************************************************************************
+	*
+	*Function Name:static void disp_fan_speed_level(void)
+	*Function: 
+	*Input Ref: NO
+	*Return Ref: NO
+	*
+******************************************************************************/
+static void disp_fan_speed_level(void)
+{
+
+     if(run_t.disp_wind_speed_grade >66){
+	 	TM1723_Write_Display_Data(0xCE,(T13+lcdNumber8_Low[lcd_t.number8_low]+ WIND_SPEED_FULL) & 0xff);
+	  }
+	  else if(run_t.wifi_link_net_success ==1){ //WT.EDIT 2025.04.16 logic is not rigorous.
+		  if(run_t.disp_wind_speed_grade >33 && run_t.disp_wind_speed_grade <67){
+		     TM1723_Write_Display_Data(0xCE,(T13+lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_TWO) & 0xff);
+
+		  }
+		  else if(run_t.disp_wind_speed_grade <34){
+			 TM1723_Write_Display_Data(0xCE,(T13+lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_ONE) & 0xff);
+		  }
+	  }
+
+}
+
+/*************************************************************************************
+    *
+    *Function Name:static void donot_disp_T13_icon_fan_speed_level(void)
+    *Function:
+    *
+    *
+    *
+**************************************************************************************/
+static void donot_disp_T13_icon_fan_speed_level(void)
+{
+    if(run_t.disp_wind_speed_grade >66){
+           TM1723_Write_Display_Data(0xCE,(lcdNumber8_Low[lcd_t.number8_low]+ WIND_SPEED_FULL) & 0xff);
+     }
+	 else if(run_t.wifi_link_net_success ==1){ //WT.EDIT 2025.04.16 the logic is not rigorous
+         if(run_t.disp_wind_speed_grade >33 && run_t.disp_wind_speed_grade <67){
+            TM1723_Write_Display_Data(0xCE,(lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_TWO) & 0xff);
+    
+         }
+         else if(run_t.disp_wind_speed_grade <34){
+            TM1723_Write_Display_Data(0xCE,(lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_ONE) & 0xff);
+         }
+	 }
+}
+
+
+
+

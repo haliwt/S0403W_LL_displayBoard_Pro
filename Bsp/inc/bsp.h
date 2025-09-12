@@ -72,12 +72,8 @@ typedef struct _process_state{
    uint8_t receive_copy_cmd;
    uint8_t disp_time_colon_flag;
    
-
- 
-  
-
-
-   uint8_t gTimer_mode_key_long;
+   uint8_t disp_fan_switch_flag ;
+   
    uint8_t temp_key_set_value ;
    uint8_t set_temp_value_success;
    uint8_t humidity_real_value;
@@ -89,6 +85,7 @@ typedef struct _process_state{
 
 
    //
+   uint8_t gTimer_mode_key_long;
    uint8_t gTimer_set_temp_times;
    uint8_t gTimer_temp_compare_value;
    uint8_t gTimer_fan_to_ptc_warning;

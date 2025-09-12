@@ -2,7 +2,7 @@
 
 
 
-static void disp_fan_speed_level(void);
+
 
 static void donot_disp_T13_icon_fan_speed_level(void);
 
@@ -445,55 +445,8 @@ void power_on_display_temp_handler(void)
 
 
 }
-/******************************************************************************
-	*
-	*Function Name:static void Display_Kill_Dry_Ster_Icon(void)
-	*Function: display of icon , "1" -> ON ,"0"-> OFF
-	*Input Ref:
-	*Return Ref:
-	*
-******************************************************************************/
-static void disp_fan_speed_level(void)
-{
 
-     if(run_t.disp_wind_speed_grade >66){
-	 	TM1723_Write_Display_Data(0xCE,(T13+lcdNumber8_Low[lcd_t.number8_low]+ WIND_SPEED_FULL) & 0xff);
-	  }
-	  else if(run_t.wifi_link_net_success ==1){ //WT.EDIT 2025.04.16 logic is not rigorous.
-		  if(run_t.disp_wind_speed_grade >33 && run_t.disp_wind_speed_grade <67){
-		     TM1723_Write_Display_Data(0xCE,(T13+lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_TWO) & 0xff);
 
-		  }
-		  else if(run_t.disp_wind_speed_grade <34){
-			 TM1723_Write_Display_Data(0xCE,(T13+lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_ONE) & 0xff);
-		  }
-	  }
-
-}
-
-/*************************************************************************************
-    *
-    *Function Name:static void donot_disp_T13_icon_fan_speed_level(void)
-    *Function:
-    *
-    *
-    *
-**************************************************************************************/
-static void donot_disp_T13_icon_fan_speed_level(void)
-{
-    if(run_t.disp_wind_speed_grade >66){
-           TM1723_Write_Display_Data(0xCE,(lcdNumber8_Low[lcd_t.number8_low]+ WIND_SPEED_FULL) & 0xff);
-     }
-	 else if(run_t.wifi_link_net_success ==1){ //WT.EDIT 2025.04.16 the logic is not rigorous
-         if(run_t.disp_wind_speed_grade >33 && run_t.disp_wind_speed_grade <67){
-            TM1723_Write_Display_Data(0xCE,(lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_TWO) & 0xff);
-    
-         }
-         else if(run_t.disp_wind_speed_grade <34){
-            TM1723_Write_Display_Data(0xCE,(lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_ONE) & 0xff);
-         }
-	 }
-}
 
 
 static void works_timer_disp_numaber(void)
@@ -551,34 +504,7 @@ static void works_timer_disp_numaber(void)
      }
 
 }
-/************************************************************
-*
-*Funtion Name:void fan_disp_speed_leaf(uint8_t disp)
-*
-*
-*
-************************************************************/
-void fan_disp_speed_leaf(uint8_t disp)
-{
 
-    if(disp==0){
-
-      TM1723_Write_Display_Data(0xCC,T14_NO+lcdNumber7_Low[lcd_t.number7_low]+lcdNumber8_High[lcd_t.number8_high]);//display "7,8'
-      disp_fan_speed_level();
-      TM1723_Write_Display_Data(0xCF,((T11+T16)& 0x05));//
-
-    }
-    else{
-
-       TM1723_Write_Display_Data(0xCC,T14+lcdNumber7_Low[lcd_t.number7_low]+lcdNumber8_High[lcd_t.number8_high]);//display "t,c
-       donot_disp_T13_icon_fan_speed_level();
-       TM1723_Write_Display_Data(0xCF,((T16+T12+T10)&0x0B));//
-
-    }
-
-
-
-}
 /**********************************************************************************************************
 *
 *	Function Name: void power_off_disp_fan_run_handler(void)
