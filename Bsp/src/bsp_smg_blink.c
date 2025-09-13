@@ -11,12 +11,17 @@
 
 #define T8_HUM        0x01
 
+#define  LEAF_TOGGLE_THRESHOLD    3
+
+
+
 volatile bool blink_on = true;       // 闪烁状态
 volatile uint16_t blink_counter = 0; // 闪烁计数
 
 static void works_time_fun(void);
 static void disp_fan_speed_level(void);
 static void donot_disp_T13_icon_fan_speed_level(void);
+static void fan_set_timer_disp_leaf(uint8_t disp);
 
 
 
@@ -74,8 +79,9 @@ static void display_digits(uint8_t mask, bool blink)
 #else 
 static void display_digits(uint8_t mask, bool blink) 
 {
-   uint8_t colon ;
-
+  // uint8_t colon ;
+   	uint8_t colon_base,t15_base ,t14_base,t13_base,t151413_base;
+   #if 0
    // DIGIT45
     if (!blink) {
         TM1723_Write_Display_Data(ADDR_DIGIT45, (T8_HUM+lcdNumber4_Low[lcd_t.number4_low])& 0x0F); // 共阴空白
@@ -116,7 +122,81 @@ static void display_digits(uint8_t mask, bool blink)
     }
 
     //update_wind_speed_display(mask);
+   #else 
 
+   	 // DIGIT45
+	    if (!blink_on) {
+	        TM1723_Write_Display_Data(ADDR_DIGIT45, (T8_HUM+lcdNumber4_Low[lcd_t.number4_low])& 0x0F); // 共阴空白
+	    } else {
+	        TM1723_Write_Display_Data(ADDR_DIGIT45,
+	            (T8_HUM+lcdNumber4_Low[lcd_t.number4_low] + lcdNumber5_High[lcd_t.number5_high]) & 0xFF);
+	    }
+
+	    // DIGIT56
+	    t151413_base = gpro_t.disp_fan_switch_flag ? T15 : T15_NO;
+	    if (!blink_on) {
+		    
+	        TM1723_Write_Display_Data(ADDR_DIGIT56, t151413_base+0x0);
+	    } else {
+			
+	        TM1723_Write_Display_Data(ADDR_DIGIT56,
+	            (t151413_base + lcdNumber5_Low[lcd_t.number5_low] + lcdNumber6_High[lcd_t.number6_high]) & 0XFF);
+	    }
+
+	    // DIGIT67
+	   // colon = gpro_t.disp_time_colon_flag ? TIME_COLON : TIME_NO_COLON;
+	    if (!blink_on) {
+	        TM1723_Write_Display_Data(ADDR_DIGIT67, 0x0);
+	    } else {
+	        TM1723_Write_Display_Data(ADDR_DIGIT67,
+	            (TIME_COLON + lcdNumber6_Low[lcd_t.number6_low] + lcdNumber7_High[lcd_t.number7_high]) & 0XFF);
+	    }
+
+	    // DIGIT78
+	   // t14_base = gpro_t.disp_fan_switch_flag ? 0 : 1;
+	    if (!blink_on) {
+			 TM1723_Write_Display_Data(ADDR_DIGIT78, t151413_base+0x0);
+	    } else {
+			
+	        TM1723_Write_Display_Data(ADDR_DIGIT78,(t151413_base+lcdNumber7_Low[lcd_t.number7_low] + lcdNumber8_High[lcd_t.number8_high]) & 0xFF);
+	    }
+
+		//DIGIT8T
+		t13_base = gpro_t.disp_fan_switch_flag ? 0 : 1;
+		if (!blink_on) {
+	       
+			if(run_t.disp_wind_speed_grade >66){
+				TM1723_Write_Display_Data(0xCE,(T13+WIND_SPEED_FULL) );
+			}
+			else if(run_t.wifi_link_net_success ==1){ //WT.EDIT 2025.04.16 logic is not rigorous.
+				if(run_t.disp_wind_speed_grade >33 && run_t.disp_wind_speed_grade <67){
+				TM1723_Write_Display_Data(0xCE,(T13+WIND_SPEED_TWO) & 0xff);
+
+			}
+			else if(run_t.disp_wind_speed_grade <34){
+				TM1723_Write_Display_Data(0xCE,(T13+WIND_SPEED_ONE) & 0xff);
+
+			}
+			}
+	    } else {
+	       // TM1723_Write_Display_Data(0xCE,(lcdNumber8_Low[lcd_t.number8_low] + WIND_SPEED_FULL) & mask);
+			if(run_t.disp_wind_speed_grade >66){
+			TM1723_Write_Display_Data(0xCE,(lcdNumber8_Low[lcd_t.number8_low]+ WIND_SPEED_FULL) & 0xff);
+			}
+			else if(run_t.wifi_link_net_success ==1){ //WT.EDIT 2025.04.16 the logic is not rigorous
+			if(run_t.disp_wind_speed_grade >33 && run_t.disp_wind_speed_grade <67){
+			TM1723_Write_Display_Data(0xCE,(lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_TWO) & 0xff);
+
+			}
+			else if(run_t.disp_wind_speed_grade <34){
+			TM1723_Write_Display_Data(0xCE,(lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_ONE) & 0xff);
+			}
+			}
+	    }
+
+
+
+   #endif 
    
 }
 #endif 
@@ -138,6 +218,12 @@ void disp_set_timer_timing_value_fun(void)
 			 run_t.gTimer_digital5678_ms=0;
 			   blink_on = !blink_on;
 		}
+
+	  if(lcd_t.gTimer_leaf_counter > LEAF_TOGGLE_THRESHOLD) {//3*100ms
+
+            lcd_t.gTimer_leaf_counter = 0;
+            gpro_t.disp_fan_switch_flag  ^= 1;
+	  	}
 
     if (run_t.gTimer_key_timing < 4) {
         tim_bit_2_hours = run_t.timer_time_hours / 10;
@@ -226,12 +312,15 @@ void disp_fan_leaf_run_icon(void)
 void disp_fan_leaf_run_icon(void)
 {
     
-    static uint8_t colon_flag;
-    const uint8_t LEAF_TOGGLE_THRESHOLD = 3;
-	static uint8_t colon_base,t15_base ;
+    static uint8_t colon_base,colon_flag;
+    static uint8_t t15_base;
+
 
     /* 主显示更新：仅当无风扇/ptc 报警时执行 */
     if (run_t.fan_warning == 0 && run_t.ptc_warning == 0) {
+
+        
+	
         if (run_t.display_set_timer_or_works_time_mode != setup_timer &&
             lcd_t.gTimer_leaf_counter > LEAF_TOGGLE_THRESHOLD) {//3*100ms
 
@@ -258,16 +347,96 @@ void disp_fan_leaf_run_icon(void)
             /* 风速显示由 fan_disp_speed_leaf 处理，注意保持原有参数关系 */
             fan_disp_speed_leaf(gpro_t.disp_fan_switch_flag ? 0 : 1);
         }
-	}
-
-    /* 冒号闪烁计数器（与上面独立，保持原行为） */
+    	}
+	 /* 冒号闪烁计数器（与上面独立，保持原行为） */
     if (lcd_t.gTimer_colon_counter > 0) {
         lcd_t.gTimer_colon_counter = 0;
         colon_flag ^= 1;
         gpro_t.disp_time_colon_flag = (colon_flag != 0) ? 1 : 0;
     }
-
 }
+//	   else if(run_t.display_set_timer_or_works_time_mode == setup_timer && lcd_t.gTimer_leaf_counter > LEAF_TOGGLE_THRESHOLD) {//3*100ms){
+//
+//			lcd_t.gTimer_leaf_counter = 0;
+//            gpro_t.disp_fan_switch_flag  ^= 1;
+//	   
+//			 // DIGIT45
+//	    if (!blink_on) {
+//	        TM1723_Write_Display_Data(ADDR_DIGIT45, (T8_HUM+lcdNumber4_Low[lcd_t.number4_low])& 0x0F); // 共阴空白
+//	    } else {
+//	        TM1723_Write_Display_Data(ADDR_DIGIT45,
+//	            (T8_HUM+lcdNumber4_Low[lcd_t.number4_low] + lcdNumber5_High[lcd_t.number5_high]) & 0xFF);
+//	    }
+//
+//	    // DIGIT56
+//	    t15_base = gpro_t.disp_fan_switch_flag ? T15 : T15_NO;
+//	    if (!blink_on) {
+//		    
+//	        TM1723_Write_Display_Data(ADDR_DIGIT56, t15_base+0x0);
+//	    } else {
+//			
+//	        TM1723_Write_Display_Data(ADDR_DIGIT56,
+//	            (t15_base + lcdNumber5_Low[lcd_t.number5_low] + lcdNumber6_High[lcd_t.number6_high]) & 0XFF);
+//	    }
+//
+//	    // DIGIT67
+//	   // colon = gpro_t.disp_time_colon_flag ? TIME_COLON : TIME_NO_COLON;
+//	    if (!blink_on) {
+//	        TM1723_Write_Display_Data(ADDR_DIGIT67, 0x0);
+//	    } else {
+//	        TM1723_Write_Display_Data(ADDR_DIGIT67,
+//	            (TIME_COLON + lcdNumber6_Low[lcd_t.number6_low] + lcdNumber7_High[lcd_t.number7_high]) & 0XFF);
+//	    }
+//
+//	    // DIGIT78
+//	    t14_base = gpro_t.disp_fan_switch_flag ? 0 : 1;
+//	    if (!blink_on) {
+//			 TM1723_Write_Display_Data(ADDR_DIGIT78, t14_base+0x0);
+//	    } else {
+//			
+//	        TM1723_Write_Display_Data(ADDR_DIGIT78,(t14_base+lcdNumber7_Low[lcd_t.number7_low] + lcdNumber8_High[lcd_t.number8_high]) & 0xFF);
+//	    }
+//
+//		//DIGIT8T
+//		t13_base = gpro_t.disp_fan_switch_flag ? 0 : 1;
+//		if (!blink_on) {
+//	       
+//			if(run_t.disp_wind_speed_grade >66){
+//				TM1723_Write_Display_Data(0xCE,(T13+WIND_SPEED_FULL) );
+//			}
+//			else if(run_t.wifi_link_net_success ==1){ //WT.EDIT 2025.04.16 logic is not rigorous.
+//				if(run_t.disp_wind_speed_grade >33 && run_t.disp_wind_speed_grade <67){
+//				TM1723_Write_Display_Data(0xCE,(T13+WIND_SPEED_TWO) & 0xff);
+//
+//			}
+//			else if(run_t.disp_wind_speed_grade <34){
+//				TM1723_Write_Display_Data(0xCE,(T13+WIND_SPEED_ONE) & 0xff);
+//
+//			}
+//			}
+//	    } else {
+//	       // TM1723_Write_Display_Data(0xCE,(lcdNumber8_Low[lcd_t.number8_low] + WIND_SPEED_FULL) & mask);
+//			if(run_t.disp_wind_speed_grade >66){
+//			TM1723_Write_Display_Data(0xCE,(lcdNumber8_Low[lcd_t.number8_low]+ WIND_SPEED_FULL) & 0xff);
+//			}
+//			else if(run_t.wifi_link_net_success ==1){ //WT.EDIT 2025.04.16 the logic is not rigorous
+//			if(run_t.disp_wind_speed_grade >33 && run_t.disp_wind_speed_grade <67){
+//			TM1723_Write_Display_Data(0xCE,(lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_TWO) & 0xff);
+//
+//			}
+//			else if(run_t.disp_wind_speed_grade <34){
+//			TM1723_Write_Display_Data(0xCE,(lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_ONE) & 0xff);
+//			}
+//			}
+//	    }
+//
+//
+//	   }
+//	}
+
+   
+
+
 
 
 #endif 
@@ -331,6 +500,27 @@ void fan_disp_speed_leaf(uint8_t disp)
 
 }
 
+static void fan_set_timer_disp_leaf(uint8_t disp)
+{
+
+    if(disp==0){
+
+      TM1723_Write_Display_Data(0xCC,T14_NO+lcdNumber7_Low[lcd_t.number7_low]+lcdNumber8_High[lcd_t.number8_high]);//display "7,8'
+      disp_fan_speed_level();
+      TM1723_Write_Display_Data(0xCF,((T11+T16)& 0x05));//
+
+    }
+    else{
+
+       TM1723_Write_Display_Data(0xCC,T14+lcdNumber7_Low[lcd_t.number7_low]+lcdNumber8_High[lcd_t.number8_high]);//display "t,c
+       donot_disp_T13_icon_fan_speed_level();
+       TM1723_Write_Display_Data(0xCF,((T16+T12+T10)&0x0B));//
+
+    }
+
+
+
+}
 
 /******************************************************************************
 	*
