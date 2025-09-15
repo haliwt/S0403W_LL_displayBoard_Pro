@@ -276,7 +276,7 @@ void receive_data_fromm_mainboard(uint8_t *pdata)
          //timer time + don't has ai item
               run_t.display_set_timer_or_works_time_mode = timer_time;
               run_t.gTimer_again_switch_works = 0; //WT.EDIT ,if don't define timer_time,wait 3s switch to works_time.
-    	      run_t.gModel=2;
+    	      run_t.gModel=0;
          }
          else{
                   //beijing time + ai item

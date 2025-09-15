@@ -203,6 +203,7 @@ static void vTaskRunPro(void *pvParameters)
 					    gl_ref.long_key_mode_counter=0;
 										
 					    SendData_Buzzer();
+					    osDelay(5);
 					    mode_key_short_fun();
 										 
 						gl_ref.mode_sound =1;
@@ -433,7 +434,7 @@ void AppTaskCreate (void)
 
 	xTaskCreate( vTaskRunPro,    		/* fucntion name  */
                  "vTaskRunPro",  		/* alias name   */
-                 256,         		    /* stack heap capacity */
+                 128,         		    /* stack heap capacity */
                  NULL,        		    /* param  */
                  1,           		    /* priority  */
                  &xHandleTaskRunPro);   /* task handler  */

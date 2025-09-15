@@ -20,6 +20,7 @@ void bsp_init(void)
 {
   //Beijing_Time_Init();
   bsp_wifi_init();
+  
   run_t.disp_wind_speed_grade =100;//WT.EDIT 2025.04.16
   run_t.wifi_set_temperature=40; //WT.EDIT 2025.04.16
   #if Enable_EventRecorder == 1  
@@ -37,7 +38,7 @@ void mode_key_long_fun(void)
    
    if(run_t.ptc_warning ==0){
 
-       run_t.gModel=2;
+       run_t.gModel=0;
        gpro_t.gTimer_disp_temp_humi_value=0;
        run_t.display_set_timer_or_works_time_mode = setup_timer;
       

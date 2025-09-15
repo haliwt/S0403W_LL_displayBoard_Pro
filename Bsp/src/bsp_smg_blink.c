@@ -300,7 +300,7 @@ void disp_set_timer_timing_value_fun(void)
         if (run_t.timer_time_hours != 0){
             run_t.timer_timing_define_flag = timing_success;
             run_t.display_set_timer_or_works_time_mode = timer_time;
-            run_t.gModel = 2;
+            run_t.gModel = 0;
             if (wifi_link_net_state() == 1) {
                 gpro_t.receive_copy_cmd = ack_not_ai_mode;
                 gpro_t.gTimer_again_send_power_on_off = 0;
