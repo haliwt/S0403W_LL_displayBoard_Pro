@@ -203,6 +203,7 @@ static void vTaskRunPro(void *pvParameters)
 					    gl_ref.long_key_mode_counter=0;
 										
 					    SendData_Buzzer();
+					    mode_key_short_fun();
 										 
 						gl_ref.mode_sound =1;
 
@@ -269,20 +270,17 @@ static void vTaskRunPro(void *pvParameters)
 
          //  test_n++;
 
-           if(gl_ref.mode_sound == 1){
-               gl_ref.mode_sound++;
-
-              //SendData_Buzzer_Has_Ack();//SendData_Buzzer(); 
-              //osDelay(5);//20
-             // gpro_t.send_ack_cmd = ack_buzzer_sound;
-              gpro_t.gTimer_again_send_power_on_off=0;
-              
-             
-            
-              mode_key_short_fun();//SendData_Buzzer();
-
-           }
-           else if(gl_ref.mode_sound==2){
+//           if(gl_ref.mode_sound == 1){
+//               gl_ref.mode_sound++;
+//
+//              //SendData_Buzzer_Has_Ack();//SendData_Buzzer(); 
+//              //osDelay(5);//20
+//             // gpro_t.send_ack_cmd = ack_buzzer_sound;
+//              gpro_t.gTimer_again_send_power_on_off=0;
+//            //  mode_key_short_fun();//SendData_Buzzer();
+//
+//           }
+           if(gl_ref.mode_sound==1){
                  gl_ref.mode_sound ++ ;
                   
                  mode_key_ai_mode_handler();

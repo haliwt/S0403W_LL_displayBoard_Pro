@@ -292,11 +292,12 @@ void disp_set_timer_timing_value_fun(void)
         mask = blink_on ? 0xFF : 0x0F; // 闪烁掩码
         display_digits(mask, blink_on);
 
-    } else {
+    } 
+	else{
         run_t.timer_time_minutes = 0;
         run_t.gTimer_timing = 0;
 
-        if (run_t.timer_time_hours != 0) {
+        if (run_t.timer_time_hours != 0){
             run_t.timer_timing_define_flag = timing_success;
             run_t.display_set_timer_or_works_time_mode = timer_time;
             run_t.gModel = 2;
@@ -305,7 +306,8 @@ void disp_set_timer_timing_value_fun(void)
                 gpro_t.gTimer_again_send_power_on_off = 0;
                 SendData_Set_Command(0x27, 0x02);
             }
-        } else {
+        } 
+		else{
             run_t.timer_timing_define_flag = timing_not_definition;
             run_t.display_set_timer_or_works_time_mode = works_time;
             run_t.gModel = 1;
