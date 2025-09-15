@@ -522,6 +522,24 @@ static void works_time_fun(void)
     	 lcd_t.number8_high = lcd_t.number8_low ;//(run_t.dispTime_minutes )%10;
 
     }
+	else if(run_t.display_set_timer_or_works_time_mode ==timer_time){
+
+	        lcd_t.number5_low=(run_t.timer_time_hours) /10;
+			lcd_t.number5_high =lcd_t.number5_low;//(run_t.dispTime_hours) /10;
+	
+			lcd_t.number6_low = (run_t.timer_time_hours ) %10;;
+			lcd_t.number6_high =  lcd_t.number6_low ;//(run_t.dispTime_hours ) %10;
+			
+			lcd_t.number7_low = (run_t.timer_time_minutes )/10;
+			lcd_t.number7_high = lcd_t.number7_low;//(run_t.dispTime_minutes )/10;
+	
+			lcd_t.number8_low = (run_t.timer_time_minutes )%10;
+			lcd_t.number8_high = lcd_t.number8_low ;//(run_t.dispTime_minutes )%10;
+
+
+
+	}
+		
 
 }
 

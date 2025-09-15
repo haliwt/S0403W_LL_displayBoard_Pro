@@ -51,13 +51,7 @@ void disp_timer_run_times(void)
                  gpro_t.gTimer_again_send_power_on_off =0;
 				Power_Off_Fun();
 			
-
-			   // freertos_start_timer2_handler();//run_t.gFan_RunContinue=1;
-				
-	           
-	          
-                
-                }
+				}
                 else{
      
                      run_t.timer_time_hours =0;

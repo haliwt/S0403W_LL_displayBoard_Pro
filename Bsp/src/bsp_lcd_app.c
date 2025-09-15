@@ -391,7 +391,7 @@ static void display_lowbit_lunmber4_reg0xc9_handler(void)
 */
 static void display_temperture_humidity_value(void)
 {
-
+   static uint8_t ai_mode_base;
    if(disp_set_timer_value!=1 && gpro_t.temp_key_set_value !=1 && gpro_t.gTimer_disp_temp_humi_value>4){
 
 		gpro_t.gTimer_disp_temp_humi_value=0;
@@ -400,14 +400,9 @@ static void display_temperture_humidity_value(void)
 		Display_Kill_Dry_Ster_Icon();
 
 		//display address 0xC3
-		if(run_t.gModel==1){
-		TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high])& 0xff);//display	"AI icon"
-		}
-		else { 
-		TM1723_Write_Display_Data(0xC3,((lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//don't display "AI icon"
-
-		}
-
+		ai_mode_base = run_t.gModel? AI_Symbol : AI_NO_Symbol;
+		TM1723_Write_Display_Data(0xC3,((ai_mode_base+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high])& 0xff);//display	"AI icon"
+		
 		//display address 0xC4
 		TM1723_Write_Display_Data(0xC4,((0x01+lcdNumber2_Low[lcd_t.number2_low])+lcdNumber3_High[lcd_t.number3_high])&0xff);
 
@@ -447,7 +442,8 @@ void power_on_display_temp_handler(void)
     Display_Kill_Dry_Ster_Icon();
 
     // 显示 AI 图标（0xC3）
-    TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high])& 0xff);
+    
+    TM1723_Write_Display_Data(0xC3,((run_t.gModel+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high])& 0xff);
 
     // 显示温度单位（0xC4）
 	TM1723_Write_Display_Data(0xC4,((0x01+lcdNumber2_Low[lcd_t.number2_low])+lcdNumber3_High[lcd_t.number3_high])&0xff);
@@ -673,9 +669,9 @@ static void display_icons_0xC2(uint8_t and_mask)
 
 void display_ai_icon(uint8_t data) 
 {
-	uint8_t ai_symbol;
+	static uint8_t ai_symbol;
 	ai_symbol = data ? AI_Symbol : AI_NO_Symbol;
-    TM1723_Write_Display_Data(0xC3, (lcdNumber1_Low[lcd_t.number1_low] + ai_symbol + lcdNumber2_High[lcd_t.number2_high]));
+    TM1723_Write_Display_Data(0xC3, (ai_symbol+lcdNumber1_Low[lcd_t.number1_low] +lcdNumber2_High[lcd_t.number2_high]));
 }
 
 static void display_temp_unit(uint8_t and_mask) {
@@ -740,7 +736,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
             display_ai_icon(run_t.gModel);
             display_temp_unit(0xff);
             display_wifi_icon();
-            osDelay(30);
+           // osDelay(30);
         } 
 		else {
             display_temperture_humidity_value();

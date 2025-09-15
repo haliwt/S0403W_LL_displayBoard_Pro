@@ -61,7 +61,7 @@ void mode_key_short_fun(void)
 	
 			//timer time + don't has ai item
 			run_t.display_set_timer_or_works_time_mode = timer_time;
-			run_t.gModel=0;
+			run_t.gModel=1;
             run_t.gTimer_again_switch_works = 0;
 			
 
@@ -70,7 +70,7 @@ void mode_key_short_fun(void)
 			//beijing time + ai item
 			run_t.display_set_timer_or_works_time_mode = works_time;
 			
-			run_t.gModel=1;
+			run_t.gModel=0;
 
 		
 		}
