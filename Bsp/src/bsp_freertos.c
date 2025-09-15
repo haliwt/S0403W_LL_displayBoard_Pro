@@ -269,18 +269,6 @@ static void vTaskRunPro(void *pvParameters)
 
         if(run_t.power_on== power_on){
 
-         //  test_n++;
-
-//           if(gl_ref.mode_sound == 1){
-//               gl_ref.mode_sound++;
-//
-//              //SendData_Buzzer_Has_Ack();//SendData_Buzzer(); 
-//              //osDelay(5);//20
-//             // gpro_t.send_ack_cmd = ack_buzzer_sound;
-//              gpro_t.gTimer_again_send_power_on_off=0;
-//            //  mode_key_short_fun();//SendData_Buzzer();
-//
-//           }
            if(gl_ref.mode_sound==1){
                  gl_ref.mode_sound ++ ;
                   
@@ -312,7 +300,7 @@ static void vTaskRunPro(void *pvParameters)
        display_timer_and_beijing_time_handler();
        disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
 
-       set_temperature_compare_value_fun();
+      // set_temperature_compare_value_fun();
 
 	   
       

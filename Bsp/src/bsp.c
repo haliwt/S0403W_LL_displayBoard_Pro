@@ -384,6 +384,7 @@ void set_temperature_compare_value_fun(void)
           gpro_t.gTimer_temp_compare_value =0;
 
     }
+	#if 0
     else if(gpro_t.set_temp_value_success == 1 && gpro_t.gTimer_temp_compare_value > 3 && gpro_t.temp_key_set_value ==0){
 
        gpro_t.gTimer_temp_compare_value =0;
@@ -450,7 +451,7 @@ void set_temperature_compare_value_fun(void)
           }
               
     }
-
+  #endif 
 }
 /**************************************************************************************************
 *

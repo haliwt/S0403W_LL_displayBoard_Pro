@@ -697,39 +697,46 @@ void disp_temp_humidity_wifi_icon_handler(void)
     TIM1723_Write_Cmd(0x40);
     TIM1723_Write_Cmd(0x44);
 
-    if (run_t.smart_phone_set_temp_value_flag) {
+
+
+     if(gpro_t.temp_key_set_value ==1){ //
+
+	    if (gpro_t.gTimer_set_temp_times < 2){
+            set_lcd_numbers_from_value(run_t.wifi_set_temperature);
+            Display_Kill_Dry_Ster_Icon(); //address 0xC2
+            display_ai_icon(run_t.gModel); //address 0xC3
+            display_temp_unit(0xff);       //address 0xC4
+            display_wifi_icon();           //address 0xC5
+            //osDelay(30);
+        } 
+        else{
+          run_t.smart_phone_set_temp_value_flag =1;
+          gpro_t.temp_key_set_value =0;
+          gpro_t.gTimer_temp_compare_value =0;
+		  run_t.gTimer_numbers_one_two_blink =0;
+        }
+
+    }
+    else if (run_t.smart_phone_set_temp_value_flag) {
         set_lcd_numbers_from_value(run_t.wifi_set_temperature);
 
-        if (run_t.gTimer_numbers_one_two_blink < 6) {
+        if (run_t.gTimer_numbers_one_two_blink  > 2){
             display_icons_0xC2(0xff);
             display_ai_icon(run_t.gModel);
             display_temp_unit(0xff);
-        } else if (run_t.gTimer_numbers_one_two_blink < 11) {
-            display_icons_0xC2(0x0f);
-            display_ai_icon(run_t.gModel);
-            display_temp_unit(0xF1);
-        } else {
-            run_t.gTimer_numbers_one_two_blink = 0;
-            if (++number_blink_times > 2) {
-                number_blink_times = 0;
-                disp_set_timer_value = 1;
-                run_t.smart_phone_set_temp_value_flag = 0;
-                gpro_t.set_temp_value_success = 1;
-                gpro_t.gTimer_temp_compare_value = 20;
+             disp_set_timer_value = 1;
+             run_t.smart_phone_set_temp_value_flag = 0;
+             gpro_t.set_temp_value_success = 1;
+			  SendData_Temp_Data(run_t.wifi_set_temperature);
+
+			  osDelay(10);
+              
             }
-        }
-        TIM1723_Write_Cmd(LUM_VALUE);
+        
     } 
 	else {
-        if (gpro_t.temp_key_set_value) {
-            set_lcd_numbers_from_value(run_t.wifi_set_temperature);
-            Display_Kill_Dry_Ster_Icon();
-            display_ai_icon(run_t.gModel);
-            display_temp_unit(0xff);
-            display_wifi_icon();
-            osDelay(30);
-        } 
-		else if (disp_set_timer_value == 1) {
+        
+		if (disp_set_timer_value == 1) {
             disp_set_timer_value++;
             set_lcd_numbers_from_value(gpro_t.temp_real_value);
             Display_Kill_Dry_Ster_Icon();
