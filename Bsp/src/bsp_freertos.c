@@ -286,9 +286,9 @@ static void vTaskRunPro(void *pvParameters)
 
           
        power_on_handler();
-       disp_temp_humidity_wifi_icon_handler();
+       
 
-       display_timer_and_beijing_time_handler();
+      // display_timer_and_beijing_time_handler();
        disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
        }
        else if(run_t.power_on== power_off){
@@ -329,7 +329,7 @@ static void vTaskStart(void *pvParameters)
            gl_ref.long_key_mode_counter =0;
            gl_ref.long_key_power_counter++;
 
-         if(gl_ref.long_key_power_counter > 70 && run_t.power_on== power_on ){
+         if(gl_ref.long_key_power_counter >65 && run_t.power_on== power_on ){
             gl_ref.long_key_power_counter =0;
             gl_ref.key_long_power_flag =1;
             gpro_t.gTimer_mode_key_long = 0;
@@ -350,7 +350,7 @@ static void vTaskStart(void *pvParameters)
          
           gl_ref.long_key_mode_counter ++ ;
 
-          if(gl_ref.long_key_mode_counter > 70  && run_t.power_on== power_on &&  run_t.ptc_warning ==0 && run_t.fan_warning ==0){
+          if(gl_ref.long_key_mode_counter > 65  && run_t.power_on== power_on &&  run_t.ptc_warning ==0 && run_t.fan_warning ==0){
              gl_ref.long_key_mode_counter=0;   
          
              gl_ref.key_long_mode_flag =1;

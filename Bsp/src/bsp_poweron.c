@@ -28,6 +28,14 @@ void power_on_handler(void)
 
 	  case 1:
 
+	  disp_temp_humidity_wifi_icon_handler();
+	    power_on_step =2;
+
+	  break;
+
+	  case 2:
+	  	display_timer_and_beijing_time_handler();
+        power_on_step =1;
 	  break;
 
 

@@ -397,6 +397,7 @@ static void receive_cmd_or_data_handler(void)
 	break;
 
 
+
 	case 0x08: //temperature of high warning.
 
 	if(gl_tMsg.execuite_cmd_notice == 0x01){  //warning 
@@ -719,6 +720,22 @@ static void receive_copy_cmd_or_data_handler(void)
 			gpro_t.receive_copy_buff[4]  =copy_ng;
 			}
 		}
+
+	   break;
+
+	   case wifi_link:
+	   	
+	   
+	          if(gl_tMsg.execuite_cmd_notice ==1){
+	   
+				 // gpro_t.receive_copy_cmd = ack_wifi_on;
+				   power_key_long_fun();
+	   
+			   }
+	   
+	   
+		  
+
 
 	   break;
 
