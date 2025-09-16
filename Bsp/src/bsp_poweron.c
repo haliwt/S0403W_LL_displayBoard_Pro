@@ -62,9 +62,18 @@ static void power_on_ref_init(void)
 	 run_t.timer_time_minutes =0;
 	 run_t.power_off_id_flag=1;
 
-	  gpro_t.power_on_every_times ++ ;
+	  gpro_t.power_on_every_times=1 ;
       run_t.disp_wind_speed_grade =100;//WT.EDIT 2025.04.16
       run_t.wifi_set_temperature=40; //WT.EDIT 2025.04.16
+      if(lcd_t.display_beijing_time_flag == 0 ){
+
+		 run_t.gTimer_disp_time_seconds=0;
+		 run_t.dispTime_hours=0;
+	     run_t.dispTime_minutes=0;
+
+      }
+  
+	
       LCD_BACK_LIGHT_ON();
 	  POWER_ON_LED() ;
 	  LED_MODEL_ON() ;
@@ -91,50 +100,18 @@ void power_on_key_short_fun(void)
 	gpro_t.set_temp_value_success =0;
     run_t.smart_phone_set_temp_value_flag=0;
 
-    
-    
     run_t.disp_wind_speed_grade =100;
 
     run_t.display_set_timer_or_works_time_mode =works_time;
 
-	
-    
-
 	 run_t.timer_timing_define_flag = timing_not_definition;
 
-	 
-
-	 if(lcd_t.display_beijing_time_flag == 0 ){
-
-	 run_t.gTimer_disp_time_seconds=0;
-	 run_t.dispTime_hours=0;
-     run_t.dispTime_minutes=0;
-	 
-	  lcd_t.number5_low=(run_t.dispTime_hours ) /10;
-     lcd_t.number5_high =(run_t.dispTime_hours) /10;
-
-	 lcd_t.number6_low = (run_t.dispTime_hours ) %10;;
-	 lcd_t.number6_high = (run_t.dispTime_hours ) %10;
-     
-     lcd_t.number7_low = (run_t.dispTime_minutes )/10;
-	 lcd_t.number7_high = (run_t.dispTime_minutes )/10;
-
-	 lcd_t.number8_low = (run_t.dispTime_minutes )%10;
-	 lcd_t.number8_high = (run_t.dispTime_minutes )%10;
-	
-	 
-	 }
-    
-	run_t.power_off_id_flag =1;
- 
-   
-
-    run_t.gModel =1; //AI mode
-    run_t.display_set_timer_or_works_time_mode=works_time ;
+	 run_t.power_off_id_flag =1;
+     run_t.display_set_timer_or_works_time_mode=works_time ;
   
   
      Lcd_PowerOn_Fun();
-   //  freertos_stop_timer1_handler();
+   
     
 }
 
@@ -172,6 +149,7 @@ void power_on_off_handler(void)
         run_t.power_on= power_on;
         SendData_PowerOnOff(1);
 		osDelay(5);
+		power_on_step =0;
        // gpro_t.long_key_power_counter =0; 
         run_t.power_on_disp_smg_number = 1;
         gpro_t.send_ack_cmd = ack_power_on;
@@ -182,18 +160,8 @@ void power_on_off_handler(void)
         gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
        
        
-         //gpro_t.power_on_every_times=1;
-
-		if(gpro_t.smart_phone_app_timer_power_on_flag == 0){
-		 run_t.plasma =1;
-		 run_t.ultrasonic =1;
-		 run_t.dry =1;
-		
-		}
-		run_t.gModel = 1;
-
-        gpro_t.gTimer_mode_key_long=0;
-         LCD_BACK_LIGHT_ON();
+     gpro_t.gTimer_mode_key_long=0;
+      LCD_BACK_LIGHT_ON();
 	  POWER_ON_LED() ;
 	  LED_MODEL_ON() ;
       display_lcd_Icon_init();
@@ -325,6 +293,13 @@ void power_off_handler(void)
         gpro_t.smart_phone_app_timer_power_on_flag =0;
 		run_t.gFan_RunContinue =1;
 	     gpro_t.gTimer_temp_compare_value=0;
+		if(lcd_t.display_beijing_time_flag == 0 ){
+
+		 run_t.gTimer_disp_time_seconds=0;
+		 run_t.dispTime_hours=0;
+	     run_t.dispTime_minutes=0;
+
+        }
 
       
 	}
@@ -343,6 +318,12 @@ void power_off_handler(void)
            gpro_t.gTimer_temp_compare_value=0;
            run_t.gFan_RunContinue =0;
 		   Lcd_PowerOff_Fun();
+		   if(lcd_t.display_beijing_time_flag == 0 ){
+
+			 run_t.gTimer_disp_time_seconds=0;
+			 run_t.dispTime_hours=0;
+		     run_t.dispTime_minutes=0;
+            }
 
 	}
 }
@@ -394,7 +375,7 @@ static void power_off_breath_Led(void)
 //		    if(counter ==1)POWER_ON_LED() ;
 //            else POWER_OFF_LED() ;
 		     POWER_LED_TOGGLE();
-            lcd_power_off_light_off();
+           /// lcd_power_off_light_off();
       }
       //counter_flag ++;
 	  //printf("power_off_led !!!\r\n");
