@@ -118,13 +118,14 @@ void Setup_Timer_Times_Donot_Display(void)
                 gpro_t.gTimer_again_send_power_on_off =0;//wt.edit 2024.11.17
                 gpro_t.send_ack_cmd = 2; //power off of flag that need send power off cmd to mainboard ,must return signal
 			    SendData_PowerOnOff(0); //send power off cmd to mainboard.WT.EDIT 2024.11.17
-			    gpro_t.send_ack_cmd = ack_power_off;
+				osDelay(5);
+				gpro_t.send_ack_cmd = ack_power_off;
                 gpro_t.gTimer_again_send_power_on_off =0;
 				Power_Off_Fun();
 
 			
 				run_t.power_on=0 ;
-			 //   freertos_start_timer2_handler();//run_t.gFan_RunContinue=1;
+			
 				
 	           
 	          

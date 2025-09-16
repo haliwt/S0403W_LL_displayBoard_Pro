@@ -72,6 +72,15 @@ MSG_T   gl_tMsg;
 
  volatile uint8_t rx_data_counter=0;
 
+// BCC校验函数
+uint8_t bcc_check(const unsigned char *data, int len) {
+    unsigned char bcc = 0;
+    for (int i = 0; i < len; i++) {
+        bcc ^= data[i];
+    }
+    return bcc;
+}
+
 /********************************************************************************
 	**
 	*Function Name:void usart1_isr_callback_handler(void)
@@ -133,6 +142,7 @@ void usart1_isr_callback_handler(uint8_t data)
 				   state=UART_STATE_EXEC_CMD_OR_LEN; //1
 			   }
 			   else{
+			   	 gl_tMsg.copy_cmd_notice = 0;
                  state=UART_STATE_EXEC_CMD_OR_LEN; //1
 			   }
     
@@ -156,7 +166,7 @@ void usart1_isr_callback_handler(uint8_t data)
 		   else if(gl_tMsg.copy_cmd_notice == 0xFF){ //this is older compatibility 
 		        gl_tMsg.cmd_notice = gl_tMsg.usData[rx_data_counter];
 				gl_tMsg.rx_data_flag =  0x0;
-                state = UART_STATE_DATA_LEN; //receive data.
+                state = UART_STATE_FRAME_CMD_0X0;; //receive data.
             }
 
 
@@ -168,6 +178,12 @@ void usart1_isr_callback_handler(uint8_t data)
 			if(inputBuf[0] == 0x0){  // frame is tail of end "0xFE"
 
 				state=UART_STATE_FRAME_END; //=1
+
+			}
+			else if(gl_tMsg.copy_cmd_notice == 0xFF){
+			    gl_tMsg.execuite_cmd_notice =  gl_tMsg.usData[rx_data_counter];
+			    state=UART_STATE_FRAME_END;
+
 
 			}
 			else{
@@ -232,14 +248,10 @@ void usart1_isr_callback_handler(uint8_t data)
               gl_tMsg.receive_data_length = gl_tMsg.usData[rx_data_counter];
              
            // 根据数据长度判断是否需要接收载荷
-            if(gl_tMsg.receive_data_length > 0 && gl_tMsg.copy_cmd_notice != 0xFF) {
+            if(gl_tMsg.receive_data_length > 0 && gl_tMsg.copy_cmd_notice != 0xFF){
 				  gl_tMsg.data_length=0;
                  state = UART_STATE_DATA;
             } 
-            else if(gl_tMsg.copy_cmd_notice == 0xFF){ //this is older compatibility copy command
-                 gl_tMsg.execuite_cmd_notice =  gl_tMsg.usData[rx_data_counter];
-				 state = UART_STATE_FRAME_END; //receive data.
-			}
 			else {
                 // 如果数据长度为0，直接跳到帧尾
                 rx_data_counter=0;
@@ -805,5 +817,134 @@ static void receive_copy_cmd_or_data_handler(void)
 //   app_xusart1_queue_isr_handler(data);
 //}
 
+/******************************************************************************
+*
+*Function Name:void send_cmd_ack_hanlder(void)
+*Funcion: handle of tall process 
+*Input Ref:
+*Return Ref:
+*
+******************************************************************************/
+void send_cmd_ack_hanlder(void)
+{
+   
+
+    switch(gpro_t.send_ack_cmd){
+
+    case ack_null:
+
+
+    break;
+
+    case ack_power_on:
+        
+      if(gpro_t.receive_copy_cmd == ok){
+         gpro_t.receive_copy_cmd =0;
+         gpro_t.send_ack_cmd = 0;
+        
+      }
+      else if(gpro_t.receive_copy_cmd != 0 && gpro_t.gTimer_again_send_power_on_off >1){
+         gpro_t.gTimer_again_send_power_on_off =0;
+         SendCmd_fun(0x10,0x01); //send notice don't buzzer sound .
+      }
+                
+     
+    break;
+
+    case ack_power_off :
+
+     if(gpro_t.receive_copy_cmd == ok){
+        gpro_t.receive_copy_cmd =0;
+         gpro_t.send_ack_cmd = 0;
+         
+      }
+      else if(gpro_t.receive_copy_cmd != 0 && gpro_t.gTimer_again_send_power_on_off >1){
+          gpro_t.gTimer_again_send_power_on_off =0;
+          SendCmd_fun(0x10,0x0);//power off notice ,don't buzzer sound .SendData_PowerOnOff(0);
+      }
+
+
+    break;
+
+    case ack_wifi_on:
+
+         if(gpro_t.receive_copy_cmd == ack_wifi_on){
+            gpro_t.receive_copy_cmd =0;
+             gpro_t.send_ack_cmd = 0;
+             
+          }
+          else if(gpro_t.receive_copy_cmd != 0 && gpro_t.gTimer_again_send_power_on_off >1){
+              gpro_t.gTimer_again_send_power_on_off =0;
+              SendData_Set_Command(0x05,0x01); // link wifi of command .
+          }
+
+
+
+    break;
+
+    case ack_ptc_on:
+
+
+    break;
+
+    case ack_ptc_off:
+
+    break;
+
+    case ack_ai_mode:
+//        if(gpro_t.receive_copy_cmd == ack_ai_mode){
+//            gpro_t.receive_copy_cmd =0;
+//            gpro_t.send_ack_cmd = 0;
+//
+//        }
+//        else if(gpro_t.receive_copy_cmd != 0 && gpro_t.gTimer_again_send_power_on_off >1){
+//            gpro_t.gTimer_again_send_power_on_off =0;
+//            SendData_Set_Command(0x27,0x01); //MODE_AI,BUR NO_BUZZER);
+//
+//        }
+    break;
+
+    case ack_not_ai_mode:
+
+//       if(gpro_t.receive_copy_cmd == ack_not_ai_mode){
+//            gpro_t.receive_copy_cmd =0;
+//            gpro_t.send_ack_cmd = 0;
+//
+//        }
+//        else if(gpro_t.receive_copy_cmd != 0 && gpro_t.gTimer_again_send_power_on_off >1){
+//            gpro_t.gTimer_again_send_power_on_off =0;
+//            SendData_Set_Command(0x27,0x02); //NOT_MODE_AI
+//
+//        }
+
+
+    break;
+
+    case ack_buzzer_sound:
+
+//        if(gpro_t.receive_copy_cmd == ack_buzzer_sound){
+//            gpro_t.receive_copy_cmd =0;
+//            gpro_t.send_ack_cmd = 0;
+//
+//        }
+//        else if(gpro_t.receive_copy_cmd != 0 && gpro_t.gTimer_again_send_power_on_off >1){
+//            gpro_t.gTimer_again_send_power_on_off =0;
+//            SendData_Set_Command(0x06,0x01); //buzzer sound command .
+//
+//        }
+
+    break;
+
+
+    
+
+    
+
+
+    }
+
+
+
+}
 
 

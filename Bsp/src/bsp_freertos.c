@@ -294,13 +294,13 @@ static void vTaskRunPro(void *pvParameters)
             }
 
           
-       power_on_ref_init();
+       power_on_handler();
        disp_temp_humidity_wifi_icon_handler();
 
        display_timer_and_beijing_time_handler();
        disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
 
-      // set_temperature_compare_value_fun();
+       set_temperature_compare_value_fun();
 
 	   
       

@@ -453,7 +453,7 @@ void power_on_display_temp_handler(void)
     // 显示低位数字（0xC9）
     display_lowbit_lunmber4_reg0xc9_handler();
 
-
+    TIM1723_Write_Cmd(LUM_VALUE);
 
 }
 
@@ -714,6 +714,8 @@ void disp_temp_humidity_wifi_icon_handler(void)
           gpro_t.temp_key_set_value =0;
           gpro_t.gTimer_temp_compare_value =0;
 		  run_t.gTimer_numbers_one_two_blink =0;
+		  SendData_Temp_Data(run_t.wifi_set_temperature);
+          osDelay(5);
         }
 
     }
@@ -728,8 +730,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
              run_t.smart_phone_set_temp_value_flag = 0;
              gpro_t.set_temp_value_success = 1;
 			  SendData_Temp_Data(run_t.wifi_set_temperature);
-
-			  osDelay(10);
+              osDelay(10);
               
             }
         

@@ -1,13 +1,60 @@
 #include "bsp.h"
 
+static uint8_t power_on_step;
+
+uint8_t counter_flag ;
+
+
+
+static void power_off_breath_Led(void);
+
+
+static void power_on_ref_init(void);
+
+
 static void display_lcd_Icon_init(void);
 
-void power_on_ref_init(void)
+
+void power_on_handler(void)
+{
+   
+   switch(power_on_step){
+
+      case 0:
+          power_on_ref_init();
+          power_on_step =1;
+
+      break;
+
+	  case 1:
+
+	  break;
+
+
+   }
+
+
+}
+
+static void power_on_ref_init(void)
 {
 
-   if(gpro_t.power_on_every_times==1){
+  
+     if(gpro_t.smart_phone_app_timer_power_on_flag == 0){
+
+    	run_t.gModel =1; //WT.EDIT 2022.09.01
+    	run_t.plasma=1;
+    	run_t.dry =1;
+    	run_t.ultrasonic =1;
     
-      gpro_t.power_on_every_times ++ ;
+    }
+     run_t.gTimer_timing=0;
+
+	 run_t.timer_time_hours =0;
+	 run_t.timer_time_minutes =0;
+	 
+
+	  gpro_t.power_on_every_times ++ ;
       run_t.disp_wind_speed_grade =100;//WT.EDIT 2025.04.16
       run_t.wifi_set_temperature=40; //WT.EDIT 2025.04.16
       LCD_BACK_LIGHT_ON();
@@ -17,7 +64,7 @@ void power_on_ref_init(void)
       power_on_display_temp_handler();//WT.EDIT 2025.03.28
 
 
-    }
+    
 }
 /**************************************************************************
  * 
@@ -31,15 +78,8 @@ void power_on_key_short_fun(void)
 {
   
    
-   if(gpro_t.smart_phone_app_timer_power_on_flag == 0){
-
-    	run_t.gModel =1; //WT.EDIT 2022.09.01
-    	run_t.plasma=1;
-    	run_t.dry =1;
-    	run_t.ultrasonic =1;
-    
-    }
-
+ 
+    power_on_step=0;
 	gpro_t.set_temp_value_success =0;
     run_t.smart_phone_set_temp_value_flag=0;
 
@@ -47,17 +87,10 @@ void power_on_key_short_fun(void)
     
     run_t.disp_wind_speed_grade =100;
 
+    run_t.display_set_timer_or_works_time_mode =works_time;
+
+	
     
-	
-
-   run_t.display_set_timer_or_works_time_mode =works_time;
-
-	
-     run_t.gTimer_timing=0;
-
-	 run_t.timer_time_hours =0;
-	 run_t.timer_time_minutes =0;
-	 
 
 	 run_t.timer_timing_define_flag = timing_not_definition;
 
@@ -141,11 +174,15 @@ void power_on_off_handler(void)
         gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
        
        
-         gpro_t.power_on_every_times=1;
+         //gpro_t.power_on_every_times=1;
+
+		if(gpro_t.smart_phone_app_timer_power_on_flag == 0){
 		 run_t.plasma =1;
 		 run_t.ultrasonic =1;
 		 run_t.dry =1;
-		 run_t.gModel = 1;
+		
+		}
+		run_t.gModel = 1;
 
         gpro_t.gTimer_mode_key_long=0;
          LCD_BACK_LIGHT_ON();
@@ -161,8 +198,7 @@ void power_on_off_handler(void)
         run_t.power_on= power_off;
         SendData_PowerOnOff(0);
 		osDelay(5);
-       // gpro_t.long_key_power_counter=0; //WT.2024.11.05
-       // gpro_t.key_long_power_flag=0;
+   
         gpro_t.send_ack_cmd = ack_power_off;
         gpro_t.gTimer_again_send_power_on_off =0;
         run_t.wifi_set_temperature =40;//WT.EDIT 2025.01.15
@@ -242,4 +278,128 @@ static void display_lcd_Icon_init(void)
      TIM1723_Write_Cmd(LUM_VALUE);
 }
 
+/****************************************************************/
+
+
+
+
+void power_off_handler(void)
+{
+    
+   static uint8_t dc_power_off;
+
+   if(dc_power_off == 0){
+
+      dc_power_off++;
+
+   //   freertos_start_timer1_handler();
+      
+
+   }
+
+
+    if(run_t.power_off_id_flag == 1){   
+        run_t.power_off_id_flag++;  
+        lcd_donot_disp_screen();
+        Power_Off_Fun();
+    
+
+        LED_MODEL_OFF();
+        POWER_ON_LED();
+
+        run_t.wifi_led_fast_blink_flag=0;
+        run_t.smart_phone_set_temp_value_flag=0;
+        run_t.timer_time_hours =0;
+        run_t.timer_time_minutes =0;
+
+        run_t.fan_warning=0;
+        run_t.ptc_warning = 0;
+
+        run_t.gModel =0; //WT.EDIT 2022.09.01
+        run_t.plasma=0;
+        run_t.dry =0;
+        run_t.ultrasonic =0;
+
+
+        run_t.timer_timing_define_flag = timing_not_definition;
+
+        run_t.disp_wind_speed_grade =100;	
+
+       
+        
+        gpro_t.smart_phone_app_timer_power_on_flag =0;
+      //  freertos_start_timer1_handler();
+     //   freertos_start_timer2_handler();
+      
+	}
+    
+	
+   
+    power_off_breath_Led();
+	if(run_t.gFan_RunContinue == 1){
+       
+	      LCD_BACK_LIGHT_ON();
+	      LCD_Display_Wind_Icon_Handler();
+     }
+	 else if(run_t.gFan_RunContinue == 2){
+         
+           run_t.gFan_RunContinue =0;
+		   Lcd_PowerOff_Fun();
+
+	}
+}
+
+
+
+/************************************************************************
+	*
+	*Function Name: static void Power_Off_Fun(void)
+	*
+	*
+	*
+	*
+************************************************************************/
+ void Power_Off_Fun(void)
+{
+	
+        run_t.gModel =0; //WT.EDIT 2022.09.01
+		run_t.plasma=0;
+		run_t.dry =0;
+		run_t.ultrasonic =0;
+
+		//run_t.gPower_On=power_off;
+		
+		run_t.wifi_led_fast_blink_flag=0;
+		run_t.timer_timing_define_flag = timing_not_definition;
+		
+		run_t.disp_wind_speed_grade =30;	
+		
+		
+} 
+
+/************************************************************************
+	*
+	*Function Name: static void power_off_breath_Led(void)
+	*
+	*
+	*
+	*
+************************************************************************/
+static void power_off_breath_Led(void)
+ {
+
+      //POWER_LED_TOGGLE() ;
+     // static uint8_t counter;
+	  if(gpro_t.gTimer_disp_temp_humi_value> 1){
+            gpro_t.gTimer_disp_temp_humi_value=0;
+//		    counter = counter ^ 0x01;
+//		    if(counter ==1)POWER_ON_LED() ;
+//            else POWER_OFF_LED() ;
+		     POWER_LED_TOGGLE();
+            lcd_power_off_light_off();
+      }
+      //counter_flag ++;
+	  //printf("power_off_led !!!\r\n");
+
+}
 
