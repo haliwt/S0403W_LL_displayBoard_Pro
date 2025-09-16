@@ -207,17 +207,7 @@ extern RUN_T run_t;
 
 
 
-
-
-
-
-
-
-
-
 void Setup_Timer_Times_Donot_Display(void);
-
-//void display_timer_or_timing_time_fun(uint8_t tim);
 
 
 void disp_timer_run_times(void);

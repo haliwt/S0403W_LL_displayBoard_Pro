@@ -3,9 +3,7 @@
 RUN_T run_t;
 
 
-//static void disp_timer_run_times(void);
-//void Setup_Timer_Times_Donot_Display(void);
-//static void Works_Counter_Time(void);
+
 
 uint8_t temp;
 
@@ -13,7 +11,7 @@ uint8_t temp;
 
 /*************************************************************************
 	*
-	*Functin Name:static void disp_timer_run_times(void)
+	*Functin Name:void disp_timer_run_times(void)
 	*Function : set up timer timing function
 	*
 	*

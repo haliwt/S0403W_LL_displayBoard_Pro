@@ -60,7 +60,7 @@ typedef struct GL_TASK{
    uint8_t  key_mode_flag ;
    uint8_t  key_dec_flag;
    uint8_t  key_add_flag;
-   uint8_t  mode_sound;
+
    uint8_t smart_phone_app_timer_power_on_flag;
    uint8_t app_power_off_flag;
 
@@ -201,14 +201,11 @@ static void vTaskRunPro(void *pvParameters)
                     }
 					else{
 					    gl_ref.long_key_mode_counter=0;
-										
+							
 					    SendData_Buzzer();
 					    osDelay(5);
 					    mode_key_short_fun();
 										 
-						gl_ref.mode_sound =1;
-
-                              
 					}
                
 
@@ -269,13 +266,7 @@ static void vTaskRunPro(void *pvParameters)
 
         if(run_t.power_on== power_on){
 
-           if(gl_ref.mode_sound==1){
-                 gl_ref.mode_sound ++ ;
-                  
-                 mode_key_ai_mode_handler();
-
-           }
-         
+    
 
            if( gpro_t.gTimer_mode_key_long > 1 && (gl_ref.key_long_mode_flag  ==1 ||gl_ref.key_long_power_flag ==1)){
                  gl_ref.long_key_mode_counter =0;

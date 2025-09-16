@@ -426,6 +426,10 @@ void disp_fan_leaf_run_icon(void)
         gpro_t.disp_time_colon_flag = (colon_flag != 0) ? 1 : 0;
     }
 }
+
+
+
+
 //	   else if(run_t.display_set_timer_or_works_time_mode == setup_timer && lcd_t.gTimer_leaf_counter > LEAF_TOGGLE_THRESHOLD) {//3*100ms){
 //
 //			lcd_t.gTimer_leaf_counter = 0;
