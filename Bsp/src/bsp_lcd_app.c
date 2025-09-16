@@ -608,41 +608,45 @@ static void works_timer_disp_numaber(void)
 **********************************************************************************************************/
 void power_off_disp_fan_run_handler(void)
 {
-    if(lcd_t.gTimer_fan_10ms <40){
 
-    
-           TM1723_Write_Display_Data(0xCA,(lcdNumber5_Low[0x0A]+lcdNumber6_High[0x0A]) & 0xff);
-		   if(gpro_t.disp_time_colon_flag ==1)
-           		TM1723_Write_Display_Data(0xCB,(TIME_COLON+lcdNumber6_Low[0x0A]+lcdNumber7_High[0x0A]) & 0xff);
-		   else
-		   	 TM1723_Write_Display_Data(0xCB,TIME_NO_COLON+lcdNumber6_Low[0x0A]+lcdNumber7_High[0X0A]);
+   static uint8_t  blink_flag ;
+   
+	if(lcd_t.gTimer_fan_10ms >40){
+         lcd_t.gTimer_fan_10ms=0;
+
+	     blink_flag = !blink_flag;
+	
+	}
+
+	  if(!blink_flag){
+
+	    TM1723_Write_Display_Data(0xCA,(lcdNumber5_Low[0x0A]+lcdNumber6_High[0x0A]) & 0xff);
+	
+		   TM1723_Write_Display_Data(0xCB,TIME_NO_COLON+lcdNumber6_Low[0x0A]+lcdNumber7_High[0X0A]);
 		   
            TM1723_Write_Display_Data(0xCC,(T14+lcdNumber7_Low[0x0A]+lcdNumber8_High[0x0A]) & 0xff);
           
            TM1723_Write_Display_Data(0xCE,lcdNumber8_Low[0x0A]+WIND_SPEED_FULL);//display "t,c"
            TM1723_Write_Display_Data(0xCF,((T16+T12+T10)& 0x0B));//
+            TIM1723_Write_Cmd(LUM_VALUE);
                     
          }
-         else if(lcd_t.gTimer_fan_10ms >39 && lcd_t.gTimer_fan_10ms<80){ //close
+	    else{
                 
      
 
          TM1723_Write_Display_Data(0xCA,(T15+lcdNumber5_Low[0x0A]+lcdNumber6_High[0x0A]) & 0xff);
-         if(gpro_t.disp_time_colon_flag ==1)
-            TM1723_Write_Display_Data(0xCB,(TIME_COLON+lcdNumber6_Low[0x0A]+lcdNumber7_High[0x0A]) & 0xff);
-		 else 
-		 	 TM1723_Write_Display_Data(0xCB,(TIME_COLON+lcdNumber6_Low[0x0A]+lcdNumber7_High[0x0A]) & 0xff);
+     
+		TM1723_Write_Display_Data(0xCB,(TIME_NO_COLON+lcdNumber6_Low[0x0A]+lcdNumber7_High[0x0A]) & 0xff);
 		 
          TM1723_Write_Display_Data(0xCC,(lcdNumber7_Low[0x0A]+lcdNumber8_High[0x0A]) & 0xff);
          TM1723_Write_Display_Data(0xCE,T13+lcdNumber8_Low[0x0A]+WIND_SPEED_FULL);//display "close"
         
          TM1723_Write_Display_Data(0xCF,((T11+T16) & 0x05));//
+          TIM1723_Write_Cmd(LUM_VALUE);
                   
-    
-         }
-         else if(lcd_t.gTimer_fan_10ms > 79){
-                lcd_t.gTimer_fan_10ms=0;
-         }
+        }
+        
 
 }
 /******************************************************/

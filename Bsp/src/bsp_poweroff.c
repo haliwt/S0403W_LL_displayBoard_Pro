@@ -123,7 +123,7 @@ static void power_off_breath_Led(void)
 //		    if(counter ==1)POWER_ON_LED() ;
 //            else POWER_OFF_LED() ;
 		     POWER_LED_TOGGLE();
-            lcd_power_off_light_off();
+           // lcd_power_off_light_off();
       }
       //counter_flag ++;
 	  //printf("power_off_led !!!\r\n");

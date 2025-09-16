@@ -4,7 +4,7 @@
 /*******************************************************************************
 	*
 	*Function Name:void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-	*Function : timing 10ms interrupt call back function 
+	*Function : timing 1ms interrupt call back function 
 	*
 	*
 *******************************************************************************/
@@ -17,7 +17,7 @@ void tim16_int_callback_handler(void)
 	tm1++;
     tm2++;
 
-    if(tm2> 9){
+    if(tm2> 9){//10ms * x
         tm2=0;
     lcd_t.gTimer_wifi_500ms++;
 	lcd_t.gTimer_fan_10ms++;

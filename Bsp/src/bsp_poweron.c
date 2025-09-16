@@ -1,6 +1,6 @@
 #include "bsp.h"
 
-static uint8_t power_on_step;
+uint8_t power_on_step;
 
 uint8_t counter_flag ;
 
@@ -60,7 +60,7 @@ static void power_on_ref_init(void)
 
 	 run_t.timer_time_hours =0;
 	 run_t.timer_time_minutes =0;
-	 
+	 run_t.power_off_id_flag=1;
 
 	  gpro_t.power_on_every_times ++ ;
       run_t.disp_wind_speed_grade =100;//WT.EDIT 2025.04.16
@@ -294,20 +294,9 @@ static void display_lcd_Icon_init(void)
 void power_off_handler(void)
 {
     
-   static uint8_t dc_power_off;
-
-   if(dc_power_off == 0){
-
-      dc_power_off++;
-
-   //   freertos_start_timer1_handler();
-      
-
-   }
-
-
     if(run_t.power_off_id_flag == 1){   
-        run_t.power_off_id_flag++;  
+        run_t.power_off_id_flag++; 
+		power_on_step=0;
         lcd_donot_disp_screen();
         Power_Off_Fun();
     
@@ -333,24 +322,25 @@ void power_off_handler(void)
 
         run_t.disp_wind_speed_grade =100;	
 
-       
-        
         gpro_t.smart_phone_app_timer_power_on_flag =0;
-      //  freertos_start_timer1_handler();
-     //   freertos_start_timer2_handler();
+		run_t.gFan_RunContinue =1;
+	     gpro_t.gTimer_temp_compare_value=0;
+
       
 	}
     
 	
    
     power_off_breath_Led();
-	if(run_t.gFan_RunContinue == 1){
+
+	
+	if(run_t.gFan_RunContinue == 1 && gpro_t.gTimer_temp_compare_value < 61){
        
 	      LCD_BACK_LIGHT_ON();
 	      LCD_Display_Wind_Icon_Handler();
      }
-	 else if(run_t.gFan_RunContinue == 2){
-         
+	 else if(gpro_t.gTimer_temp_compare_value  > 59){
+           gpro_t.gTimer_temp_compare_value=0;
            run_t.gFan_RunContinue =0;
 		   Lcd_PowerOff_Fun();
 

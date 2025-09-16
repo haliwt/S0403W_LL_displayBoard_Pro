@@ -355,21 +355,37 @@ static void receive_cmd_or_data_handler(void)
 	case ptc_on_off: //PTC 
 	if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
 		run_t.dry = open;
+		SendData_Set_Command(0x12,0x01); //close ptc 
+		osDelay(3);
+		gpro_t.gTimer_copy_cmd_counter=0; 
+	    gpro_t.receive_copy_buff[2]=copy_null;
 
 		}
 		else{//power off 
-		run_t.dry = close;
-	}
+			run_t.dry = close;
+			SendData_Set_Command(0x12,0x0); //close ptc 
+		    osDelay(3);
+			gpro_t.gTimer_copy_cmd_counter=0; 
+	        gpro_t.receive_copy_buff[2]=copy_null;
+	    }
 
 	break;
 
 	case plasma_on_off://plasma
 	if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
 		run_t.plasma = open;
+		SendData_Set_Command(0x13,0x01); //close ptc 
+		 osDelay(3);
+		 gpro_t.gTimer_copy_cmd_counter=0; 
+	     gpro_t.receive_copy_buff[3]=copy_null;
 
 		}
 		else{//power off 
 		run_t.plasma = close;
+		SendData_Set_Command(0x13,0x0); //close ptc 
+		 osDelay(3);
+		 gpro_t.gTimer_copy_cmd_counter=0; 
+	     gpro_t.receive_copy_buff[3]=copy_null;
 	}
 
 	break;
@@ -377,10 +393,18 @@ static void receive_cmd_or_data_handler(void)
 	case ultrasonic_on_off:
 	if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
 		run_t.ultrasonic = open;
+		SendData_Set_Command(0x14,0x01); //close ptc 
+		 osDelay(3);
+		 gpro_t.gTimer_copy_cmd_counter=0; 
+	     gpro_t.receive_copy_buff[4]=copy_null;
 
 		}
 		else{//power off 
 		run_t.ultrasonic = close;
+		SendData_Set_Command(0x13,0x0); //close ptc 
+		 osDelay(3);
+		 gpro_t.gTimer_copy_cmd_counter=0; 
+	     gpro_t.receive_copy_buff[4]=copy_null;
 	}
 
 	break;
@@ -407,7 +431,10 @@ static void receive_cmd_or_data_handler(void)
 		run_t.display_set_timer_or_works_time_mode = PTC_WARNING;
 
 		run_t.dry=0;
-		SendData_Set_Command(0x22,0x0); //close ptc ,but don't buzzer sound .
+		//SendData_Set_Command(0x08,0x01); //high temperatue warning .
+
+		SendWifiData_Answer_Cmd(0x08,0x01);
+	   osDelay(5);
 
 	}
 	else if(gl_tMsg.execuite_cmd_notice== 0x0){ //close 
@@ -430,7 +457,9 @@ static void receive_cmd_or_data_handler(void)
 		run_t.display_set_timer_or_works_time_mode =FAN_WARNING;  //run_t.display_set_timer_or_works_time_mode
 
 		run_t.dry =0;
-		SendData_Set_Command(0x22,0x0); //close ptc ,but don't buzzer sound .
+		//SendData_Set_Command(0x09,0x01); //
+		SendWifiData_Answer_Cmd(0x09,0x01);
+		osDelay(5);
 
 	}
 	else if(gl_tMsg.execuite_cmd_notice == 0x0){ //close 
@@ -440,17 +469,14 @@ static void receive_cmd_or_data_handler(void)
 
 	break;
 
-	case 0x1A: //娓╁害鏁版嵁
+	case 0x1A: //read sensor "DHT11" temperature and humidity value .
 
 	if(gl_tMsg.receive_data_length == 0x02){ //鏁版嵁
 
 	    gpro_t.humidity_real_value = gl_tMsg.rx_data[0];
 		gpro_t.temp_real_value = gl_tMsg.rx_data[1];
 
-		//humidity_value 
-
-		//hum1 =  gpro_t.humidity_real_value/ 10;
-		//hum2 =  gpro_t.humidity_real_value % 10;
+		
 
 		lcd_t.number3_low= gpro_t.humidity_real_value/ 10;
 		lcd_t.number3_high =gpro_t.humidity_real_value/ 10;
@@ -458,18 +484,15 @@ static void receive_cmd_or_data_handler(void)
 		lcd_t.number4_low = gpro_t.humidity_real_value % 10;
 		lcd_t.number4_high = gpro_t.humidity_real_value % 10;
 
-	//temperature_value 
-	//  temp = pdata[6];
-	//temp1 =   gpro_t.temp_real_value/ 10;
-	//temp2   = gpro_t.temp_real_value% 10;
 
-	lcd_t.number1_low= gpro_t.temp_real_value/ 10;
-	lcd_t.number1_high =gpro_t.temp_real_value/ 10;
 
-	lcd_t.number2_low =  gpro_t.temp_real_value% 10;
-	lcd_t.number2_high =  gpro_t.temp_real_value% 10;
+	     lcd_t.number1_low= gpro_t.temp_real_value/ 10;
+	     lcd_t.number1_high =gpro_t.temp_real_value/ 10;
 
-	power_on_display_temp_handler(); //WT.EDIT 2025.03.28
+	     lcd_t.number2_low =  gpro_t.temp_real_value% 10;
+	     lcd_t.number2_high =  gpro_t.temp_real_value% 10;
+
+	     power_on_display_temp_handler(); //WT.EDIT 2025.03.28
 
 	}
 	
@@ -726,18 +749,14 @@ static void receive_copy_cmd_or_data_handler(void)
 	   case wifi_link:
 	   	
 	   
-	          if(gl_tMsg.execuite_cmd_notice ==1){
+          if(gl_tMsg.execuite_cmd_notice ==1){
+   
+			 // gpro_t.receive_copy_cmd = ack_wifi_on;
+			   power_key_long_fun();
+   
+		   }
 	   
-				 // gpro_t.receive_copy_cmd = ack_wifi_on;
-				   power_key_long_fun();
-	   
-			   }
-	   
-	   
-		  
-
-
-	   break;
+	  break;
 
 	   case fan_on_off:
 
