@@ -299,13 +299,6 @@ static void vTaskRunPro(void *pvParameters)
 
        display_timer_and_beijing_time_handler();
        disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
-
-       set_temperature_compare_value_fun();
-
-	   
-      
-	
-      // printf("xTaskRunPro !!!\r\n");
        }
        else if(run_t.power_on== power_off){
           gl_ref.long_key_power_counter =0;
@@ -314,7 +307,7 @@ static void vTaskRunPro(void *pvParameters)
            power_off_handler();
 
        }
-       send_cmd_ack_hanlder() ; 
+      // send_cmd_ack_hanlder() ; 
      
          vTaskDelay(10);
          

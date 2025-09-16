@@ -154,14 +154,14 @@ void add_key_fun(void)
         gpro_t.temp_key_set_value = 1;
         gpro_t.gTimer_set_temp_times = 0;
         gpro_t.smart_phone_turn_off_ptc_flag =0;
-			
+		
 	
 	   break;
 
 	   case setup_timer:
 		  
 			run_t.gTimer_key_timing =0;
-         
+            run_t.timer_time_minutes =0;
 			run_t.timer_time_hours++ ;//run_t.dispTime_minutes = run_t.dispTime_minutes + 60;
 		    if(run_t.timer_time_hours > 24){ //if(run_t.dispTime_minutes > 59){
 
@@ -169,7 +169,7 @@ void add_key_fun(void)
                 
 
 			}
-		
+		    gpro_t.key_be_pressed_flag=1;
       
 		break;
 		}	
@@ -217,6 +217,7 @@ void dec_key_fun(void)
              gpro_t.temp_key_set_value = 1;
              gpro_t.gTimer_set_temp_times = 0;
              gpro_t.smart_phone_turn_off_ptc_flag =0;
+			 
 	
 		    break;
 
@@ -224,7 +225,8 @@ void dec_key_fun(void)
 	    
 			 
 				run_t.gTimer_key_timing =0;
-           
+				
+                run_t.timer_time_minutes =0;
 				run_t.timer_time_hours -- ;//run_t.dispTime_minutes = run_t.dispTime_minutes - 1;
 				if(run_t.timer_time_hours < 0){//if(run_t.dispTime_minutes < 0){
 
@@ -232,7 +234,7 @@ void dec_key_fun(void)
 					
 					
 				}
-                
+                gpro_t.key_be_pressed_flag=1;
         
              break;
 

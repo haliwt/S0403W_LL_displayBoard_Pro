@@ -730,7 +730,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
              run_t.smart_phone_set_temp_value_flag = 0;
              gpro_t.set_temp_value_success = 1;
 			  SendData_Temp_Data(run_t.wifi_set_temperature);
-              osDelay(10);
+              osDelay(5);
               
             }
         

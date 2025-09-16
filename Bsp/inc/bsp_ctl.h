@@ -24,9 +24,9 @@ typedef enum{
 
 typedef enum{
 
-  null,
-  ng,
-  ok
+  copy_null,
+  copy_ng,
+  copy_ok
 
 }copy_cmd_t;
 
@@ -190,6 +190,7 @@ typedef struct __RUN{
 
 	
     int8_t 	gTime_hours;
+
 
      uint8_t gTimer_ptc_fan_warning;
      uint8_t gTimer_again_switch_works ;

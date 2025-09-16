@@ -264,7 +264,7 @@ static void display_digits(uint8_t mask, bool blink)
 // ====== 主函数 ======
 void disp_set_timer_timing_value_fun(void) 
 {
-    static uint8_t tim_bit_1_hours, tim_bit_2_hours;
+    static uint8_t tim_bit_1_hours, tim_bit_2_hours,tim_bit_1_minutes,tim_bit_2_minutes;
     //gpro_t.gTimer_disp_temp_humi_value = 0;
     uint8_t mask;
 	
@@ -282,34 +282,50 @@ void disp_set_timer_timing_value_fun(void)
     if (run_t.gTimer_key_timing < 4) {
         tim_bit_2_hours = run_t.timer_time_hours / 10;
         tim_bit_1_hours = run_t.timer_time_hours % 10;
-        run_t.timer_time_minutes = 0;
 
-        lcd_t.number5_low = lcd_t.number5_high = tim_bit_2_hours;
-        lcd_t.number6_low = lcd_t.number6_high = tim_bit_1_hours;
-        lcd_t.number7_low = lcd_t.number7_high = 0;
-        lcd_t.number8_low = lcd_t.number8_high = 0;
+		tim_bit_2_minutes = run_t.timer_time_minutes /10;
+        tim_bit_1_minutes = run_t.timer_time_minutes % 10;
+
+        lcd_t.number5_low =  tim_bit_2_hours;
+		lcd_t.number5_high = tim_bit_2_hours;
+        lcd_t.number6_low =  tim_bit_1_hours;
+		lcd_t.number6_high = tim_bit_1_hours;
+		
+        lcd_t.number7_low = tim_bit_2_minutes ;
+		lcd_t.number7_high = tim_bit_2_minutes;
+        lcd_t.number8_low = tim_bit_1_minutes ;
+		lcd_t.number8_high= tim_bit_1_minutes;
 
         mask = blink_on ? 0xFF : 0x0F; // 闪烁掩码
         display_digits(mask, blink_on);
 
     } 
 	else{
-        run_t.timer_time_minutes = 0;
+        //run_t.timer_time_minutes = 0;
         run_t.gTimer_timing = 0;
 
-        if (run_t.timer_time_hours != 0){
+        if (run_t.timer_time_hours != 0 && gpro_t.key_be_pressed_flag ==1){
             run_t.timer_timing_define_flag = timing_success;
             run_t.display_set_timer_or_works_time_mode = timer_time;
             run_t.gModel = 0;
+			gpro_t.key_be_pressed_flag =0;
             if (wifi_link_net_state() == 1) {
-                gpro_t.receive_copy_cmd = ack_not_ai_mode;
+				
                 gpro_t.gTimer_again_send_power_on_off = 0;
                 SendData_Set_Command(0x27, 0x02);
             }
-        } 
+        }
+		else if(run_t.timer_timing_define_flag==timing_success && gpro_t.key_be_pressed_flag==0){
+
+            run_t.display_set_timer_or_works_time_mode=timer_time;
+
+		
+
+		}
 		else{
             run_t.timer_timing_define_flag = timing_not_definition;
             run_t.display_set_timer_or_works_time_mode = works_time;
+		    gpro_t.key_be_pressed_flag =0;
             run_t.gModel = 1;
         }
     }

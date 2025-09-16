@@ -68,10 +68,11 @@ typedef struct _process_state{
   
    //send data need copy this is cmd
    uint8_t send_ack_cmd;
-   uint8_t receive_copy_cmd;
+   uint8_t receive_copy_buff[20];
    uint8_t disp_time_colon_flag;
    
    uint8_t disp_fan_switch_flag ;
+   uint8_t key_be_pressed_flag;
    
    uint8_t temp_key_set_value ;
    uint8_t set_temp_value_success;
@@ -90,7 +91,7 @@ typedef struct _process_state{
    uint8_t gTimer_fan_to_ptc_warning;
    uint8_t gTimer_again_send_power_on_off;
    uint8_t gTimer_disp_temp_humi_value;
-  
+   uint8_t  gTimer_copy_cmd_counter;
  
    
 

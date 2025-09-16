@@ -48,7 +48,7 @@ static void works_timer_disp_numaber(void)
     case timer_time:
  
 
-           lcd_t.number5_low=(run_t.timer_time_hours ) /10;
+           	lcd_t.number5_low=(run_t.timer_time_hours ) /10;
 			lcd_t.number5_high =lcd_t.number5_low;//(run_t.timer_time_hours) /10;
 
 			lcd_t.number6_low = (run_t.timer_time_hours ) %10;;

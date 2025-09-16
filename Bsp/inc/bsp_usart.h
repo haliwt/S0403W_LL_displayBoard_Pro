@@ -31,8 +31,9 @@ void usart1_isr_callback_handler(uint8_t data);
 void parse_recieve_data_handler(void);
 
 
-void send_cmd_ack_hanlder(void);
+//void send_cmd_ack_hanlder(void);
 
+void clear_rx_buff(void);
 
 #endif 
 
