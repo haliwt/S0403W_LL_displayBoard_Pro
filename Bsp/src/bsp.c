@@ -487,7 +487,7 @@ static void fan_default_warning_fun(void)
 ****************************************************************************************************/
 static void ptc_high_temp_warning_fun(void)
 {
-   
+   #if 0
     TM1723_Write_Display_Data(0xC9,(0x01+lcdNumber4_Low[lcd_t.number4_low]+lcdNumber5_High_E[0]));//display digital 'E'
    // TM1723_Write_Display_Data(0xCA,T15+lcdNumber5_Low_E[0]+lcdNumber6_High_r[0]);//display digital 'r'  
     if(gpro_t.disp_time_colon_flag ==1){           
@@ -524,6 +524,40 @@ static void ptc_high_temp_warning_fun(void)
         lcd_t.gTimer_fan_10ms=0;
         }
 
+    }
+	#endif 
+
+	 uint8_t colon_data;
+	 static uint8_t fan_time ;
+
+	 // 显示 'E'
+    TM1723_Write_Display_Data(0xC9, 0x01 + lcdNumber4_Low[lcd_t.number4_low] + lcdNumber5_High_E[0]);
+
+    // 显示时间冒号状态
+    colon_data = (gpro_t.disp_time_colon_flag == 1) ? TIME_COLON : TIME_NO_COLON;
+    TM1723_Write_Display_Data(0xCB, colon_data + lcdNumber6_Low_r[0] + lcdNumber7_High[0]);
+
+    // 风扇警告显示逻辑
+    if (run_t.fan_warning == 0) {
+		if(lcd_t.gTimer_fan_10ms > 40){
+        lcd_t.gTimer_fan_10ms=0;
+		fan_time = !fan_time;
+
+		}
+
+        if (fan_time){
+            TM1723_Write_Display_Data(0xCA, lcdNumber5_Low_E[0] + lcdNumber6_High_r[0]);
+            TM1723_Write_Display_Data(0xCC, T14 + lcdNumber7_Low[0] + lcdNumber8_High[1]);
+            TM1723_Write_Display_Data(0xCE, lcdNumber8_Low[1]);
+            TM1723_Write_Display_Data(0xCF, (T16 + T12 + T10) & 0x0B);
+        }
+        else {
+            TM1723_Write_Display_Data(0xCA, T15 + lcdNumber5_Low_E[0] + lcdNumber6_High_r[0]);
+            TM1723_Write_Display_Data(0xCC, lcdNumber7_Low[0] + lcdNumber8_High[1]);
+            TM1723_Write_Display_Data(0xCE, T13 + lcdNumber8_Low[1]);
+            TM1723_Write_Display_Data(0xCF, (T11 + T16) & 0x05);
+        }
+       
     }
 
 }
