@@ -128,6 +128,8 @@ void usart1_isr_callback_handler(uint8_t data)
             else{
                 state=0;
                 rx_data_counter=0;
+				gl_tMsg.usData[0]=0;
+				gl_tMsg.usData[1]=1;
             }
 
         break;
@@ -189,6 +191,10 @@ void usart1_isr_callback_handler(uint8_t data)
 			else{
 				state=0;
 				rx_data_counter=0;
+				gl_tMsg.usData[0]=0;
+				gl_tMsg.usData[1]=1;
+				gl_tMsg.usData[2]=0;
+				gl_tMsg.usData[3]=1;
 			}
 
 		break;
@@ -204,6 +210,11 @@ void usart1_isr_callback_handler(uint8_t data)
 			 else{
                 state=0;
                 rx_data_counter=0;
+				gl_tMsg.usData[0]=0;
+				gl_tMsg.usData[1]=1;
+				gl_tMsg.usData[2]=0;
+				gl_tMsg.usData[3]=1;
+				gl_tMsg.usData[4]=0;
 			 }
          
 
@@ -231,8 +242,11 @@ void usart1_isr_callback_handler(uint8_t data)
 	        else{
 	                state=0;
 	                rx_data_counter=0;
-					 gl_tMsg.usData[0] = 0;
-				    gl_tMsg.usData[1] = 0;
+					gl_tMsg.usData[0]=0;
+					gl_tMsg.usData[1]=1;
+					gl_tMsg.usData[2]=0;
+					gl_tMsg.usData[3]=1;
+					gl_tMsg.usData[4]=0;
 	        }
 			
 
@@ -291,9 +305,9 @@ void clear_rx_buff(void)
 {
 	gl_tMsg.usData[0] = 0;
 	gl_tMsg.usData[1] = 0;
-	gl_tMsg.usData[2] = 0;
-	gl_tMsg.usData[3] = 0;
-    gl_tMsg.usData[4] = 0;
+	//gl_tMsg.usData[2] = 0;
+	//gl_tMsg.usData[3] = 0;
+    gl_tMsg.usData[6] = 0;
 
 }
 /********************************************************************************
@@ -313,17 +327,18 @@ void parse_recieve_data_handler(void)
 	case 0:
       
        receive_cmd_or_data_handler();
+	   clear_rx_buff();
 	 
 
    break;
 
    case 0x0FF: //copy cmd or notice,this is older version protocol.
 		receive_copy_cmd_or_data_handler();
-		
+		clear_rx_buff();
 
    case 0x80:
        receive_copy_cmd_or_data_handler();
-
+       clear_rx_buff();
    break;
 
     }
@@ -339,8 +354,7 @@ void parse_recieve_data_handler(void)
 static void receive_cmd_or_data_handler(void)
 {
 
-
-	switch(gl_tMsg.cmd_notice){
+   switch(gl_tMsg.cmd_notice){
 	case power_on_off:
 
 	if(gl_tMsg.execuite_cmd_notice == 0x01){//power on
@@ -443,9 +457,6 @@ static void receive_cmd_or_data_handler(void)
 
 
 	}
-
-
-
 	break;
 
 	case 0x09: //fan of default of warning.
@@ -498,7 +509,7 @@ static void receive_cmd_or_data_handler(void)
 	
 	break;
 
-	case 0x1C: //琛ㄧず鏃堕棿锛氬皬鏃讹紝鍒嗭紝绉�
+	case 0x1C: //time is hours,minutes,seconds value .
 
 	if(gl_tMsg.receive_data_length == 0x03){ //鏁版嵁
 
@@ -539,12 +550,12 @@ static void receive_cmd_or_data_handler(void)
 
 	case 0x1F: //link wifi if success data 
 
-	if(gl_tMsg.rx_data[0] == 0x01){  // link wifi 
+	if(gl_tMsg.execuite_cmd_notice == 0x01){  // link wifi 
 
 		run_t.wifi_link_net_success =1 ;      
 
 	}
-	else if(gl_tMsg.rx_data[0] == 0x0){ //don't link wifi 
+	else{ //don't link wifi 
 
 		run_t.wifi_link_net_success =0 ;     
 
@@ -577,6 +588,8 @@ static void receive_cmd_or_data_handler(void)
 
 
 	//smart phone data
+	case 0x20: //new version smart phone normal power on and off command.
+
 	case 0x31: //smart phone app timer that power on command,is normal power on and off
 
 	if(gl_tMsg.execuite_cmd_notice == 0x01){ //open
@@ -589,8 +602,6 @@ static void receive_cmd_or_data_handler(void)
 		run_t.wifi_link_net_success=1;
 		SendWifiData_Answer_Cmd(0x031,0x0);
 		xTask_PowerOff_Handler() ; 
-
-
 	}
 
 	break;
@@ -610,6 +621,8 @@ static void receive_cmd_or_data_handler(void)
 
 	break; 
 
+	case 0x2A: //new version main board or smart phone app set temperature value
+
 	case 0x3A: // smart phone APP set temperature value 
 
 		run_t.wifi_link_net_success=1;
@@ -626,7 +639,7 @@ static void receive_cmd_or_data_handler(void)
 		lcd_t.number2_high = run_t.wifi_set_temperature % 10; //
 
 		run_t.smart_phone_set_temp_value_flag =1;
-
+        run_t.gTimer_numbers_one_two_blink=0; //WT.EDIT 2025.09.18
 
 	break;
 	}

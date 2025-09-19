@@ -723,20 +723,24 @@ void disp_temp_humidity_wifi_icon_handler(void)
         }
 
     }
-    else if (run_t.smart_phone_set_temp_value_flag) {
+    else if (run_t.smart_phone_set_temp_value_flag){
         set_lcd_numbers_from_value(run_t.wifi_set_temperature);
 
-        if (run_t.gTimer_numbers_one_two_blink  > 2){
-            display_icons_0xC2(0xff);
-            display_ai_icon(run_t.gModel);
-            display_temp_unit(0xff);
-             disp_set_timer_value = 1;
-             run_t.smart_phone_set_temp_value_flag = 0;
-             gpro_t.set_temp_value_success = 1;
-			  SendData_Temp_Data(run_t.wifi_set_temperature);
-              osDelay(5);
+        if (run_t.gTimer_numbers_one_two_blink  < 9){
+			set_lcd_numbers_from_value(run_t.wifi_set_temperature);
+            Display_Kill_Dry_Ster_Icon(); //address 0xC2
+            display_ai_icon(run_t.gModel); //address 0xC3
+            display_temp_unit(0xff);       //address 0xC4
+            display_wifi_icon();           //address 0xC5
+             //gpro_t.set_temp_value_success = 1;
+			 // SendData_Temp_Data(run_t.wifi_set_temperature);
+             // osDelay(5);
               
             }
+			else{
+               disp_set_timer_value = 1;
+              run_t.smart_phone_set_temp_value_flag = 0;
+			}
         
     } 
 	else {

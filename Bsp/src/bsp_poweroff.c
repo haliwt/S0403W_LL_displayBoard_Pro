@@ -52,11 +52,8 @@ void power_off_handler(void)
 
         run_t.disp_wind_speed_grade =100;	
 
-       
-        
         gpro_t.smart_phone_app_timer_power_on_flag =0;
-      //  freertos_start_timer1_handler();
-     //   freertos_start_timer2_handler();
+   
       
 	}
     

@@ -56,6 +56,7 @@ typedef struct GL_TASK{
    uint8_t  long_key_power_counter;
    uint8_t  key_long_power_flag;
    uint8_t  key_long_mode_flag;
+   uint8_t  key_mode_short_flag ;
    uint8_t  key_power_flag;
    uint8_t  key_mode_flag ;
    uint8_t  key_dec_flag;
@@ -101,7 +102,7 @@ void freeRTOS_Handler(void)
 static void vTaskDecoderPro(void *pvParameters)
 {
 	BaseType_t xResult;
-	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(300); /* ï¿?0ï¿?7ï¿½ï¿½ï¿?0ï¿?0ï¿?0ï¿?1ï¿½ï¿½ï¿?0ï¿?6ï¿?0ï¿?7ï¿½ï¿½ï¿?0ï¿?8ï¿?0ï¿?6ï¿?0ï¿?7ï¿?0ï¿?5ï¿?0ï¿?8ï¿½ï¿½ï¿?0ï¿?4ï¿?0ï¿?1ï¿?0ï¿?2ï¿?0ï¿?9300ms */
+	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(300); /* ï¿½?0ï¿½?7ï¿½ï¿½ï¿½?0ï¿½?0ï¿½?0ï¿½?1ï¿½ï¿½ï¿½?0ï¿½?6ï¿½?0ï¿½?7ï¿½ï¿½ï¿½?0ï¿½?8ï¿½?0ï¿½?6ï¿½?0ï¿½?7ï¿½?0ï¿½?5ï¿½?0ï¿½?8ï¿½ï¿½ï¿½?0ï¿½?4ï¿½?0ï¿½?1ï¿½?0ï¿½?2ï¿½?0ï¿½?9300ms */
 	//uint8_t ucQueueMsgValue[10];
 	 uint32_t ulValue;
 	
@@ -178,6 +179,7 @@ static void vTaskRunPro(void *pvParameters)
 
              }
              else{
+				 
                  gl_ref.long_key_power_counter=0;
                  power_on_off_handler();
              }
@@ -200,11 +202,15 @@ static void vTaskRunPro(void *pvParameters)
 
                     }
 					else{
+						
+						gl_ref.key_long_mode_flag =0;
 					    gl_ref.long_key_mode_counter=0;
-							
-					    SendData_Buzzer();
-					    osDelay(5);
-					    mode_key_short_fun();
+						if(run_t.wifi_link_net_success == 0){	
+                            SendData_Buzzer();
+                            osDelay(5);
+                        }
+                        gl_ref.key_mode_short_flag =1;
+					   // mode_key_short_fun();
 										 
 					}
                
@@ -266,7 +272,13 @@ static void vTaskRunPro(void *pvParameters)
 
         if(run_t.power_on== power_on){
 
-    
+           if(gl_ref.key_mode_short_flag ==1){
+            gl_ref.key_mode_short_flag ++ ;
+            mode_key_short_fun();
+            display_ai_icon(run_t.gModel) ;
+			//printf("key_shrot_mode !!!\r\n");
+
+           }
 
            if( gpro_t.gTimer_mode_key_long > 1 && (gl_ref.key_long_mode_flag  ==1 ||gl_ref.key_long_power_flag ==1)){
                  gl_ref.long_key_mode_counter =0;
@@ -428,14 +440,14 @@ void AppTaskCreate (void)
 */
 //static void AppObjCreate (void)
 //{
-//	/* ï¿?0ï¿?7ï¿?0ï¿?7ï¿?0ï¿?5ï¿½ï¿½10ï¿?0ï¿?0ï¿?0ï¿?2uint8_tï¿?0ï¿?4ï¿?0ï¿?1ï¿?0ï¿?3ï¿?0ï¿?4ï¿?0ï¿?3ï¿?0ï¿?4ï¿?0ï¿?9ï¿?0ï¿?7ï¿?0ï¿?9ï¿?0ï¿?4 */
+//	/* ï¿½?0ï¿½?7ï¿½?0ï¿½?7ï¿½?0ï¿½?5ï¿½ï¿½10ï¿½?0ï¿½?0ï¿½?0ï¿½?2uint8_tï¿½?0ï¿½?4ï¿½?0ï¿½?1ï¿½?0ï¿½?3ï¿½?0ï¿½?4ï¿½?0ï¿½?3ï¿½?0ï¿½?4ï¿½?0ï¿½?9ï¿½?0ï¿½?7ï¿½?0ï¿½?9ï¿½?0ï¿½?4 */
 //	xUartRxQueue = xQueueCreate(20, sizeof(uint8_t));
 //    if(xUartRxQueue == 0 )
 //    {
 //        /* creat quenu is fail !!! */
 //    }
 //	
-//	/* ï¿?0ï¿?7ï¿?0ï¿?7ï¿?0ï¿?5ï¿½ï¿½10ï¿?0ï¿?0ï¿?0ï¿?2ï¿?0ï¿?7ï¿?0ï¿?3ï¿?0ï¿?7ï¿?0ï¿?4ï¿?0ï¿?0ï¿?0ï¿?0ï¿?0ï¿?9ï¿?0ï¿?5ï¿½ï¿½ï¿?0ï¿?1ï¿?0ï¿?9ï¿?0ï¿?7ï¿?0ï¿?8ï¿?0ï¿?2ï¿?0ï¿?3ï¿?0ï¿?4ï¿?0ï¿?3ï¿?0ï¿?4ï¿?0ï¿?9ï¿?0ï¿?7ï¿?0ï¿?9ï¿?0ï¿?4ï¿?0ï¿?5ï¿?0ï¿?1ï¿?0ï¿?7ï¿?0ï¿?7ï¿?0ï¿?7ï¿?0ï¿?3CM3/CM4ï¿?0ï¿?2ï¿?0ï¿?3ï¿?0ï¿?2ï¿?0ï¿?9ï¿?0ï¿?8ï¿?0ï¿?532ï¿?0ï¿?2ï¿?0ï¿?3ï¿?0ï¿?3ï¿½ï¿½ï¿?0ï¿?5ï¿?0ï¿?1ï¿?0ï¿?6ï¿?0ï¿?3ï¿?0ï¿?0ï¿?0ï¿?2ï¿?0ï¿?0ï¿?0ï¿?0ï¿?0ï¿?9ï¿?0ï¿?5ï¿½ï¿½ï¿?0ï¿?1ï¿?0ï¿?9ï¿?0ï¿?7ï¿?0ï¿?9ï¿?0ï¿?4ï¿?0ï¿?7ï¿?0ï¿?14ï¿?0ï¿?0ï¿?0ï¿?2ï¿½ï¿½ï¿?0ï¿?0ï¿?0ï¿?5ï¿?0ï¿?3 */
+//	/* ï¿½?0ï¿½?7ï¿½?0ï¿½?7ï¿½?0ï¿½?5ï¿½ï¿½10ï¿½?0ï¿½?0ï¿½?0ï¿½?2ï¿½?0ï¿½?7ï¿½?0ï¿½?3ï¿½?0ï¿½?7ï¿½?0ï¿½?4ï¿½?0ï¿½?0ï¿½?0ï¿½?0ï¿½?0ï¿½?9ï¿½?0ï¿½?5ï¿½ï¿½ï¿½?0ï¿½?1ï¿½?0ï¿½?9ï¿½?0ï¿½?7ï¿½?0ï¿½?8ï¿½?0ï¿½?2ï¿½?0ï¿½?3ï¿½?0ï¿½?4ï¿½?0ï¿½?3ï¿½?0ï¿½?4ï¿½?0ï¿½?9ï¿½?0ï¿½?7ï¿½?0ï¿½?9ï¿½?0ï¿½?4ï¿½?0ï¿½?5ï¿½?0ï¿½?1ï¿½?0ï¿½?7ï¿½?0ï¿½?7ï¿½?0ï¿½?7ï¿½?0ï¿½?3CM3/CM4ï¿½?0ï¿½?2ï¿½?0ï¿½?3ï¿½?0ï¿½?2ï¿½?0ï¿½?9ï¿½?0ï¿½?8ï¿½?0ï¿½?532ï¿½?0ï¿½?2ï¿½?0ï¿½?3ï¿½?0ï¿½?3ï¿½ï¿½ï¿½?0ï¿½?5ï¿½?0ï¿½?1ï¿½?0ï¿½?6ï¿½?0ï¿½?3ï¿½?0ï¿½?0ï¿½?0ï¿½?2ï¿½?0ï¿½?0ï¿½?0ï¿½?0ï¿½?0ï¿½?9ï¿½?0ï¿½?5ï¿½ï¿½ï¿½?0ï¿½?1ï¿½?0ï¿½?9ï¿½?0ï¿½?7ï¿½?0ï¿½?9ï¿½?0ï¿½?4ï¿½?0ï¿½?7ï¿½?0ï¿½?14ï¿½?0ï¿½?0ï¿½?0ï¿½?2ï¿½ï¿½ï¿½?0ï¿½?0ï¿½?0ï¿½?5ï¿½?0ï¿½?3 */
 //
 //}
 

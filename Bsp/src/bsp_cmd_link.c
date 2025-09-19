@@ -92,10 +92,8 @@ void SendData_Set_Command(uint8_t cmd,uint8_t data)
 	outputBuf[4]=0x00; // data is length: 00 ->don't data 
 	outputBuf[5]=0xFE; // frame of end code -> 0xFE.
     outputBuf[6] = bcc_check(outputBuf,6);
-
-
-		transferSize=7;
-		usart1_dma_send(outputBuf,transferSize);
+    transferSize=7;
+	usart1_dma_send(outputBuf,transferSize);
 		// if(transferSize)
 		// {
 		// 	while(transOngoingFlag);

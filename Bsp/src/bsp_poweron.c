@@ -50,12 +50,13 @@ static void power_on_ref_init(void)
   
      if(gpro_t.smart_phone_app_timer_power_on_flag == 0){
 
-    	run_t.gModel =1; //WT.EDIT 2022.09.01
+    	
     	run_t.plasma=1;
     	run_t.dry =1;
     	run_t.ultrasonic =1;
     
     }
+	 run_t.gModel =1; //WT.EDIT 2022.09.01
      run_t.gTimer_timing=0;
 
 	 run_t.timer_time_hours =0;
@@ -94,8 +95,6 @@ static void power_on_ref_init(void)
 void power_on_key_short_fun(void)
 {
   
-   
- 
     power_on_step=0;
 	gpro_t.set_temp_value_success =0;
     run_t.smart_phone_set_temp_value_flag=0;
@@ -256,9 +255,6 @@ static void display_lcd_Icon_init(void)
 
 /****************************************************************/
 
-
-
-
 void power_off_handler(void)
 {
     
@@ -367,18 +363,11 @@ void power_off_handler(void)
 static void power_off_breath_Led(void)
  {
 
-      //POWER_LED_TOGGLE() ;
-     // static uint8_t counter;
-	  if(gpro_t.gTimer_disp_temp_humi_value> 1){
-            gpro_t.gTimer_disp_temp_humi_value=0;
-//		    counter = counter ^ 0x01;
-//		    if(counter ==1)POWER_ON_LED() ;
-//            else POWER_OFF_LED() ;
-		     POWER_LED_TOGGLE();
-           /// lcd_power_off_light_off();
-      }
-      //counter_flag ++;
-	  //printf("power_off_led !!!\r\n");
-
+	if(gpro_t.gTimer_disp_temp_humi_value> 1){
+	    gpro_t.gTimer_disp_temp_humi_value=0;
+	    POWER_LED_TOGGLE();
+	  
+	}
+	      
 }
 

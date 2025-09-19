@@ -108,14 +108,14 @@ void display_timer_and_beijing_time_handler(void)
     
     
      Setup_Timer_Times_Donot_Display();
-     if(wifi_link_net_state()==1 && (ai_default != ai_mode_flag)){ //WT.EDIT 2025.01.03
-             ai_default = ai_mode_flag;
-             not_ai_mode_flag++;
-             gpro_t.send_ack_cmd = ack_ai_mode;
-             gpro_t.gTimer_again_send_power_on_off =0;
-			 SendData_Set_Command(0x27,0x01); //smart phone notice is ai mode
-
-     }
+//     if(wifi_link_net_state()==1 && (ai_default != ai_mode_flag)){ //WT.EDIT 2025.01.03
+//             ai_default = ai_mode_flag;
+//             not_ai_mode_flag++;
+//             gpro_t.send_ack_cmd = ack_ai_mode;
+//             gpro_t.gTimer_again_send_power_on_off =0;
+//			// SendData_Set_Command(0x27,0x01); //smart phone notice is ai mode
+//
+//     }
      
 
     break;

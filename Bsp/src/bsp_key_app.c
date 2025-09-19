@@ -61,13 +61,14 @@ void mode_key_short_fun(void)
 	
 			//timer time + don't has ai item
 			run_t.display_set_timer_or_works_time_mode = timer_time;
-			run_t.gModel=0;
+			run_t.gModel=0; //don't display this AI icon.
             run_t.gTimer_again_switch_works = 0;
+			printf("key_shrot_mode-0 !!!\r\n");
 			 
-			if(wifi_link_net_state() == 1){
-				SendData_Set_Command(0x27,0x02); //MODE_NOT AI,BUR NO_BUZZER);
-				
-			}
+			 if(run_t.wifi_link_net_success == 1){
+				SendData_Set_Command(0x07,0x02); //AI command has buzzer sound .
+				vTaskDelay(3);
+			 }
 			
 
 		}
@@ -76,15 +77,17 @@ void mode_key_short_fun(void)
 			run_t.display_set_timer_or_works_time_mode = works_time;
 			run_t.gTimer_again_switch_works = 0;
 			run_t.gModel=1;
-			if(wifi_link_net_state() ==1){
-    				SendData_Set_Command(0x27,0x01); //MODE_AI,BUR NO_BUZZER);
-    				//HAL_Delay(10);
-    		}
+			printf("key_shrot_mode-1 !!!\r\n");
+			 if(run_t.wifi_link_net_success ==1){
+    				SendData_Set_Command(0x07,0x01); //MODE_AI,BUR NO_BUZZER);
+					vTaskDelay(3);
+    		 		
+    		 }
 
 		
 		}
 		
-		display_ai_icon(run_t.gModel) ;
+	//	display_ai_icon(run_t.gModel) ;
 			
 	}		
 }
