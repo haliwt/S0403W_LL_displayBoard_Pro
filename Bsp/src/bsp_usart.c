@@ -226,8 +226,8 @@ void usart1_isr_callback_handler(uint8_t data)
             gl_tMsg.usData[rx_data_counter] = inputBuf[0];
 	        gl_tMsg.bcc_check_code =  gl_tMsg.usData[rx_data_counter];
 			gl_tMsg.data_length = rx_data_counter;
-	      //  if(gl_tMsg.bcc_check_code == bcc_check(gl_tMsg.usData, gl_tMsg.data_length))
-	        {
+	        //if(gl_tMsg.bcc_check_code == bcc_check(gl_tMsg.usData, gl_tMsg.data_length))
+	       // {
 	                state=0;
 	                rx_data_counter=0; 
 					
@@ -238,16 +238,16 @@ void usart1_isr_callback_handler(uint8_t data)
 				 //gl_tMsg.usData[1] = 0;
 				 ///parse_recieve_data_handler();
 
-	        }
-//	        else{
-//	                state=0;
-//	                rx_data_counter=0;
-//					gl_tMsg.usData[0]=0;
-//					gl_tMsg.usData[1]=1;
-//					gl_tMsg.usData[2]=0;
-//					gl_tMsg.usData[3]=1;
-//					gl_tMsg.usData[4]=0;
-//	        }
+	       // }
+	        // else{
+	        //         state=0;
+	        //         rx_data_counter=0;
+			// 		gl_tMsg.usData[0]=0;
+			// 		gl_tMsg.usData[1]=1;
+			// 		gl_tMsg.usData[2]=0;
+			// 		gl_tMsg.usData[3]=1;
+			// 		gl_tMsg.usData[4]=0;
+	        // }
 			
 
         break;
@@ -321,7 +321,7 @@ void clear_rx_buff(void)
 void parse_recieve_data_handler(void)
 {
   
-    
+   if(gl_tMsg.bcc_check_code == bcc_check(gl_tMsg.usData, gl_tMsg.data_length)){
 	switch(gl_tMsg.copy_cmd_notice){ //cmd or notice .
 
 	case 0:
@@ -344,6 +344,7 @@ void parse_recieve_data_handler(void)
 	break;
 
     }
+  }
  }
 
 /**
