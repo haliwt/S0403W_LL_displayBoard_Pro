@@ -372,14 +372,16 @@ static void receive_cmd_or_data_handler(void)
 	case ptc_on_off: //PTC 
 	if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
 		run_t.dry = open;
-		SendData_Set_Command(0x12,0x01); //close ptc 
-		osDelay(3);
-		gpro_t.gTimer_copy_cmd_counter=0; 
-	    gpro_t.receive_copy_buff[2]=copy_null;
-        Display_Kill_Dry_Ster_Icon();
+			//printf("dry is open !!!\n");
+			SendData_Set_Command(0x12,0x01); //close ptc 
+			osDelay(3);
+			gpro_t.gTimer_copy_cmd_counter=0; 
+			gpro_t.receive_copy_buff[2]=copy_null;
+			Display_Kill_Dry_Ster_Icon();
 		}
 		else{//power off 
 			run_t.dry = close;
+			//printf("dry is close !!!\n");
 			SendData_Set_Command(0x12,0x0); //close ptc 
 		    osDelay(3);
 			gpro_t.gTimer_copy_cmd_counter=0; 
