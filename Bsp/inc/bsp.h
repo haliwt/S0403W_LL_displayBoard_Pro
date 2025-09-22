@@ -36,7 +36,9 @@
 
 #define  USE_FreeRTOS      1
 	
-#define Enable_EventRecorder 1  
+#define Enable_EventRecorder    0
+
+#define DEBUG_FLAG    Enable_EventRecorder
 
 #if USE_FreeRTOS == 1
 	#include "FreeRTOS.h"

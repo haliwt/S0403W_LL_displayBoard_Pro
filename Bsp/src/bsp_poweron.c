@@ -347,7 +347,7 @@ void power_off_handler(void)
 		run_t.wifi_led_fast_blink_flag=0;
 		run_t.timer_timing_define_flag = timing_not_definition;
 		
-		run_t.disp_wind_speed_grade =30;	
+		run_t.disp_wind_speed_grade =100;	
 		
 		
 } 

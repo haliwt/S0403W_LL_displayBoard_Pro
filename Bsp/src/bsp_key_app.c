@@ -63,7 +63,10 @@ void mode_key_short_fun(void)
 			run_t.display_set_timer_or_works_time_mode = timer_time;
 			run_t.gModel=0; //don't display this AI icon.
             run_t.gTimer_again_switch_works = 0;
+			#if DEBUG_FLAG
 			printf("key_shrot_mode-0 !!!\r\n");
+
+			#endif 
 			 
 			 if(run_t.wifi_link_net_success == 1){
 				SendData_Set_Command(0x07,0x02); //AI command has buzzer sound .
@@ -77,7 +80,9 @@ void mode_key_short_fun(void)
 			run_t.display_set_timer_or_works_time_mode = works_time;
 			run_t.gTimer_again_switch_works = 0;
 			run_t.gModel=1;
+			#if DEBUG_FLAG
 			printf("key_shrot_mode-1 !!!\r\n");
+			#endif 
 			 if(run_t.wifi_link_net_success ==1){
     				SendData_Set_Command(0x07,0x01); //MODE_AI,BUR NO_BUZZER);
 					vTaskDelay(3);
