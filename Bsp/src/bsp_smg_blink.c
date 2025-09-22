@@ -21,7 +21,7 @@ volatile uint16_t blink_counter = 0; // 闪烁计数
 static void works_time_fun(void);
 static void disp_fan_speed_level(void);
 static void donot_disp_T13_icon_fan_speed_level(void);
-static void fan_set_timer_disp_leaf(uint8_t disp);
+//static void fan_set_timer_disp_leaf(uint8_t disp);
 
 
 
@@ -40,17 +40,17 @@ static void fan_set_timer_disp_leaf(uint8_t disp);
 * @param
 * @return
 */
-static void update_wind_speed_display(uint8_t mask) 
-{
-    uint8_t base = lcdNumber8_Low[lcd_t.number8_low];
-    if (run_t.disp_wind_speed_grade > 66) {
-        TM1723_Write_Display_Data(ADDR_WIND, (T13 + base + WIND_SPEED_FULL) & mask);
-    } else if (run_t.disp_wind_speed_grade > 33) {
-        TM1723_Write_Display_Data(ADDR_WIND, (T13 + base + WIND_SPEED_TWO) & mask);
-    } else {
-        TM1723_Write_Display_Data(ADDR_WIND, (T13 + base + WIND_SPEED_ONE) & mask);
-    }
-}
+//static void update_wind_speed_display(uint8_t mask) 
+//{
+//    uint8_t base = lcdNumber8_Low[lcd_t.number8_low];
+//    if (run_t.disp_wind_speed_grade > 66) {
+//        TM1723_Write_Display_Data(ADDR_WIND, (T13 + base + WIND_SPEED_FULL) & mask);
+//    } else if (run_t.disp_wind_speed_grade > 33) {
+//        TM1723_Write_Display_Data(ADDR_WIND, (T13 + base + WIND_SPEED_TWO) & mask);
+//    } else {
+//        TM1723_Write_Display_Data(ADDR_WIND, (T13 + base + WIND_SPEED_ONE) & mask);
+//    }
+//}
 
 /**
 * @brief 
@@ -80,7 +80,7 @@ static void display_digits(uint8_t mask, bool blink)
 static void display_digits(uint8_t mask, bool blink) 
 {
   // uint8_t colon ;
-   	uint8_t colon_base,t15_base ,t14_base,t13_base,t10_base;
+   	uint8_t t15_base ,t14_base,t13_base,t10_base;
    #if 0
    // DIGIT45
     if (!blink) {
@@ -593,27 +593,27 @@ void fan_disp_speed_leaf(uint8_t disp)
 
 }
 
-static void fan_set_timer_disp_leaf(uint8_t disp)
-{
+//static void fan_set_timer_disp_leaf(uint8_t disp)
+//{
 
-    if(disp==0){
+//    if(disp==0){
 
-      TM1723_Write_Display_Data(0xCC,T14_NO+lcdNumber7_Low[lcd_t.number7_low]+lcdNumber8_High[lcd_t.number8_high]);//display "7,8'
-      disp_fan_speed_level();
-      TM1723_Write_Display_Data(0xCF,((T11+T16)& 0x05));//
+//      TM1723_Write_Display_Data(0xCC,T14_NO+lcdNumber7_Low[lcd_t.number7_low]+lcdNumber8_High[lcd_t.number8_high]);//display "7,8'
+//      disp_fan_speed_level();
+//      TM1723_Write_Display_Data(0xCF,((T11+T16)& 0x05));//
 
-    }
-    else{
+//    }
+//    else{
 
-       TM1723_Write_Display_Data(0xCC,T14+lcdNumber7_Low[lcd_t.number7_low]+lcdNumber8_High[lcd_t.number8_high]);//display "t,c
-       donot_disp_T13_icon_fan_speed_level();
-       TM1723_Write_Display_Data(0xCF,((T16+T12+T10)&0x0B));//
+//       TM1723_Write_Display_Data(0xCC,T14+lcdNumber7_Low[lcd_t.number7_low]+lcdNumber8_High[lcd_t.number8_high]);//display "t,c
+//       donot_disp_T13_icon_fan_speed_level();
+//       TM1723_Write_Display_Data(0xCF,((T16+T12+T10)&0x0B));//
 
-    }
+//    }
 
 
 
-}
+//}
 
 /******************************************************************************
 	*
