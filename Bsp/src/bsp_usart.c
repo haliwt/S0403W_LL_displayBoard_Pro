@@ -554,9 +554,9 @@ static void receive_cmd_or_data_handler(void)
 
 	break;
 
-	case 0x1F: //link wifi if success data 
+	case 0x1F: //link wifi if success data don't command and notice.
 
-	if(gl_tMsg.execuite_cmd_notice == 0x01){  // link wifi 
+	if(gl_tMsg.rx_data[0] == 0x01){  // link wifi 
 
 		run_t.wifi_link_net_success =1 ;      
 
