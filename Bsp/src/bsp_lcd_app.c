@@ -122,6 +122,9 @@ static void display_temperture_humidity_value(void)
 
 		wifi_icon_blink_reg0xc5_handler();//TM1723_Write_Display_Data(0xC5,((0x01+lcdNumber2_Low[lcd_t.number2_low])+lcdNumber3_High[lcd_t.number3_high])&0xff);
 		display_lowbit_lunmber4_reg0xc9_handler();
+	   
+	     sendNotice_toMainBoard(0xF0,0x01); //WT.EDIT 2025.10.31 new version : 0x01 
+	     vTaskDelay(pdMS_TO_TICKS(5));
 
        }
 }
