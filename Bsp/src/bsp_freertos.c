@@ -61,6 +61,7 @@ typedef struct GL_TASK{
    uint8_t  key_mode_flag ;
    uint8_t  key_dec_flag;
    uint8_t  key_add_flag;
+   uint8_t   stopTwoHours_flag;
 
    uint8_t smart_phone_app_timer_power_on_flag;
    uint8_t app_power_off_flag;
@@ -221,6 +222,7 @@ static void vTaskRunPro(void *pvParameters)
                 gpro_t.smart_phone_power_on ++;
                 run_t.power_on= power_on;
                 power_on_key_short_fun();
+				
 
         }
         else if(gl_ref.smart_phone_app_timer_power_on_flag ==1){
@@ -271,7 +273,7 @@ static void vTaskRunPro(void *pvParameters)
 
 
         if(run_t.power_on== power_on){
-
+         
            if(gl_ref.key_mode_short_flag ==1){
             gl_ref.key_mode_short_flag ++ ;
             mode_key_short_fun();
@@ -297,13 +299,27 @@ static void vTaskRunPro(void *pvParameters)
             }
 
           
-       power_on_handler();
-       disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
+	       power_on_handler();
+	       disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
+	       if(gpro_t.gTimer_two_hours_conter > 7199){ //WT.EDIT2025.10.30
+		   	   gpro_t.gTimer_two_hours_conter=0;
+               gl_ref.stopTwoHours_flag = 1;
+		       SendData_twoHours_Data(0x78);//120 minutes
+
+		   }
+		   else if(gl_ref.stopTwoHours_flag == 1 && gpro_t.gTimer_two_hours_conter > 600){
+		        gpro_t.gTimer_two_hours_conter=0;
+				gl_ref.stopTwoHours_flag = 0;
+				SendData_twoHours_Data(0x0A);//10 minutes
+
+
+          }
        }
        else if(run_t.power_on== power_off){
           gl_ref.long_key_power_counter =0;
            gl_ref.key_long_power_flag =0;
            run_t.power_on_disp_smg_number = 0;
+		   gpro_t.gTimer_two_hours_conter=0; //WT.EDIT 2025.1030
            power_off_handler();
 
        }

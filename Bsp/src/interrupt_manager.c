@@ -58,6 +58,7 @@ void tim16_int_callback_handler(void)
         run_t.gTimer_again_switch_works ++ ;
 		
 		 lcd_t.gTimer_colon_counter++;
+		gpro_t.gTimer_two_hours_conter ++ ;
        
 		 
 	}

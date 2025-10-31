@@ -22,6 +22,8 @@ void power_on_handler(void)
 
       case 0:
           power_on_ref_init();
+          sendNotice_toMainBoard(0xF0,0x01); //WT.EDIT 2025.10.31 new version : 0x01 
+	      vTaskDelay(pdMS_TO_TICKS(5));
           power_on_step =1;
 
       break;
@@ -107,7 +109,7 @@ void power_on_key_short_fun(void)
 
 	 run_t.power_off_id_flag =1;
      run_t.display_set_timer_or_works_time_mode=works_time ;
-  
+     gpro_t.gTimer_two_hours_conter=0;
   
      Lcd_PowerOn_Fun();
    

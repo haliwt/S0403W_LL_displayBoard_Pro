@@ -94,6 +94,7 @@ typedef struct _process_state{
    uint8_t gTimer_again_send_power_on_off;
    uint8_t gTimer_disp_temp_humi_value;
    uint8_t  gTimer_copy_cmd_counter;
+   uint16_t gTimer_two_hours_conter;
  
    
 
