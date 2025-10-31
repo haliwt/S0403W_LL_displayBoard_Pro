@@ -123,8 +123,7 @@ static void display_temperture_humidity_value(void)
 		wifi_icon_blink_reg0xc5_handler();//TM1723_Write_Display_Data(0xC5,((0x01+lcdNumber2_Low[lcd_t.number2_low])+lcdNumber3_High[lcd_t.number3_high])&0xff);
 		display_lowbit_lunmber4_reg0xc9_handler();
 	   
-	     sendNotice_toMainBoard(0xF0,0x01); //WT.EDIT 2025.10.31 new version : 0x01 
-	     vTaskDelay(pdMS_TO_TICKS(5));
+	   
 
        }
 }
@@ -368,11 +367,10 @@ void disp_temp_humidity_wifi_icon_handler(void)
     TIM1723_Write_Cmd(0x40);
     TIM1723_Write_Cmd(0x44);
 
+    switch(gpro_t.temp_key_set_value){
 
-
-     if(gpro_t.temp_key_set_value ==1){ //
-
-	    if (gpro_t.gTimer_set_temp_times < 2){
+	  case 1:
+         if (gpro_t.gTimer_set_temp_times < 2){
             set_lcd_numbers_from_value(run_t.wifi_set_temperature);
             Display_Kill_Dry_Ster_Icon(); //address 0xC2
             display_ai_icon(run_t.gModel); //address 0xC3
@@ -383,21 +381,25 @@ void disp_temp_humidity_wifi_icon_handler(void)
         else{
           gpro_t.set_temp_value_success=1;
           gpro_t.temp_key_set_value =0;
-          gpro_t.gTimer_temp_compare_value =0;
+           gpro_t.gTimer_temp_compare_value =10; //at once run compare value fun WT.EDIT 2025.10.31
+		  set_temperature_compare_value_fun();
 	
 		  if( run_t.smart_phone_set_temp_value_flag ==0){ //WT.EIDT 2025.10.31
 		    SendData_Temp_Data(run_t.wifi_set_temperature);
             vTaskDelay(pdMS_TO_TICKS(5));
 		  }
-		  gpro_t.gTimer_temp_compare_value =10; //at once run compare value fun WT.EDIT 2025.10.31
+		 
         }
 
-    }
-	else {
+ 
+
+	break;
+
+	case 0:
         
-		
-        display_temperture_humidity_value();
+	     display_temperture_humidity_value();
         set_temperature_compare_value_fun();
+     break;
     }
 
     wifi_icon_blink_reg0xc5_handler();

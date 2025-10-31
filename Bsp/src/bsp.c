@@ -262,18 +262,6 @@ void set_temperature_compare_value_fun(void)
 
 	}
 
-//    if(gpro_t.temp_key_set_value ==1 && gpro_t.gTimer_set_temp_times > 1){ //
-    
-//         // run_t.smart_phone_set_temp_value_flag =1;
-//          gpro_t.temp_key_set_value =0;
-//	      run_t.ptc_on_off_flag=0; //force close ptc function is disable. WT.EDIT 2025.10.31
-//          gpro_t.gTimer_temp_compare_value =0;
-//		  gpro_t.set_temp_value_success=1; //WT.EDIT 2025.10.31
-//		  SendData_Temp_Data(run_t.wifi_set_temperature);
-//          vTaskDelay(pdMS_TO_TICKS(5));
-
-//    }
-
 	switch(gpro_t.set_temp_value_success){
 
 	 case 1:

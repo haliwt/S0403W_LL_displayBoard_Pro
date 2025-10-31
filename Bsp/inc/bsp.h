@@ -36,7 +36,7 @@
 
 #define  USE_FreeRTOS      1
 	
-#define Enable_EventRecorder    0
+#define Enable_EventRecorder    1
 
 #define DEBUG_FLAG    Enable_EventRecorder
 
@@ -87,6 +87,7 @@ typedef struct _process_state{
 
 
    //
+   uint8_t gTimer_soft_version_counter;
    uint8_t gTimer_mode_key_long;
    uint8_t gTimer_set_temp_times;
    uint8_t gTimer_temp_compare_value;

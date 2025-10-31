@@ -24,6 +24,7 @@ void power_on_handler(void)
           power_on_ref_init();
           //sendNotice_toMainBoard(0xF0,0x01); //WT.EDIT 2025.10.31 new version : 0x01 
 	      //vTaskDelay(pdMS_TO_TICKS(5));
+	      gpro_t.temp_key_set_value =0;
           power_on_step =1;
 
       break;
@@ -54,7 +55,20 @@ void power_on_handler(void)
 
 
           }
-	     power_on_step =1;
+	     power_on_step =4;
+
+	  break;
+
+	  case 4:
+        if(gpro_t.gTimer_soft_version_counter > 3){
+			gpro_t.gTimer_soft_version_counter=0;
+	   		 sendNotice_toMainBoard(0xF0,0x01); //WT.EDIT 2025.10.31 new version : 0x01 
+			vTaskDelay(pdMS_TO_TICKS(5));
+
+        }
+	  
+	  power_on_step =1;
+
 
 	  break;
 
@@ -82,7 +96,7 @@ static void power_on_ref_init(void)
 	 run_t.timer_time_hours =0;
 	 run_t.timer_time_minutes =0;
 	 run_t.power_off_id_flag=1;
-
+      gpro_t.temp_key_set_value =0;
 	  gpro_t.power_on_every_times=1 ;
       run_t.disp_wind_speed_grade =100;//WT.EDIT 2025.04.16
       run_t.wifi_set_temperature=40; //WT.EDIT 2025.04.16
