@@ -28,7 +28,7 @@ void tim16_int_callback_handler(void)
     if(tm1>99){ //100ms 
        tm1=0;
        lcd_t.gTimer_colon_ms++ ;
-	   run_t.gTimer_numbers_one_two_blink++;
+
 	   run_t.gTimer_digital5678_ms++;
        run_t.gTimer_ptc_fan_blink_warning++ ;
 	    lcd_t.gTimer_leaf_counter++;

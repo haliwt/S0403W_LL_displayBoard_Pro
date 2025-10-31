@@ -22,22 +22,40 @@ void power_on_handler(void)
 
       case 0:
           power_on_ref_init();
-          sendNotice_toMainBoard(0xF0,0x01); //WT.EDIT 2025.10.31 new version : 0x01 
-	      vTaskDelay(pdMS_TO_TICKS(5));
+          //sendNotice_toMainBoard(0xF0,0x01); //WT.EDIT 2025.10.31 new version : 0x01 
+	      //vTaskDelay(pdMS_TO_TICKS(5));
           power_on_step =1;
 
       break;
 
 	  case 1:
 
-	  disp_temp_humidity_wifi_icon_handler();
+	    disp_temp_humidity_wifi_icon_handler();
 	    power_on_step =2;
 
 	  break;
 
 	  case 2:
 	  	display_timer_and_beijing_time_handler();
-        power_on_step =1;
+        power_on_step =3;
+	  break;
+
+	  case 3:
+	  	  if(gpro_t.gTimer_two_hours_conter > 7199){ //WT.EDIT2025.10.30
+		   	   gpro_t.gTimer_two_hours_conter=0;
+               gpro_t.stopTwoHours_flag = 1;
+		       SendData_twoHours_Data(0x78);//120 minutes
+
+		   }
+		   else if(gpro_t.stopTwoHours_flag == 1 && gpro_t.gTimer_two_hours_conter > 630){
+		        gpro_t.gTimer_two_hours_conter=0;
+				gpro_t.stopTwoHours_flag = 0;
+				SendData_twoHours_Data(0x0A);//10 minutes
+
+
+          }
+	     power_on_step =1;
+
 	  break;
 
 
@@ -75,7 +93,7 @@ static void power_on_ref_init(void)
 	     run_t.dispTime_minutes=0;
 
       }
-  
+      gpro_t.stopTwoHours_flag=0;
 	
       LCD_BACK_LIGHT_ON();
 	  POWER_ON_LED() ;

@@ -371,8 +371,8 @@ static void receive_cmd_or_data_handler(void)
 
 	case ptc_on_off: //PTC 
 	if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
-		run_t.dry = open;
-			//printf("dry is open !!!\n");
+		    run_t.dry = open;
+			run_t.ptc_on_off_flag = 0;
 			SendData_Set_Command(0x12,0x01); //close ptc 
 			osDelay(3);
 			gpro_t.gTimer_copy_cmd_counter=0; 
@@ -381,7 +381,7 @@ static void receive_cmd_or_data_handler(void)
 		}
 		else{//power off 
 			run_t.dry = close;
-			//printf("dry is close !!!\n");
+			run_t.ptc_on_off_flag = 1;
 			SendData_Set_Command(0x12,0x0); //close ptc 
 		    osDelay(3);
 			gpro_t.gTimer_copy_cmd_counter=0; 
@@ -632,7 +632,9 @@ static void receive_cmd_or_data_handler(void)
 	case 0x3A: // smart phone APP set temperature value 
 
 		run_t.wifi_link_net_success=1;
-		gpro_t.smart_phone_turn_off_ptc_flag=0; //smart phone app from setup temperature value .
+	    run_t.ptc_on_off_flag = 0; //WT.EDIT 2025.10.31
+	   
+        gpro_t.smart_phone_turn_off_ptc_flag=0; //smart phone app from setup temperature value .
 		run_t.wifi_set_temperature = gl_tMsg.rx_data[0];
 
 		//decade_temp =  run_t.wifi_set_temperature / 10 ;
@@ -644,8 +646,10 @@ static void receive_cmd_or_data_handler(void)
 		lcd_t.number2_low = run_t.wifi_set_temperature % 10; //
 		lcd_t.number2_high = run_t.wifi_set_temperature % 10; //
 
-		run_t.smart_phone_set_temp_value_flag =1;
-        run_t.gTimer_numbers_one_two_blink=0; //WT.EDIT 2025.09.18
+		gpro_t.gTimer_set_temp_times=0;//WT.EDIT 2025.10.31
+		gpro_t.temp_key_set_value =1;
+        run_t.smart_phone_set_temp_value_flag =1;
+       
 
 	break;
 	}
