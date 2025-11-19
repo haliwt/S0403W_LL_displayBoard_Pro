@@ -311,7 +311,7 @@ void disp_set_timer_timing_value_fun(void)
 			gpro_t.key_be_pressed_flag =0;
             if (wifi_link_net_state() == 1) {
 				
-                gpro_t.gTimer_again_send_power_on_off = 0;
+                gpro_t.gTimer_cp_timer_counter = 0;
                 SendData_Set_Command(0x27, 0x02);
             }
         }

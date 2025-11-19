@@ -38,11 +38,12 @@ void tim16_int_callback_handler(void)
   if(tm0>999){ //1000 *1ms = 1000ms = 1s
 		tm0=0;
 		
+		
 		 gpro_t.gTimer_mode_key_long++;
          gpro_t.gTimer_set_temp_times++;
          gpro_t.gTimer_temp_compare_value++ ;
          gpro_t.gTimer_fan_to_ptc_warning++ ;
-         gpro_t.gTimer_again_send_power_on_off ++;
+         gpro_t.gTimer_cp_timer_counter ++;
 		 gpro_t.gTimer_disp_temp_humi_value++;
          gpro_t.gTimer_soft_version_counter++;
      
@@ -58,7 +59,12 @@ void tim16_int_callback_handler(void)
         run_t.gTimer_again_switch_works ++ ;
 		
 		 lcd_t.gTimer_colon_counter++;
-		gpro_t.gTimer_two_hours_conter ++ ;
+		 gpro_t.gTimer_two_hours_second_counter++;
+		 if(gpro_t.gTimer_two_hours_second_counter > 59){//one mintues .WT.EDIT 2025.11.1
+		 	gpro_t.gTimer_two_hours_second_counter =0;
+		    gpro_t.gTimer_two_hours_conter ++ ;
+
+		 }
        
 		 
 	}

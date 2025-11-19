@@ -337,7 +337,7 @@ void parse_recieve_data_handler(void)
    case 0x80:
 
 
-   case 0x0FF: //copy cmd or notice,this is older version protocol.
+   case 0xFF: //copy cmd or notice,this is older version protocol.
 		receive_copy_cmd_or_data_handler();
 		clear_rx_buff();
 
@@ -670,25 +670,16 @@ static void receive_copy_cmd_or_data_handler(void)
 			
 		if(gl_tMsg.execuite_cmd_notice == 0x01){//power on
 		
-			if(run_t.power_on == power_on){
-			
-			   gpro_t.receive_copy_buff[1]  =copy_ok;
+		
+			gpro_t.send_ack_cmd=0;
 
-			}
-			else{
-			    gpro_t.receive_copy_buff[1]  =copy_ng;
-			}
+			
 
 		}
-		else{//power off 
-			
-			if(run_t.power_on == power_off){
-			   gpro_t.receive_copy_buff[1]  =copy_ok;
+		else if(run_t.power_on == power_off){
+	
 
-			}
-			else{
-			  gpro_t.receive_copy_buff[1]  =copy_ng;
-			}
+			   gpro_t.send_ack_cmd=0;
 
 		}
 
@@ -698,23 +689,15 @@ static void receive_copy_cmd_or_data_handler(void)
 	   case  ptc_on_off:
 	   	
 		if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
-			if(run_t.dry == open){
-				gpro_t.receive_copy_buff[2]  =copy_ok;
-
-			}
-			else{
-				gpro_t.receive_copy_buff[2]  =copy_ng;
-			}
+		
+				gpro_t.send_ack_cmd=0;
+			
 		}
-		else{//power off 
-			if(run_t.dry == close){
-				gpro_t.receive_copy_buff[2]  =copy_ok;
-
-			}
-			else{
-				gpro_t.receive_copy_buff[2]  =copy_ng;
-			}
-		}
+		else {
+			
+			 gpro_t.send_ack_cmd=0;
+              
+		 }
 
 		
 
@@ -723,23 +706,11 @@ static void receive_copy_cmd_or_data_handler(void)
 	   case plasma_on_off:
 	   	
 		if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
-			if(run_t.plasma == open){
-			gpro_t.receive_copy_buff[3]  =copy_ok;
-
+				gpro_t.send_ack_cmd=0;
+			
 			}
-			else{
-			gpro_t.receive_copy_buff[3]  =copy_ng;
-			}
-
-			}
-			else{//power off 
-				if(run_t.plasma == close){
-					gpro_t.receive_copy_buff[3]  =copy_ok;
-	
-				}
-				else{
-					gpro_t.receive_copy_buff[3]  =copy_ng;
-				}
+			else {
+				gpro_t.send_ack_cmd=0;
 
 			}
 
@@ -748,36 +719,22 @@ static void receive_copy_cmd_or_data_handler(void)
 	   case ultrasonic_on_off:
 	   	
 		if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
-			if(run_t.plasma == open){
-			gpro_t.receive_copy_buff[4]  =copy_ok;
-
-			}
-			else{
-		      gpro_t.receive_copy_buff[4]  =copy_ng;
-			}
+			gpro_t.send_ack_cmd=0;
 
 		}
-		else{//power off 
-			if(run_t.plasma == close){
-		      gpro_t.receive_copy_buff[4]  =copy_ok;
-
-			}
-			else{
-			gpro_t.receive_copy_buff[4]  =copy_ng;
-			}
+		else {
+		   gpro_t.send_ack_cmd=0;
 		}
 
 	   break;
 
 	   case wifi_link:
 	   	
-	   
-          if(gl_tMsg.execuite_cmd_notice ==1){
-   
-			 // gpro_t.receive_copy_cmd = ack_wifi_on;
+	      if(gl_tMsg.execuite_cmd_notice ==1){
+               gpro_t.send_ack_cmd=0;
 			   power_key_long_fun();
    
-		   }
+		  }
 	   
 	  break;
 
@@ -785,7 +742,7 @@ static void receive_copy_cmd_or_data_handler(void)
 
 		if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
 			if(run_t.fan == open){
-			gpro_t.receive_copy_buff[11]  =copy_ok;
+			  gpro_t.receive_copy_buff[11]  =copy_ok;
 
 			}
 			else{
@@ -803,6 +760,20 @@ static void receive_copy_cmd_or_data_handler(void)
 			}
 
 		}
+
+	   break;
+
+
+	   case 0x1C:
+
+	       if(gl_tMsg.execuite_cmd_notice == 0x01){
+	   	
+                 gpro_t.send_ack_cmd=0;
+	       	 }
+			 else{
+	             gpro_t.send_ack_cmd=0;
+			}
+
 
 	   break;
 	   
@@ -823,58 +794,178 @@ static void receive_copy_cmd_or_data_handler(void)
 *
 */
 
-//bool process_ack_frame(uint8_t *frame, uint8_t len)
-//{
-//    // 基本长度检查
-//    if (len < 6) return false;
+void ack_handler(uint8_t *data)
+{
+  
+  //power ack 
+  switch(gpro_t.send_ack_cmd){
+              
 
-//    // 帧头检查
-//    if (frame[0] != FRAME_START_BYTE)
-//        return false;
+   case 0x01: //power on or off
 
-//    // 命令字检查（ACK 成功或失败）
-//    if (frame[1] != ACK_SUCCESS_CMD && frame[1] != ACK_FAILURE_CMD)
-//        return false;
+   
+   if(gpro_t.ack_cp_cmd_flag==0x11){
+	   gpro_t.ack_cp_repeat_counter++;
+   if(gpro_t.ack_cp_repeat_counter < 4 && gpro_t.gTimer_copy_cmd_counter > 0 ){
+	       gpro_t.gTimer_copy_cmd_counter =0;
+	       SendData_PowerOnOff(1);
+		   osDelay(5);
 
-//    uint8_t data_len = frame[2];
-//    if (data_len < 1) return false; // 至少有原命令字
+   }
+   }
+   else if(gpro_t.ack_cp_cmd_flag==0x10){ //be should is power off .
+         gpro_t.ack_cp_repeat_counter++;
+	     if(gpro_t.ack_cp_repeat_counter < 4 && gpro_t.gTimer_copy_cmd_counter > 0){
+	       gpro_t.gTimer_copy_cmd_counter =0;
+	       SendData_PowerOnOff(0);
+		   osDelay(5);
+         }
 
-//    // 帧尾检查
-//    if (frame[3 + data_len] != FRAME_END_BYTE)
-//        return false;
+     }
 
-//    // BCC 校验
-//    uint8_t bcc_calc = calc_bcc(frame, 4 + data_len); // 帧尾之前
-//    uint8_t bcc_recv = frame[4 + data_len];
-//    if (bcc_calc != bcc_recv)
-//        return false;
+	 if(gpro_t.ack_cp_repeat_counter > 5){
+	  	gpro_t.ack_cp_repeat_counter=6;
+		gpro_t.send_ack_cmd=0;
 
-//    // 数据区解析
-//    uint8_t ack_cmd = frame[3]; // 原命令字
+	  }
 
-//    // 对比原命令
-//    if (ack_cmd != last_cmd)
-//    {
-//        // 命令不匹配
-//        return false;
-//    }
 
-//    // 判断 ACK 成功/失败
-//    if (frame[1] == ACK_SUCCESS_CMD)
-//    {
-//        // ✅ 应答正确
-//        return true;
-//    }
-//    else
-//    {
-//        // ❌ 应答失败
-//        return false;
-//    }
-//}
+  
 
-// 假设这些在你的主文件中已经定义
-//extern QueueHandle_t xUartRxQueue;
-//extern uint8_t inputBuf[1];
+  break;
+
+  case 0x02: //PTC ON OR OFF ACK
+
+  
+  if(gpro_t.ack_cp_cmd_flag == 0x21){// 0x2 ->
+      gpro_t.ack_cp_repeat_counter++;
+     if(gpro_t.ack_cp_repeat_counter < 4 && gpro_t.gTimer_copy_cmd_counter > 0){
+			gpro_t.gTimer_copy_cmd_counter =0;
+			SendData_Set_Command(0x02,0x01); //close ptc 
+			osDelay(5);
+	 }
+  
+	}
+    else if(	gpro_t.ack_cp_cmd_flag == 0x20){ // 0x2 ->)
+
+      gpro_t.ack_cp_repeat_counter++;
+	 if(gpro_t.ack_cp_repeat_counter < 4 && gpro_t.gTimer_copy_cmd_counter > 0){
+		   gpro_t.gTimer_copy_cmd_counter =0;
+		   SendData_Set_Command(0x02,0x00); //close ptc 
+		   osDelay(5);
+  
+  
+	   }
+  
+	  if(gpro_t.ack_cp_repeat_counter > 5){
+	  	gpro_t.ack_cp_repeat_counter=6;
+		gpro_t.send_ack_cmd=0;
+
+	  }
+
+  
+  }
+  break;
+
+  case 0x22:
+  //PTC ON OR OFF BY compare value 
+
+  if(gpro_t.ack_cp_cmd_flag == 0xE1){// 0x1XX ->0XDXX  0X2XX->0XEXX
+      gpro_t.ack_cp_repeat_counter++;
+      if(gpro_t.ack_cp_repeat_counter < 4 && gpro_t.gTimer_copy_cmd_counter > 0){
+			gpro_t.gTimer_copy_cmd_counter =0;
+			SendData_Set_Command(0x22,0x01); //close ptc 
+			osDelay(5);
+	  }
+  
+	
+
+  }
+  else if(	gpro_t.ack_cp_cmd_flag == 0xE0){ // 0x2 ->)
+
+      gpro_t.ack_cp_repeat_counter++;
+	 if(gpro_t.ack_cp_repeat_counter < 4 && gpro_t.gTimer_copy_cmd_counter > 0){
+		   gpro_t.gTimer_copy_cmd_counter =0;
+		   SendData_Set_Command(0x22,0x00); //close ptc 
+		   osDelay(5);
+  
+  
+	   }
+   }
+  
+	  if(gpro_t.ack_cp_repeat_counter > 5){
+	  	gpro_t.ack_cp_repeat_counter=6;
+		gpro_t.send_ack_cmd=0;
+
+	  }
+
+  
+  
+  break;
+
+  case 0x1C:
+  //TWO HOURS  ON OR OFF B
+
+  if(gpro_t.two_hours_cp_flag == 0xC1){// 0x2 ->  // 0x1XX ->0XDXX  0X2XX->0XEXX
+      gpro_t.ack_cp_repeat_counter++;
+      if(gpro_t.ack_cp_repeat_counter < 4 && gpro_t.gTimer_copy_cmd_counter > 0){
+			gpro_t.gTimer_copy_cmd_counter =0;
+			SendData_twoHours_Data(0x78);//120 minutes
+			osDelay(5);
+  
+  
+		}
+  
+	 
+  }
+  else if(gpro_t.two_hours_cp_flag== 0xC0){ // 0x2 ->)
+
+     gpro_t.ack_cp_repeat_counter++;
+	 if(gpro_t.ack_cp_repeat_counter < 4 && gpro_t.gTimer_copy_cmd_counter > 0){
+		   gpro_t.gTimer_copy_cmd_counter =0;
+		   SendData_twoHours_Data(0x0A);//10 minutes
+		   osDelay(5);
+  
+  
+	   }
+   }
+	 if(gpro_t.ack_cp_repeat_counter > 5){
+	  	gpro_t.ack_cp_repeat_counter=6;
+		gpro_t.send_ack_cmd=0;
+
+	  }
+
+  
+  
+
+  break;
+
+  case ack_wifi_on:
+
+   if(gpro_t.ack_cp_cmd_flag == 0x31){// 0x1XX ->0XDXX  0X2XX->0XEXX
+       gpro_t.ack_cp_repeat_counter++;
+      if(gpro_t.ack_cp_repeat_counter < 4 && gpro_t.gTimer_copy_cmd_counter > 0){
+
+       gpro_t.gTimer_cp_timer_counter =0;
+       SendData_Set_Command(0x05,0x01); // link wifi of command .
+       osDelay(3);
+      
+    }
+    }
+    if(gpro_t.ack_cp_repeat_counter > 5){
+		gpro_t.send_ack_cmd=0;
+		gpro_t.ack_cp_repeat_counter=6;
+
+    }
+
+  break;
+
+}	
+
+}
+
+
+
 
 /**
  * @brief  UART中断服务程序（ISR）
@@ -893,31 +984,6 @@ static void receive_copy_cmd_or_data_handler(void)
 *Return Ref:
 *
 ******************************************************************************/
-void copy_cmd_notice_hanlder(void)
-{
-	if(gpro_t.gTimer_copy_cmd_counter > 3 && (gpro_t.receive_copy_buff[2]==copy_ng || gpro_t.receive_copy_buff[2]==copy_null)){
-			gpro_t.gTimer_copy_cmd_counter =0;
-	
-	   //ptc open or close copy cmd
-	
-			if(run_t.dry==0){
-			  SendData_Set_Command(0x12,0x00); //close ptc 
-			  //SendWifiData_Answer_Cmd(0x02,0x00);
-			   osDelay(5);
-	
-			}
-			else{
-			  SendData_Set_Command(0x12,0x01); //close ptc 
-			 // SendWifiData_Answer_Cmd(0x12,0x01);
-			   osDelay(5);
-			}
-	   
-	
-   }
- 	  
 
-  
-
-}
 
 

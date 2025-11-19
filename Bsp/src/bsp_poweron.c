@@ -14,7 +14,11 @@ static void power_on_ref_init(void);
 
 static void display_lcd_Icon_init(void);
 
-
+/*
+	*@brief :
+	*@param:
+	*@retval:
+*/
 void power_on_handler(void)
 {
    
@@ -22,11 +26,10 @@ void power_on_handler(void)
 
       case 0:
           power_on_ref_init();
-          //sendNotice_toMainBoard(0xF0,0x01); //WT.EDIT 2025.10.31 new version : 0x01 
-	      //vTaskDelay(pdMS_TO_TICKS(5));
 	      gpro_t.temp_key_set_value =0;
           power_on_step =1;
-
+          gpro_t.gTimer_two_hours_second_counter=0;
+		  gpro_t.gTimer_two_hours_conter=0;
       break;
 
 	  case 1:
@@ -42,17 +45,26 @@ void power_on_handler(void)
 	  break;
 
 	  case 3:
-	  	  if(gpro_t.gTimer_two_hours_conter > 7199){ //WT.EDIT2025.10.30
+	  	  if(gpro_t.gTimer_two_hours_conter > 119){ //WT.EDIT2025.10.30
 		   	   gpro_t.gTimer_two_hours_conter=0;
-               gpro_t.stopTwoHours_flag = 1;
+               gpro_t.stopTwoHours_flag = 1; //WT.EDIT 2025.11.10
+		       gpro_t.send_ack_cmd = 0x1C;
+			   gpro_t.two_hours_cp_flag= 0xC1;
+			    gpro_t.ack_cp_repeat_counter=0;
+			   gpro_t.gTimer_cp_timer_counter =0;
 		       SendData_twoHours_Data(0x78);//120 minutes
+               vTaskDelay(pdMS_TO_TICKS(5));
 
 		   }
-		   else if(gpro_t.stopTwoHours_flag == 1 && gpro_t.gTimer_two_hours_conter > 630){
+		   else if(gpro_t.stopTwoHours_flag == 1 && gpro_t.gTimer_two_hours_conter > 10){
 		        gpro_t.gTimer_two_hours_conter=0;
+				gpro_t.send_ack_cmd = 0x1C;//WT.EDIT 2025.11.10
+				gpro_t.two_hours_cp_flag=0xC0;
+				 gpro_t.ack_cp_repeat_counter=0;
+			    gpro_t.gTimer_cp_timer_counter =0;
 				gpro_t.stopTwoHours_flag = 0;
 				SendData_twoHours_Data(0x0A);//10 minutes
-
+                vTaskDelay(pdMS_TO_TICKS(5));
 
           }
 	     power_on_step =4;
@@ -60,17 +72,34 @@ void power_on_handler(void)
 	  break;
 
 	  case 4:
-        if(gpro_t.gTimer_soft_version_counter > 3){
+        if(gpro_t.gTimer_soft_version_counter > 5){
 			gpro_t.gTimer_soft_version_counter=0;
 	   		 sendNotice_toMainBoard(0xF0,0x01); //WT.EDIT 2025.10.31 new version : 0x01 
 			vTaskDelay(pdMS_TO_TICKS(5));
 
         }
 	  
-	  power_on_step =1;
+	  power_on_step =5;
 
 
 	  break;
+
+	 case 5:
+     if(gpro_t.temp_key_set_value==0 && gpro_t.gTimer_temp_compare_value > 3 ){
+	 	gpro_t.gTimer_temp_compare_value =0;
+
+
+	   set_temperature_compare_value_fun();
+		    if(LL_USART_IsActiveFlag_ORE(USART1)){
+
+       LL_USART_ClearFlag_ORE(USART1);
+   }
+
+     }
+
+	 power_on_step =1;
+
+	 break;
 
 
    }
@@ -100,13 +129,20 @@ static void power_on_ref_init(void)
 	  gpro_t.power_on_every_times=1 ;
       run_t.disp_wind_speed_grade =100;//WT.EDIT 2025.04.16
       run_t.wifi_set_temperature=40; //WT.EDIT 2025.04.16
-      if(lcd_t.display_beijing_time_flag == 0 ){
+      if(run_t.wifi_link_net_success ==0){
 
 		 run_t.gTimer_disp_time_seconds=0;
 		 run_t.dispTime_hours=0;
 	     run_t.dispTime_minutes=0;
 
       }
+	  else if(run_t.wifi_link_net_success ==1 && lcd_t.display_beijing_time_flag==0){
+	          run_t.gTimer_disp_time_seconds=0;
+			  run_t.dispTime_hours=0;
+			  run_t.dispTime_minutes=0;
+
+      }
+
       gpro_t.stopTwoHours_flag=0;
 	
       LCD_BACK_LIGHT_ON();
@@ -182,11 +218,17 @@ void power_on_off_handler(void)
         run_t.power_on= power_on;
         SendData_PowerOnOff(1);
 		osDelay(5);
+		 
+                
 		power_on_step =0;
        // gpro_t.long_key_power_counter =0; 
         run_t.power_on_disp_smg_number = 1;
+	   //copy 
         gpro_t.send_ack_cmd = ack_power_on;
-        gpro_t.gTimer_again_send_power_on_off =0;
+	    gpro_t.ack_cp_cmd_flag= 0x11;
+		 gpro_t.ack_cp_repeat_counter=0;
+        gpro_t.gTimer_cp_timer_counter =0;
+		//end
         run_t.wifi_set_temperature=40; //WT.EDIT 2025.01.15
         run_t.display_set_timer_or_works_time_mode = works_time;//WT.EDIT 2025.01.15
         run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
@@ -207,16 +249,17 @@ void power_on_off_handler(void)
         run_t.power_on= power_off;
         SendData_PowerOnOff(0);
 		osDelay(5);
-   
+        //cp
         gpro_t.send_ack_cmd = ack_power_off;
-        gpro_t.gTimer_again_send_power_on_off =0;
+		gpro_t.ack_cp_cmd_flag =0x10;
+		 gpro_t.ack_cp_repeat_counter=0;
+        gpro_t.gTimer_cp_timer_counter =0;
+		//cp_end 
         run_t.wifi_set_temperature =40;//WT.EDIT 2025.01.15
         run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
         gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
         Lcd_PowerOff_Fun();
-        //osDelay(3);//HAL_Delay(10);
-        /* run_t.power_on= power_off; */
-        //printf("power off !!!\r\n");
+   
 
 
     }
@@ -404,4 +447,6 @@ static void power_off_breath_Led(void)
 	}
 	      
 }
+
+
 

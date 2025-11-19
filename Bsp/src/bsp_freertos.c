@@ -171,7 +171,9 @@ static void vTaskRunPro(void *pvParameters)
         
                  gl_ref.long_key_power_counter=0; //WT.EDIT 2025.05.10
                  gpro_t.send_ack_cmd = ack_wifi_on;
-                 gpro_t.gTimer_again_send_power_on_off =0;
+			     gpro_t.ack_cp_cmd_flag =0x31;
+				  gpro_t.ack_cp_repeat_counter=0;
+                 gpro_t.gTimer_cp_timer_counter =0;
                  SendData_Set_Command(0x05,0x01); // link wifi of command .
                  osDelay(3);
                  gpro_t.gTimer_mode_key_long=0;
@@ -180,7 +182,7 @@ static void vTaskRunPro(void *pvParameters)
 
              }
              else{
-				 
+			
                  gl_ref.long_key_power_counter=0;
                  power_on_off_handler();
              }
@@ -230,7 +232,7 @@ static void vTaskRunPro(void *pvParameters)
                  run_t.power_on= power_on;
                 gl_ref.long_key_power_counter =0;
                 run_t.power_on_disp_smg_number = 0;
-                gpro_t.gTimer_again_send_power_on_off =0;
+                gpro_t.gTimer_cp_timer_counter =0;
                 power_on_key_short_fun();
                  
 
@@ -300,7 +302,7 @@ static void vTaskRunPro(void *pvParameters)
 
           
 	       power_on_handler();
-		   
+		   ack_handler();
 	       disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
 	     
        }

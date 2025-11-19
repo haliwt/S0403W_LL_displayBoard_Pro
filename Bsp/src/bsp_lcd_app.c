@@ -398,7 +398,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
 	case 0:
         
 	     display_temperture_humidity_value();
-        set_temperature_compare_value_fun();
+        //set_temperature_compare_value_fun();
      break;
     }
 

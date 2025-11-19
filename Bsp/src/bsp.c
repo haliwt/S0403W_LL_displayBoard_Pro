@@ -112,7 +112,7 @@ void display_timer_and_beijing_time_handler(void)
 //             ai_default = ai_mode_flag;
 //             not_ai_mode_flag++;
 //             gpro_t.send_ack_cmd = ack_ai_mode;
-//             gpro_t.gTimer_again_send_power_on_off =0;
+//             gpro_t.gTimer_cp_timer_counter =0;
 //			// SendData_Set_Command(0x27,0x01); //smart phone notice is ai mode
 //
 //     }
@@ -134,7 +134,9 @@ void display_timer_and_beijing_time_handler(void)
              not_ai_default = not_ai_mode_flag;
              ai_mode_flag++;
              gpro_t.send_ack_cmd = ack_not_ai_mode;
-             gpro_t.gTimer_again_send_power_on_off =0;
+			 gpro_t.ack_cp_cmd_flag = 0xB1;
+			gpro_t.ack_cp_repeat_counter=0;
+             gpro_t.gTimer_cp_timer_counter =0;
 			 SendData_Set_Command(0x27,0x02); //NOT_MODE_AI,BUR NO_BUZZER);
 
         }
@@ -265,7 +267,7 @@ void set_temperature_compare_value_fun(void)
 	switch(gpro_t.set_temp_value_success){
 
 	 case 1:
-       if(gpro_t.gTimer_temp_compare_value > 3 && gpro_t.temp_key_set_value ==0){
+       if(gpro_t.temp_key_set_value ==0){
 
        gpro_t.gTimer_temp_compare_value =0;
 
@@ -273,12 +275,16 @@ void set_temperature_compare_value_fun(void)
 
                run_t.dry = 0;
 			   if(first_set_ptc_on==1)first_set_ptc_on=2;  //the first open ptc heating //WT.DEDIT 2028.08.27 modify this flow codes
-	           SendData_Set_Command(0x22,0x00); //close ptc 
+			   gpro_t.send_ack_cmd = 0x22;//WT.EDIT 2025.11.10 0X1XX -> 0XDXX, 0X2XX->0XEXX
+				 gpro_t.ack_cp_cmd_flag=0xE0;
+			     gpro_t.ack_cp_repeat_counter=0;
+				 gpro_t.gTimer_cp_timer_counter =0;
+
+
+			   SendData_Set_Command(0x22,0x00); //close ptc 
 	           vTaskDelay(pdMS_TO_TICKS(5));
-
-	          // SendData_Temp_Data(run_t.wifi_set_temperature);
-              // vTaskDelay(pdMS_TO_TICKS(5));
-
+              
+	        
 			
             
       }
@@ -288,20 +294,24 @@ void set_temperature_compare_value_fun(void)
 	          
                 first_set_ptc_on=1;
 				run_t.dry = 1;
-				
+			   gpro_t.send_ack_cmd = 0x22;//WT.EDIT 2025.11.10 0X1XX -> 0XDXX, 0X2XX->0XEXX
+			   gpro_t.ack_cp_cmd_flag=0xE1;
+			    gpro_t.ack_cp_repeat_counter=0;
+			   gpro_t.gTimer_cp_timer_counter =0;
 	            SendData_Set_Command(0x22,0x01); //open ptc 
 	            vTaskDelay(pdMS_TO_TICKS(5));
-	           // SendData_Temp_Data(run_t.wifi_set_temperature);
-				//vTaskDelay(pdMS_TO_TICKS(5));
+	          
             
 	       }
 		   else if(first_set_ptc_on==2 && (run_t.wifi_set_temperature -3) >= gpro_t.temp_real_value && run_t.ptc_on_off_flag ==0){//WT.DEDIT 2028.08.27 modify this flow codes
                  run_t.dry = 1;
-				
+				gpro_t.send_ack_cmd = 0x22;//WT.EDIT 2025.11.10 0X1XX -> 0XDXX, 0X2XX->0XEXX
+			   gpro_t.ack_cp_cmd_flag=0xE1;
+			    gpro_t.ack_cp_repeat_counter=0;
+			   gpro_t.gTimer_cp_timer_counter =0;
 	            SendData_Set_Command(0x22,0x01); //open ptc 
 	            vTaskDelay(pdMS_TO_TICKS(5));
-	           /// SendData_Temp_Data(run_t.wifi_set_temperature);
-				//vTaskDelay(pdMS_TO_TICKS(5));
+	          
 			}
 
 
@@ -313,12 +323,16 @@ void set_temperature_compare_value_fun(void)
 	 break;
 
 	 case 0:
-         if(gpro_t.gTimer_temp_compare_value > 3 && gpro_t.temp_key_set_value ==0){ 
+         if(gpro_t.temp_key_set_value ==0){ 
         
         if(gpro_t.temp_real_value > 39){ // must be clouse ptc.
     
                first_on_ptc = 1;
                run_t.dry = 0;
+		      gpro_t.send_ack_cmd = 0x22;//WT.EDIT 2025.11.10 0X1XX -> 0XDXX, 0X2XX->0XEXX
+			   gpro_t.ack_cp_cmd_flag=0xE0;
+			    gpro_t.ack_cp_repeat_counter=0;
+			   gpro_t.gTimer_cp_timer_counter =0;
                SendData_Set_Command(0x22,0x00); //close ptc 
                vTaskDelay(pdMS_TO_TICKS(5));
           }
@@ -326,6 +340,10 @@ void set_temperature_compare_value_fun(void)
                
                  if(gpro_t.temp_real_value < 38){
                        run_t.dry = 1;
+					    gpro_t.send_ack_cmd = 0x22;//WT.EDIT 2025.11.10 0X1XX -> 0XDXX, 0X2XX->0XEXX
+				   gpro_t.ack_cp_cmd_flag=0xE1;
+				    gpro_t.ack_cp_repeat_counter=0;
+				   gpro_t.gTimer_cp_timer_counter =0;
                        SendData_Set_Command(0x22,0x01); //open ptc 
                        vTaskDelay(pdMS_TO_TICKS(5));
                 }
@@ -335,6 +353,10 @@ void set_temperature_compare_value_fun(void)
 		  else if(first_on_ptc == 0 && gpro_t.temp_real_value < 40){ //WT.EDIT 2025.10.31
 
 	            run_t.dry = 1;
+				 gpro_t.send_ack_cmd = 0x22;//WT.EDIT 2025.11.10 0X1XX -> 0XDXX, 0X2XX->0XEXX
+			   gpro_t.ack_cp_cmd_flag=0xE1;
+			    gpro_t.ack_cp_repeat_counter=0;
+			   gpro_t.gTimer_cp_timer_counter =0;
 				SendData_Set_Command(0x22,0x01); //open ptc  
 				vTaskDelay(pdMS_TO_TICKS(5));
 			    

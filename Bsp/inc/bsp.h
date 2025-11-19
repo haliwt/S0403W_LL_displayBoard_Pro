@@ -36,7 +36,7 @@
 
 #define  USE_FreeRTOS      1
 	
-#define Enable_EventRecorder    1
+#define Enable_EventRecorder    0
 
 #define DEBUG_FLAG    Enable_EventRecorder
 
@@ -70,7 +70,13 @@ typedef struct _process_state{
   
    //send data need copy this is cmd
    uint8_t send_ack_cmd;
+   uint8_t ack_cp_cmd_flag ;
+   uint8_t ack_cp_repeat_counter;
+
+  
+   uint8_t two_hours_cp_flag ;
    uint8_t receive_copy_buff[20];
+   /********end*****/
    uint8_t disp_time_colon_flag;
    
    uint8_t disp_fan_switch_flag ;
@@ -92,10 +98,11 @@ typedef struct _process_state{
    uint8_t gTimer_set_temp_times;
    uint8_t gTimer_temp_compare_value;
    uint8_t gTimer_fan_to_ptc_warning;
-   uint8_t gTimer_again_send_power_on_off;
+   uint8_t gTimer_cp_timer_counter;
    uint8_t gTimer_disp_temp_humi_value;
    uint8_t  gTimer_copy_cmd_counter;
-   uint16_t gTimer_two_hours_conter;
+   uint8_t gTimer_two_hours_second_counter;
+   uint8_t gTimer_two_hours_conter;
  
    
 

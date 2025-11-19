@@ -44,7 +44,7 @@ void disp_timer_run_times(void)
                  run_t.power_on= power_off;
                  SendData_PowerOnOff(0); //send power off cmd to mainboard.WT.EDIT 2024.11.17
                  vTaskDelay(pdMS_TO_TICKS(10));
-                 gpro_t.gTimer_again_send_power_on_off =0;
+                 gpro_t.gTimer_cp_timer_counter =0;
 				 Power_Off_Fun();
 			
 				}
@@ -72,7 +72,9 @@ void disp_timer_run_times(void)
              run_t.gModel=1;
              if(wifi_link_net_state()==1){
                   gpro_t.send_ack_cmd = ack_ai_mode;
-                  gpro_t.gTimer_again_send_power_on_off =0;
+				  gpro_t.ack_cp_cmd_flag= 0xA1;
+			      gpro_t.ack_cp_repeat_counter=0;
+                  gpro_t.gTimer_cp_timer_counter =0;
 			      SendData_Set_Command(0x27,0x01); //MODE_AI,BUR NO_BUZZER);
 
               }
@@ -111,12 +113,15 @@ void Setup_Timer_Times_Donot_Display(void)
 			    run_t.timer_time_hours=0;
 				run_t.timer_time_minutes=0;
 
-                gpro_t.gTimer_again_send_power_on_off =0;//wt.edit 2024.11.17
+                gpro_t.gTimer_cp_timer_counter =0;//wt.edit 2024.11.17
                 gpro_t.send_ack_cmd = 2; //power off of flag that need send power off cmd to mainboard ,must return signal
-			    SendData_PowerOnOff(0); //send power off cmd to mainboard.WT.EDIT 2024.11.17
+				gpro_t.ack_cp_cmd_flag = 0x10;
+				 gpro_t.ack_cp_repeat_counter=0;
+
+				SendData_PowerOnOff(0); //send power off cmd to mainboard.WT.EDIT 2024.11.17
 				osDelay(5);
-				gpro_t.send_ack_cmd = ack_power_off;
-                gpro_t.gTimer_again_send_power_on_off =0;
+				
+                gpro_t.gTimer_cp_timer_counter =0;
 				Power_Off_Fun();
 
 			

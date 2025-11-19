@@ -6,18 +6,18 @@
 typedef enum ack_sig{
 
   ack_null,
-  ack_power_on ,
-  ack_power_off,
-  ack_wifi_on,
-  ack_ptc_on,
-  ack_ptc_off,
-  ack_plasma_on,
-  ack_plasma_off,
-  ack_ultra_on,
-  ack_ultra_off,
-  ack_ai_mode,
-  ack_not_ai_mode,
-  ack_buzzer_sound
+  ack_power_on=1 ,
+  ack_power_off=2,
+  ack_wifi_on=3,
+  ack_ptc_on=4,
+  ack_ptc_off=5,
+  ack_plasma_on=6,
+  ack_plasma_off=7,
+  ack_ultra_on=8,
+  ack_ultra_off=9,
+  ack_ai_mode=0x0A,
+  ack_not_ai_mode=0X0B,
+  ack_buzzer_sound=0X0D
   
 
 }ack_sit_e;
