@@ -283,6 +283,7 @@ void set_temperature_compare_value_fun(void)
 
 			   SendData_Set_Command(0x22,0x00); //close ptc 
 	           vTaskDelay(pdMS_TO_TICKS(5));
+			   
               
 	        
 			

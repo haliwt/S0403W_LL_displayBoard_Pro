@@ -310,7 +310,7 @@ static void vTaskRunPro(void *pvParameters)
           gl_ref.long_key_power_counter =0;
            gl_ref.key_long_power_flag =0;
            run_t.power_on_disp_smg_number = 0;
-		   gpro_t.gTimer_two_hours_conter=0; //WT.EDIT 2025.1030
+		   gpro_t.gTimer_two_hours_conter=0; //WT.EDIT 2025.10.30
 		    gpro_t.stopTwoHours_flag=0;
            power_off_handler();
 

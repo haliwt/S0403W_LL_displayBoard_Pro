@@ -872,7 +872,7 @@ void ack_handler(uint8_t *data)
 
   if(gpro_t.ack_cp_cmd_flag == 0xE1){// 0x1XX ->0XDXX  0X2XX->0XEXX
       gpro_t.ack_cp_repeat_counter++;
-      if(gpro_t.ack_cp_repeat_counter < 4 && gpro_t.gTimer_copy_cmd_counter > 0){
+      if(gpro_t.ack_cp_repeat_counter < 20 && gpro_t.gTimer_copy_cmd_counter > 0){
 			gpro_t.gTimer_copy_cmd_counter =0;
 			SendData_Set_Command(0x22,0x01); //close ptc 
 			osDelay(5);
@@ -884,7 +884,7 @@ void ack_handler(uint8_t *data)
   else if(	gpro_t.ack_cp_cmd_flag == 0xE0){ // 0x2 ->)
 
       gpro_t.ack_cp_repeat_counter++;
-	 if(gpro_t.ack_cp_repeat_counter < 4 && gpro_t.gTimer_copy_cmd_counter > 0){
+	 if(gpro_t.ack_cp_repeat_counter < 20 && gpro_t.gTimer_copy_cmd_counter > 0){
 		   gpro_t.gTimer_copy_cmd_counter =0;
 		   SendData_Set_Command(0x22,0x00); //close ptc 
 		   osDelay(5);
@@ -893,8 +893,8 @@ void ack_handler(uint8_t *data)
 	   }
    }
   
-	  if(gpro_t.ack_cp_repeat_counter > 5){
-	  	gpro_t.ack_cp_repeat_counter=6;
+	 if(gpro_t.ack_cp_repeat_counter > 20){//WT.EDIT 2025.11.19
+	  	gpro_t.ack_cp_repeat_counter=20;
 		gpro_t.send_ack_cmd=0;
 
 	  }

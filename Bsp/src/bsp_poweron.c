@@ -90,10 +90,9 @@ void power_on_handler(void)
 
 
 	   set_temperature_compare_value_fun();
-		    if(LL_USART_IsActiveFlag_ORE(USART1)){
-
-       LL_USART_ClearFlag_ORE(USART1);
-   }
+	   if(LL_USART_IsActiveFlag_ORE(USART1)){
+          LL_USART_ClearFlag_ORE(USART1);
+       }
 
      }
 
