@@ -45,6 +45,7 @@ void power_on_handler(void)
 	  break;
 
 	  case 3:
+	  	#if 0
 	  	  if(gpro_t.gTimer_two_hours_conter > 119){ //WT.EDIT2025.10.30
 		   	   gpro_t.gTimer_two_hours_conter=0;
                gpro_t.stopTwoHours_flag = 1; //WT.EDIT 2025.11.10
@@ -67,6 +68,7 @@ void power_on_handler(void)
                 vTaskDelay(pdMS_TO_TICKS(5));
 
           }
+		 #endif 
 	     power_on_step =4;
 
 	  break;

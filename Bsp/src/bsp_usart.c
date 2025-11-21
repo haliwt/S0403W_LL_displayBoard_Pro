@@ -794,7 +794,7 @@ static void receive_copy_cmd_or_data_handler(void)
 *
 */
 
-void ack_handler(uint8_t *data)
+void ack_handler(void)
 {
   
   //power ack 

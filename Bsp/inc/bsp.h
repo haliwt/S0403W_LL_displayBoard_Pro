@@ -122,7 +122,7 @@ void set_temperature_compare_value_fun(void);
 void display_timer_and_beijing_time_handler(void);
 
 
-
+void ack_handler(void);
 
 
 #endif
