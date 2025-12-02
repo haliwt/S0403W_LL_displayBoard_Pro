@@ -815,7 +815,7 @@ void ack_handler(void)
    }
    else if(gpro_t.ack_cp_cmd_flag==0x10){ //be should is power off .
          gpro_t.ack_cp_repeat_counter++;
-	     if(gpro_t.ack_cp_repeat_counter < 4 && gpro_t.gTimer_copy_cmd_counter > 0){
+	     if(gpro_t.ack_cp_repeat_counter < 10 && gpro_t.gTimer_copy_cmd_counter > 0){
 	       gpro_t.gTimer_copy_cmd_counter =0;
 	       SendData_PowerOnOff(0);
 		   osDelay(5);

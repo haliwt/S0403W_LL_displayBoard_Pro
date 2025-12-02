@@ -44,8 +44,13 @@ void disp_timer_run_times(void)
                  run_t.power_on= power_off;
                  SendData_PowerOnOff(0); //send power off cmd to mainboard.WT.EDIT 2024.11.17
                  vTaskDelay(pdMS_TO_TICKS(10));
-                 gpro_t.gTimer_cp_timer_counter =0;
+                 gpro_t.gTimer_cp_timer_counter =0; //WT.EDIT 2025.11.26
+				gpro_t.send_ack_cmd = ack_power_off;
+				gpro_t.ack_cp_cmd_flag =0x10;
+				 gpro_t.ack_cp_repeat_counter=0;
+		        gpro_t.gTimer_cp_timer_counter =0;
 				 Power_Off_Fun();
+				 
 			
 				}
                 else{

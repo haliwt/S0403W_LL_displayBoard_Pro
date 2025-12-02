@@ -313,10 +313,11 @@ static void vTaskRunPro(void *pvParameters)
 		   gpro_t.gTimer_two_hours_conter=0; //WT.EDIT 2025.10.30
 		    gpro_t.stopTwoHours_flag=0;
            power_off_handler();
+	       ack_handler();
 
        }
-      // send_cmd_ack_hanlder() ; 
      
+    
          vTaskDelay(10);
          
           

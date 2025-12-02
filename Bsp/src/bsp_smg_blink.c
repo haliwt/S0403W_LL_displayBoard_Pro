@@ -593,28 +593,6 @@ void fan_disp_speed_leaf(uint8_t disp)
 
 }
 
-//static void fan_set_timer_disp_leaf(uint8_t disp)
-//{
-
-//    if(disp==0){
-
-//      TM1723_Write_Display_Data(0xCC,T14_NO+lcdNumber7_Low[lcd_t.number7_low]+lcdNumber8_High[lcd_t.number8_high]);//display "7,8'
-//      disp_fan_speed_level();
-//      TM1723_Write_Display_Data(0xCF,((T11+T16)& 0x05));//
-
-//    }
-//    else{
-
-//       TM1723_Write_Display_Data(0xCC,T14+lcdNumber7_Low[lcd_t.number7_low]+lcdNumber8_High[lcd_t.number8_high]);//display "t,c
-//       donot_disp_T13_icon_fan_speed_level();
-//       TM1723_Write_Display_Data(0xCF,((T16+T12+T10)&0x0B));//
-
-//    }
-
-
-
-//}
-
 /******************************************************************************
 	*
 	*Function Name:static void disp_fan_speed_level(void)
