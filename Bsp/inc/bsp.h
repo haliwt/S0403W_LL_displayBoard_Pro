@@ -65,7 +65,7 @@ typedef struct _process_state{
 
    uint8_t power_on_every_times;
    
-   uint8_t smart_phone_power_on;
+ 
 
   
    //send data need copy this is cmd

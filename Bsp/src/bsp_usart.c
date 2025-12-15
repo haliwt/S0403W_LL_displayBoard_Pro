@@ -39,6 +39,7 @@ typedef enum{
     temp_high_warning=8,
     fan_warning=9,
     fan_on_off = 0x0B,
+    wifi_power_off = 0x31, //WT.EDIT 2025.12.15
 
      //notice no sound 
     ack_power_on_off = 0x10,
@@ -601,6 +602,7 @@ static void receive_cmd_or_data_handler(void)
 	if(gl_tMsg.execuite_cmd_notice == 0x01){ //open
 		run_t.wifi_link_net_success=1;
 		SendWifiData_Answer_Cmd(0x31,0x01);
+	    
 		xTask_PowerOn_Handler() ; 
 
 	}

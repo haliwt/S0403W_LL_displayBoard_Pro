@@ -64,7 +64,7 @@ typedef struct GL_TASK{
    uint8_t   stopTwoHours_flag;
 
    uint8_t smart_phone_app_timer_power_on_flag;
-   uint8_t app_power_off_flag;
+
 
 
 }gl_task;
@@ -118,10 +118,13 @@ static void vTaskDecoderPro(void *pvParameters)
         {
             if((ulValue & POWER_KEY_BIT_0) != 0)
             {
-
-            gpro_t.smart_phone_power_on = 1;
+            //run_t.power_on= power_on;
+           
             gl_ref.key_long_power_flag=0;
             gl_ref.long_key_power_counter=0;
+
+			 run_t.power_on= power_on;
+             power_on_key_short_fun();
 
             }
             else if((ulValue & POWER_ON_BIT_5) != 0){
@@ -131,7 +134,10 @@ static void vTaskDecoderPro(void *pvParameters)
             }
             else if((ulValue & POWER_OFF_BIT_4) != 0){
 
-                gl_ref.app_power_off_flag =1;
+            
+				run_t.power_on= power_off;
+			    gl_ref.key_long_power_flag=0;
+				gl_ref.long_key_power_counter=0;
 
 
             }
@@ -220,13 +226,6 @@ static void vTaskRunPro(void *pvParameters)
 
                  }
         }
-        else if(gpro_t.smart_phone_power_on == 1){
-                gpro_t.smart_phone_power_on ++;
-                run_t.power_on= power_on;
-                power_on_key_short_fun();
-				
-
-        }
         else if(gl_ref.smart_phone_app_timer_power_on_flag ==1){
                 gl_ref.smart_phone_app_timer_power_on_flag++;
                  run_t.power_on= power_on;
@@ -236,11 +235,6 @@ static void vTaskRunPro(void *pvParameters)
                 power_on_key_short_fun();
                  
 
-        }
-        else if(gl_ref.app_power_off_flag ==1){
-                gl_ref.app_power_off_flag++;
-               
-                run_t.power_on= power_off;
         }
         else if((gl_ref.key_add_flag ==1 || gl_ref.key_dec_flag ==1)&&run_t.power_on== power_on){
                 
