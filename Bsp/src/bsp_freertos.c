@@ -116,32 +116,34 @@ static void vTaskDecoderPro(void *pvParameters)
 		
         if( xResult == pdPASS )
         {
-            if((ulValue & POWER_KEY_BIT_0) != 0)
-            {
-            //run_t.power_on= power_on;
+//            if((ulValue & POWER_KEY_BIT_0) != 0)
+//            {
+//            //run_t.power_on= power_on;
            
-            gl_ref.key_long_power_flag=0;
-            gl_ref.long_key_power_counter=0;
+//            gl_ref.key_long_power_flag=0;
+//            gl_ref.long_key_power_counter=0;
 
-			 run_t.power_on= power_on;
-             power_on_key_short_fun();
+//			 run_t.power_on= power_on;
+//             power_on_key_short_fun();
 
-            }
-            else if((ulValue & POWER_ON_BIT_5) != 0){
+//            }
+//            else if((ulValue & POWER_ON_BIT_5) != 0){
 
-                gl_ref.smart_phone_app_timer_power_on_flag=1;
+//                gl_ref.smart_phone_app_timer_power_on_flag=1;
 
-            }
-            else if((ulValue & POWER_OFF_BIT_4) != 0){
+//            }
+//            else if((ulValue & POWER_OFF_BIT_4) != 0){
 
             
-				run_t.power_on= power_off;
-			    gl_ref.key_long_power_flag=0;
-				gl_ref.long_key_power_counter=0;
+//				run_t.power_on= power_off;
+//			    gl_ref.key_long_power_flag=0;
+//				gl_ref.long_key_power_counter=0;
 
 
-            }
-            else if((ulValue & DECODER_BIT_9) != 0){
+//            }
+//            else 
+
+			if((ulValue & DECODER_BIT_9) != 0){
                parse_recieve_data_handler();
             }
          
@@ -181,7 +183,7 @@ static void vTaskRunPro(void *pvParameters)
 				  gpro_t.ack_cp_repeat_counter=0;
                  gpro_t.gTimer_cp_timer_counter =0;
                  SendData_Set_Command(0x05,0x01); // link wifi of command .
-                 osDelay(3);
+                 vTaskDelay(10);
                  gpro_t.gTimer_mode_key_long=0;
                
 
@@ -267,6 +269,27 @@ static void vTaskRunPro(void *pvParameters)
             } 
         }
 
+        if(gpro_t.phone_power_on_flag == 1){
+		    gpro_t.phone_power_on_flag=3;
+
+            gl_ref.key_long_power_flag=0;
+            gl_ref.long_key_power_counter=0;
+
+			 run_t.power_on= power_on;
+             power_on_key_short_fun();
+
+		}
+		else if(gpro_t.phone_power_on_flag == 2){
+                   
+		      gpro_t.phone_power_on_flag=4;
+              run_t.power_on= power_off;
+			  gl_ref.key_long_power_flag=0;
+			  gl_ref.long_key_power_counter=0;
+
+		}
+
+		
+
 
         if(run_t.power_on== power_on){
          
@@ -347,6 +370,7 @@ static void vTaskStart(void *pvParameters)
             gpro_t.gTimer_mode_key_long = 0;
             
              SendData_Buzzer();
+			
          }
         else{
            

@@ -322,7 +322,7 @@ void clear_rx_buff(void)
 void parse_recieve_data_handler(void)
 {
   
-   if(gl_tMsg.bcc_check_code == bcc_check(gl_tMsg.usData, gl_tMsg.data_length)){
+  // if(gl_tMsg.bcc_check_code == bcc_check(gl_tMsg.usData, gl_tMsg.data_length)){
 	switch(gl_tMsg.copy_cmd_notice){ //cmd or notice .
 
 	case 0:
@@ -345,8 +345,8 @@ void parse_recieve_data_handler(void)
 	break;
 
     }
-  }
  }
+ 
 
 /**
 * @brief receive cmd or data from mainboard .
@@ -601,15 +601,19 @@ static void receive_cmd_or_data_handler(void)
 
 	if(gl_tMsg.execuite_cmd_notice == 0x01){ //open
 		run_t.wifi_link_net_success=1;
+		gpro_t.phone_power_on_flag = 1;
 		SendWifiData_Answer_Cmd(0x31,0x01);
-	    
-		xTask_PowerOn_Handler() ; 
+	    vTaskDelay(5);
+	   
+		//xTask_PowerOn_Handler() ; 
 
 	}
 	else if(gl_tMsg.execuite_cmd_notice == 0x0){ //close 
 		run_t.wifi_link_net_success=1;
+		 gpro_t.phone_power_on_flag = 2;
 		SendWifiData_Answer_Cmd(0x031,0x0);
-		xTask_PowerOff_Handler() ; 
+		vTaskDelay(5);
+		//xTask_PowerOff_Handler() ; 
 	}
 
 	break;

@@ -29,6 +29,7 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
+#define RX_BUF_SIZE 10 
 
 /* USER CODE END Includes */
 

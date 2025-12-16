@@ -65,7 +65,7 @@ typedef struct _process_state{
 
    uint8_t power_on_every_times;
    
- 
+   uint8_t phone_power_on_flag; //WT.EDIT 2025.12.16
 
   
    //send data need copy this is cmd
