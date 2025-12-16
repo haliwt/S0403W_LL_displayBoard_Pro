@@ -113,9 +113,17 @@ void HardFault_Handler(void)
 void DMA1_Channel1_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
+  if(LL_DMA_IsActiveFlag_TC1(DMA1)){ //transfer complete -TC
+         LL_DMA_ClearFlag_TC1(DMA1);
+		 
+		// gpro_t.decoder_flag =1;
+  }
 
   /* USER CODE END DMA1_Channel1_IRQn 0 */
   /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
+  if(LL_DMA_IsActiveFlag_TE1(DMA1)){ //transfer Error Flag,TE)
+		 LL_DMA_ClearFlag_TE1(DMA1);
+	 }
 
   /* USER CODE END DMA1_Channel1_IRQn 1 */
 }
@@ -127,7 +135,8 @@ void DMA1_Channel2_3_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel2_3_IRQn 0 */
     if(LL_DMA_IsActiveFlag_TC2(DMA1)){ //transfer complete -TC
-         LL_DMA_ClearFlag_TC1(DMA1);
+         LL_DMA_ClearFlag_TC2(DMA1);
+		// gpro_t.decoder_flag =1;
     }
 
     if(LL_DMA_IsActiveFlag_TE2(DMA1)){ //transfer Error Flag,TE)
@@ -178,6 +187,9 @@ void TIM17_IRQHandler(void)
 void USART1_IRQHandler(void)
 {
   /* USER CODE BEGIN USART1_IRQn 0 */
+	volatile uint8_t data;
+
+ #if 0
     volatile uint8_t data;
    if(LL_USART_IsActiveFlag_RXNE_RXFNE(USART1)){
    
@@ -194,6 +206,22 @@ void USART1_IRQHandler(void)
      
 
    }
+   #else
+   if (LL_USART_IsActiveFlag_IDLE(USART1)) { 
+   	LL_USART_ClearFlag_IDLE(USART1); 
+	// 停止 DMA 
+	LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_1); 
+   // 此时 rx_buf 中已有一帧数据 (10字节) 
+   // TODO: 在这里处理 rx_buf 
+     gpro_t.decoder_flag =1;
+   // 重新配置 DMA 长度并启动 
+    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, MAX_BUFFER_SIZE); 
+   LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1); 
+
+   }
+
+
+   #endif 
 
   /* USER CODE END USART1_IRQn 0 */
   /* USER CODE BEGIN USART1_IRQn 1 */

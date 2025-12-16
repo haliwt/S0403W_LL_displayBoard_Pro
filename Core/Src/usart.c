@@ -21,6 +21,7 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
+uint8_t rx_buf[MAX_BUFFER_SIZE];
 
 /* USER CODE END 0 */
 
@@ -100,7 +101,7 @@ void MX_USART1_UART_Init(void)
   LL_DMA_SetMemorySize(DMA1, LL_DMA_CHANNEL_2, LL_DMA_MDATAALIGN_BYTE);
 
   /* USART1 interrupt Init */
-  NVIC_SetPriority(USART1_IRQn, 1);
+  NVIC_SetPriority(USART1_IRQn, 3);
   NVIC_EnableIRQ(USART1_IRQn);
 
   /* USER CODE BEGIN USART1_Init 1 */
@@ -131,7 +132,29 @@ void MX_USART1_UART_Init(void)
   {
   }
   /* USER CODE BEGIN USART1_Init 2 */
-   LL_USART_EnableIT_RXNE(USART1);
+  // 3. 配置 DMA 通道 (假设使用 DMA1 Channel1) 
+ 
+  LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_1, 
+                         LL_USART_DMA_GetRegAddr(USART1, LL_USART_DMA_REG_DATA_RECEIVE), 
+                         (uint32_t)rx_buf, 
+                         LL_DMA_DIRECTION_PERIPH_TO_MEMORY); 
+  LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, MAX_BUFFER_SIZE); 
+  // 4. 使能 USART1 DMA 接收 
+  // 使能传输完成中断 
+  LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_1); 
+  // 使能 DMA 通道 
+  LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1);
+  LL_USART_EnableDMAReq_RX(USART1);
+ 
+  // 5. 开启 USART1 IDLE 中断 
+  // 4. 使能 USART1 DMA 接收 
+
+
+
+  
+  LL_USART_EnableIT_IDLE(USART1);
+   //LL_USART_EnableIT_RXNE(USART1);
+  // LL_USART_EnableIT_TC(USART1);
   /* USER CODE END USART1_Init 2 */
 
 }

@@ -11,6 +11,9 @@
 #define ACK_SUCCESS 0x00U
 #define ACK_FAILURE 0x01U
 
+#define NEW_BUF_SIZE 9 // 需要复制的字节数 
+
+
 //extern QueueHandle_t xUartRxQueue = NULL;
 
 typedef enum {
@@ -24,7 +27,9 @@ typedef enum {
     UART_STATE_DATA_LEN,
     UART_STATE_DATA,
     UART_STATE_DATA_END,
-    UART_STATE_DATA_BCC
+    UART_STATE_DATA_BCC,
+    UART_STATE_FRAME_DATA_END,
+    UART_STATE_DATA_BCC_CHECK
 } uart_parse_state_t;
 
 typedef enum{
@@ -95,7 +100,8 @@ void usart1_isr_callback_handler(uint8_t data)
 {
      static uint8_t state;
     // BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-	 inputBuf[0] = data;
+	 //inputBuf[0] = data;
+	 memcpy(inputBuf,rx_buf,sizeof(rx_buf)) ;       
 	
      switch(state)
 		{
@@ -113,9 +119,9 @@ void usart1_isr_callback_handler(uint8_t data)
 
         case UART_STATE_NUM: //0x01
 
-             if(inputBuf[0] == FRAME_NUM ||inputBuf[0] == FRAME_ACK_NUM){  // 0x5A --main board singla or copy cmd
+             if(inputBuf[1] == FRAME_NUM ||inputBuf[0] == FRAME_ACK_NUM){  // 0x5A --main board singla or copy cmd
                rx_data_counter++;
-               gl_tMsg.usData[rx_data_counter] = inputBuf[0];
+               gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
 			   if(inputBuf[0] == FRAME_ACK_NUM){
                   gl_tMsg.copy_cmd_notice  = 0x80; //new version protocol is copy cmd notice.
                    state=UART_STATE_CMD_NOTICE; //=1
@@ -137,7 +143,7 @@ void usart1_isr_callback_handler(uint8_t data)
 
         case UART_STATE_CMD_NOTICE://2 -> odler version 1. 0xFF ->COPY CMD
                rx_data_counter++;
-               gl_tMsg.usData[rx_data_counter] = inputBuf[0];
+               gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
 			   gl_tMsg.cmd_notice = inputBuf[0];
 			   if(gl_tMsg.cmd_notice == 0xFF){//this is older version protocol 0x02 -> copy command.
 				   gl_tMsg.copy_cmd_notice = 0xFF;
@@ -153,7 +159,7 @@ void usart1_isr_callback_handler(uint8_t data)
 
         case UART_STATE_EXEC_CMD_OR_LEN://3 -> 1. execuite cmd or ontice . 2. copy cmd or notice .3. data id = 0x0F
             rx_data_counter++;
-            gl_tMsg.usData[rx_data_counter] = inputBuf[0];
+            gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
             if(gl_tMsg.usData[rx_data_counter] !=0x0F && gl_tMsg.copy_cmd_notice != 0xFF){
                 gl_tMsg.execuite_cmd_notice =  gl_tMsg.usData[rx_data_counter];
 				gl_tMsg.rx_data_flag =  0x0;
@@ -177,7 +183,7 @@ void usart1_isr_callback_handler(uint8_t data)
 
 		case UART_STATE_FRAME_CMD_0X0: //0x04 //receive comd and notice frame  0x00
 			rx_data_counter++;
-			gl_tMsg.usData[rx_data_counter] = inputBuf[0];
+			gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
 			if(inputBuf[0] == 0x0){  // frame is tail of end "0xFE"
 
 				state=UART_STATE_FRAME_END; //=1
@@ -202,7 +208,7 @@ void usart1_isr_callback_handler(uint8_t data)
 
     case  UART_STATE_FRAME_END://5 //receive comd and notice frame  end
             rx_data_counter++;
-            gl_tMsg.usData[rx_data_counter] = inputBuf[0];
+            gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
             if(inputBuf[0] == 0xFE){  // frame is tail of end "0xFE"
              
 			   state=UART_STATE_BCC_CHECK; //=1
@@ -224,17 +230,17 @@ void usart1_isr_callback_handler(uint8_t data)
 
         case UART_STATE_BCC_CHECK: //frem end bcc check code
             rx_data_counter++;
-            gl_tMsg.usData[rx_data_counter] = inputBuf[0];
+            gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
 	        gl_tMsg.bcc_check_code =  gl_tMsg.usData[rx_data_counter];
 			gl_tMsg.data_length = rx_data_counter;
 	        //if(gl_tMsg.bcc_check_code == bcc_check(gl_tMsg.usData, gl_tMsg.data_length))
 	       // {
 	                state=0;
 	                rx_data_counter=0; 
-					
+					 gpro_t.decoder_flag = 1;
 					// memset(gl_tMsg.usData,0,(gl_tMsg.data_length+1));
-
-	                xtask_decoder_task_isr_handler();
+               
+	               // xtask_decoder_task_isr_handler();
 				// gl_tMsg.usData[0] = 0;
 				 //gl_tMsg.usData[1] = 0;
 				 ///parse_recieve_data_handler();
@@ -258,7 +264,7 @@ void usart1_isr_callback_handler(uint8_t data)
 		case UART_STATE_DATA_LEN: //receive is data ->"0x04"
 
              rx_data_counter++;
-             gl_tMsg.usData[rx_data_counter] = inputBuf[0];
+             gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
 
               gl_tMsg.receive_data_length = gl_tMsg.usData[rx_data_counter];
              
@@ -277,21 +283,74 @@ void usart1_isr_callback_handler(uint8_t data)
         case UART_STATE_DATA:
 
         rx_data_counter++;
-        gl_tMsg.usData[rx_data_counter] = inputBuf[0];
-		gl_tMsg.rx_data[gl_tMsg.data_length]=inputBuf[0]; //receive data be save rx_data[]
+        gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
+		gl_tMsg.rx_data[gl_tMsg.data_length]=inputBuf[rx_data_counter]; //receive data be save rx_data[]
 		 gl_tMsg.data_length ++;
 		//gl_tMsg.rc_data_length++;
          
         if(gl_tMsg.data_length >= gl_tMsg.receive_data_length){
               
              //state = UART_STATE_DATA_END;
-			 state = UART_STATE_FRAME_END;
+			 state = UART_STATE_FRAME_DATA_END;
 
         }
 		else{
 			state=UART_STATE_DATA;
 		}
 
+
+        break;
+
+		case UART_STATE_FRAME_DATA_END:
+
+		    rx_data_counter++;
+            gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
+            if(inputBuf[0] == 0xFE){  // frame is tail of end "0xFE"
+             
+			   state=UART_STATE_BCC_CHECK; //=1
+
+             }
+			 else{
+                state=0;
+                rx_data_counter=0;
+				gl_tMsg.usData[0]=0;
+				gl_tMsg.usData[1]=1;
+				gl_tMsg.usData[2]=0;
+				gl_tMsg.usData[3]=1;
+				gl_tMsg.usData[4]=0;
+			 }
+
+
+		break;
+
+	     case UART_STATE_DATA_BCC_CHECK: //frem end bcc check code
+            rx_data_counter++;
+            gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
+	        gl_tMsg.bcc_check_code =  gl_tMsg.usData[rx_data_counter];
+			gl_tMsg.data_length = rx_data_counter;
+	        //if(gl_tMsg.bcc_check_code == bcc_check(gl_tMsg.usData, gl_tMsg.data_length))
+	       // {
+	                state=0;
+	                rx_data_counter=0; 
+					
+					// memset(gl_tMsg.usData,0,(gl_tMsg.data_length+1));
+                    gpro_t.decoder_flag = 1;
+	              //  xtask_decoder_task_isr_handler();
+				// gl_tMsg.usData[0] = 0;
+				 //gl_tMsg.usData[1] = 0;
+				 ///parse_recieve_data_handler();
+
+	       // }
+	        // else{
+	        //         state=0;
+	        //         rx_data_counter=0;
+			// 		gl_tMsg.usData[0]=0;
+			// 		gl_tMsg.usData[1]=1;
+			// 		gl_tMsg.usData[2]=0;
+			// 		gl_tMsg.usData[3]=1;
+			// 		gl_tMsg.usData[4]=0;
+	        // }
+			
 
         break;
 
@@ -329,6 +388,7 @@ void parse_recieve_data_handler(void)
       
        receive_cmd_or_data_handler();
 	   clear_rx_buff();
+	   memset(rx_buf,0,sizeof(rx_buf));
 	 
 
    break;
@@ -341,6 +401,7 @@ void parse_recieve_data_handler(void)
    case 0xFF: //copy cmd or notice,this is older version protocol.
 		receive_copy_cmd_or_data_handler();
 		clear_rx_buff();
+         memset(rx_buf,0,sizeof(rx_buf));
 
 	break;
 
@@ -489,7 +550,7 @@ static void receive_cmd_or_data_handler(void)
 
 	case 0x1A: //read sensor "DHT11" temperature and humidity value .
 
-	if(gl_tMsg.receive_data_length == 0x02){ //鏁版嵁
+
 
 	    gpro_t.humidity_real_value = gl_tMsg.rx_data[0];
 		gpro_t.temp_real_value = gl_tMsg.rx_data[1];
@@ -512,7 +573,7 @@ static void receive_cmd_or_data_handler(void)
 
 	     power_on_display_temp_handler(); //WT.EDIT 2025.03.28
 
-	}
+	
 	
 	break;
 
@@ -984,12 +1045,119 @@ void ack_handler(void)
 
 /******************************************************************************
 *
-*Function Name:void send_cmd_ack_hanlder(void)
+*Function Name
 *Funcion: handle of tall process 
 *Input Ref:
 *Return Ref:
 *
 ******************************************************************************/
+#define RX_BUF_SIZE 64 // 假设接收缓冲区大小 
 
+bool extract_frame(void) 
+{ 
+
+  uint8_t i=0;
+  for (i = 0; i < MAX_BUFFER_SIZE; i++) { 
+	if (rx_buf[i] == 0x5A && rx_buf[i+1] == 0x10) 
+	{ // 找到帧头，复制后面9个字节 
+	   if(i > 6){
+	    memset(rx_buf,0,12);
+        return false;
+	   }
+	   else{
+			memcpy(inputBuf, &rx_buf[i], NEW_BUF_SIZE);
+			memset(rx_buf,0,12);
+			return true; 
+	 }
+	// 成功提取 
+	} 
+ } 
+ memset(rx_buf,0,12);
+ return false; // 没找到匹配帧 
+}
+
+uint8_t parse_decoder_flag ;
+
+void parse_decoder_handler(void)
+{
+     
+	uint8_t i;
+	if(parse_decoder_flag!= 1){
+	if(extract_frame()==true){
+
+	   gpro_t.read_data_flag=1;
+
+         if(inputBuf[2]==0xFF){ //copy command 
+
+		     gl_tMsg.copy_cmd_notice = 0xFF;
+			  
+		     gl_tMsg.cmd_notice = inputBuf[3];
+		
+		
+		     gl_tMsg.execuite_cmd_notice = inputBuf[4];
+			
+		     parse_decoder_flag  = 1;
+			 gpro_t.read_data_flag=0;
+			 rx_data_counter=0;
+			 return ;
+			 
+		 }
+		 else{
+		 	gl_tMsg.copy_cmd_notice = 0;
+			gl_tMsg.cmd_notice = inputBuf[2];
+            //gl_tMsg.usData[rx_data_counter] = inputBuf[3];
+          
+           if(inputBuf[3]==0x0F){ //is data frame ,don't is command 
+
+               gl_tMsg.data_length =inputBuf[4]; //receive data of length
+               gl_tMsg.execuite_cmd_notice=0;
+               for(i=0;i<gl_tMsg.data_length;i++){
+		          rx_data_counter++;
+               
+			      gl_tMsg.rx_data[i] = inputBuf[4+rx_data_counter];
+         
+                 
+               }
+			   rx_data_counter=0;
+                parse_decoder_flag  = 1;
+			     gpro_t.read_data_flag=0;
+			    memset(inputBuf,0,11);
+				 return ;
+           }
+		   else{
+                gl_tMsg.execuite_cmd_notice =  inputBuf[3];
+				 rx_data_counter=0;
+				
+                parse_decoder_flag  = 1;
+		        gpro_t.read_data_flag=0;
+		        memset(inputBuf,0,11);
+				 return ;
+
+            }
+		  
+
+		 }
+
+
+	 }
+  
+   }
+}
+
+
+void parse_handler(void)
+{
+    if( parse_decoder_flag	== 1){
+		 
+		// receive_cmd_or_data_handler();
+		parse_recieve_data_handler();
+
+		 parse_decoder_flag ++;
+	
+	  }
+
+
+
+}
 
 

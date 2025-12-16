@@ -5,6 +5,7 @@
 
 void usart1_dma_send(uint8_t *txbuf,uint16_t txlen);
 
+void usart1_dma_receive_config(void);
 
 #endif 
 

@@ -2,7 +2,7 @@
 #define __BSP_CMD_LINK_H_
 
 #include "main.h"
-#define  MAX_BUFFER_SIZE   8
+#define  MAX_BUFFER_SIZE   11
 
 typedef enum PROTOCOL{
 

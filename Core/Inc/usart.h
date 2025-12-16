@@ -29,11 +29,14 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
-#define RX_BUF_SIZE 10 
+#include "bsp.h"
 
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN Private defines */
+
+
+extern uint8_t rx_buf[MAX_BUFFER_SIZE];
 
 /* USER CODE END Private defines */
 

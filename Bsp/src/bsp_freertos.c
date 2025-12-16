@@ -333,7 +333,18 @@ static void vTaskRunPro(void *pvParameters)
 	       ack_handler();
 
        }
-     
+
+	 
+         if( gpro_t.decoder_flag ==1 && gpro_t.read_data_flag == 0){
+
+			
+	      parse_decoder_handler();
+	    //usart1_dma_receive_config();
+          gpro_t.decoder_flag++;
+           
+	   }
+
+		 parse_handler();
     
          vTaskDelay(10);
          
