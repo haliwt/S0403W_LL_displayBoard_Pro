@@ -28,15 +28,20 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
 
-#define RX_BUFFER_SIZE 20
-volatile uint8_t  usart1_rx_buffer[RX_BUFFER_SIZE];
-volatile uint16_t usart1_rx_index = 0;
+//#define RX_BUFFER_SIZE 20
+//volatile uint8_t  usart1_rx_buffer[RX_BUFFER_SIZE];
+//volatile uint16_t usart1_rx_index = 0;
 
 
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+// 定义一个临时的解析缓冲区
+uint8_t processing_buf[MAX_BUFFER_SIZE];
+volatile uint16_t rx_len = 0;
+uint32_t last_pos = 0; // 记录上次处理到的位置
+
 
 /* USER CODE END PD */
 
@@ -208,36 +213,60 @@ void USART1_IRQHandler(void)
    }
    #else
    if (LL_USART_IsActiveFlag_IDLE(USART1)) { 
-   	LL_USART_ClearFlag_IDLE(USART1); 
-	// 停止 DMA 
-	LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_1); 
-   // 此时 rx_buf 中已有一帧数据 (10字节) 
-   // TODO: 在这里处理 rx_buf 
-     gpro_t.decoder_flag =1;
-   // 重新配置 DMA 长度并启动 
-    LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, MAX_BUFFER_SIZE); 
-   LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1); 
+   	   LL_USART_ClearFlag_IDLE(USART1); 
 
-   }
+      gpro_t.decoder_flag = 1;
+	 // 1. 获取当前 DMA 写入的位置 (写指针)
+        // CNDTR 寄存器是递减的，所以用总长度减去剩余长度
+        uint32_t curr_pos = MAX_BUFFER_SIZE - LL_DMA_GetDataLength(DMA1, LL_DMA_CHANNEL_1);
+
+        if (curr_pos != last_pos) 
+        {
+            // 2. 计算本次收到的数据长度
+            uint32_t length = 0;
+            if (curr_pos > last_pos) {
+                length = curr_pos - last_pos;
+                // 数据连续：rx_buf[last_pos] 到 rx_buf[curr_pos-1]
+                memcpy(processing_buf, &rx_buf[last_pos], length);
+            } 
+			else {
+                // 发生了环形回卷 (Wrap around)
+                uint32_t len1 = MAX_BUFFER_SIZE - last_pos;
+                uint32_t len2 = curr_pos;
+                length = len1 + len2;
+                // 分两段拷贝
+                memcpy(inputBuf, &rx_buf[last_pos], len1);
+                memcpy(&inputBuf[len1], &rx_buf[0], len2);
+            }
+
+            // 3. 更新长度并通知主循环
+            rx_len = length; 
+            gpro_t.decoder_flag = 1;
+            last_pos = curr_pos; // 更新读指针
+        }
+    }
+
+   
 
 
    #endif 
 
   /* USER CODE END USART1_IRQn 0 */
   /* USER CODE BEGIN USART1_IRQn 1 */
-//   if(LL_USART_IsActiveFlag_ORE(USART1)){
 
-//       LL_USART_ClearFlag_ORE(USART1);
-//   }
-//   if(LL_USART_IsActiveFlag_FE(USART1)){
-//       LL_USART_ClearFlag_FE(USART1);
-//   }
-//   if(LL_USART_IsActiveFlag_NE(USART1)){
-//      LL_USART_ClearFlag_NE(USART1);
-//   }
-//   if(LL_USART_IsActiveFlag_PE(USART1)){
-//      LL_USART_ClearFlag_PE(USART1);
-//   }
+   /* 2. 错误处理（绝对不能省） */
+    if(LL_USART_IsActiveFlag_ORE(USART1))
+    {
+        LL_USART_ClearFlag_ORE(USART1);
+        // 发生溢出通常意味着波特率极高且 CPU 被其他高优先级中断卡住了
+    }
+    
+    if(LL_USART_IsActiveFlag_FE(USART1) || LL_USART_IsActiveFlag_NE(USART1))
+    {
+        LL_USART_ClearFlag_FE(USART1);
+        LL_USART_ClearFlag_NE(USART1);
+    }
+
   /* USER CODE END USART1_IRQn 1 */
 }
 

@@ -11,7 +11,7 @@
 #define ACK_SUCCESS 0x00U
 #define ACK_FAILURE 0x01U
 
-#define NEW_BUF_SIZE 9 // 需要复制的字节数 
+#define NEW_BUF_SIZE 11 // 需要复制的字节数 
 
 
 //extern QueueHandle_t xUartRxQueue = NULL;
@@ -1041,51 +1041,90 @@ void ack_handler(void)
 //void usart1_isr_callback_handler(uint8_t data) {
 //   app_xusart1_queue_isr_handler(data);
 //}
+uint8_t parse_decoder_flag;
 
 
 /******************************************************************************
-*
-*Function Name
-*Funcion: handle of tall process 
-*Input Ref:
-*Return Ref:
-*
+	*
+	*Function Name
+	*Funcion: handle of tall process 
+	*Input Ref:
+	*Return Ref:
+	*
 ******************************************************************************/
 #define RX_BUF_SIZE 64 // 假设接收缓冲区大小 
+// 定义全局或静态变量记录读位置
+static uint32_t last_pos = 0;
 
 bool extract_frame(void) 
-{ 
+{
+    // 获取当前 DMA 写指针
+    uint32_t curr_pos = MAX_BUFFER_SIZE - LL_DMA_GetDataLength(DMA1, LL_DMA_CHANNEL_1);
+    
+    // 如果读写指针一致，说明没有新数据
+    if (curr_pos == last_pos) return false;
 
-  uint8_t i=0;
-  for (i = 0; i < MAX_BUFFER_SIZE; i++) { 
-	if (rx_buf[i] == 0x5A && rx_buf[i+1] == 0x10) 
-	{ // 找到帧头，复制后面9个字节 
-	   if(i > 6){
-	    memset(rx_buf,0,12);
-        return false;
-	   }
-	   else{
-			memcpy(inputBuf, &rx_buf[i], NEW_BUF_SIZE);
-			memset(rx_buf,0,12);
-			return true; 
-	 }
-	// 成功提取 
-	} 
- } 
- memset(rx_buf,0,12);
- return false; // 没找到匹配帧 
-}
+    uint32_t i = last_pos;
 
-uint8_t parse_decoder_flag ;
+    // 搜索从上一次停止的地方到当前写位置之间的区域
+    while (i != curr_pos) 
+    {
+        uint32_t head1 = i;
+        uint32_t head2 = (i + 1) % MAX_BUFFER_SIZE;
 
+        // 匹配帧头 0x5A 0x10
+        if (rx_buf[head1] == 0x5A && rx_buf[head2] == 0x10) 
+        {
+            // 计算当前缓冲区内可用的数据字节数
+            uint32_t available = (curr_pos >= i) ? (curr_pos - i) : (MAX_BUFFER_SIZE - i + curr_pos);
+
+            // 检查是否够一帧 (11 字节)
+            if (available >= NEW_BUF_SIZE) 
+            {
+                // 将数据拷贝到 inputBuf，确保从 inputBuf[0] 开始
+                for (uint8_t j = 0; j < NEW_BUF_SIZE; j++) {
+                    inputBuf[j] = rx_buf[(i + j) % MAX_BUFFER_SIZE];
+                }
+
+                // 重点：更新读指针，跳过这完整的一帧数据
+                last_pos = (i + NEW_BUF_SIZE) % MAX_BUFFER_SIZE;
+                return true; // 提取成功，返回 true
+            }
+            else 
+            {
+                // 找到了帧头，但后面的数据还没收齐
+                // 此时不要移动 last_pos，等下一次中断补齐数据后再处理
+                return false; 
+            }
+        }
+        
+        // 没匹配到帧头，移动到下一个字节继续找
+        i = (i + 1) % MAX_BUFFER_SIZE;
+    }
+
+    // 如果遍历了一圈都没找到帧头，说明这段数据是垃圾数据
+    // 同步指针到当前位置，清空搜索范围
+    last_pos = curr_pos;
+    return false;
+} 
+
+
+
+/******************************************************************************
+	*
+	*Function Name:void parse_decoder_handler(void)
+	*Funcion: 
+	*Input Ref:
+	*Return Ref:
+	*
+******************************************************************************/
 void parse_decoder_handler(void)
 {
      
 	uint8_t i;
-	if(parse_decoder_flag!= 1){
-	if(extract_frame()==true){
+	
+	while(extract_frame()){
 
-	   gpro_t.read_data_flag=1;
 
          if(inputBuf[2]==0xFF){ //copy command 
 
@@ -1096,8 +1135,9 @@ void parse_decoder_handler(void)
 		
 		     gl_tMsg.execuite_cmd_notice = inputBuf[4];
 			
-		     parse_decoder_flag  = 1;
-			 gpro_t.read_data_flag=0;
+		  
+			 parse_decoder_flag=1;
+
 			 rx_data_counter=0;
 			 return ;
 			 
@@ -1119,19 +1159,19 @@ void parse_decoder_handler(void)
                  
                }
 			   rx_data_counter=0;
-                parse_decoder_flag  = 1;
-			     gpro_t.read_data_flag=0;
-			    memset(inputBuf,0,11);
+   
+			    parse_decoder_flag=1;
+			    memset(inputBuf,0,sizeof(inputBuf));
 				 return ;
            }
 		   else{
                 gl_tMsg.execuite_cmd_notice =  inputBuf[3];
 				 rx_data_counter=0;
 				
-                parse_decoder_flag  = 1;
-		        gpro_t.read_data_flag=0;
-		        memset(inputBuf,0,11);
-				 return ;
+                parse_decoder_flag=1;
+		
+		        memset(inputBuf,0,sizeof(inputBuf));
+				return ;
 
             }
 		  
@@ -1141,10 +1181,15 @@ void parse_decoder_handler(void)
 
 	 }
   
-   }
-}
-
-
+ }
+/******************************************************************************
+	*
+	*Function Name
+	*Funcion: handle of tall process 
+	*Input Ref:
+	*Return Ref:
+	*
+******************************************************************************/
 void parse_handler(void)
 {
     if( parse_decoder_flag	== 1){

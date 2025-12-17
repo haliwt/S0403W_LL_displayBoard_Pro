@@ -335,16 +335,8 @@ static void vTaskRunPro(void *pvParameters)
        }
 
 	 
-         if( gpro_t.decoder_flag ==1 && gpro_t.read_data_flag == 0){
-
-			
-	      parse_decoder_handler();
-	    //usart1_dma_receive_config();
-          gpro_t.decoder_flag++;
-           
-	   }
-
-		 parse_handler();
+       
+		
     
          vTaskDelay(10);
          
@@ -430,6 +422,19 @@ static void vTaskStart(void *pvParameters)
          }
 
     }
+    
+	if( gpro_t.decoder_flag ==1 ){
+	
+			  
+			parse_decoder_handler();
+		  //usart1_dma_receive_config();
+		   parse_handler();
+			gpro_t.decoder_flag++;
+			 
+		 }
+
+
+	 
     vTaskDelay(20);
      
     }

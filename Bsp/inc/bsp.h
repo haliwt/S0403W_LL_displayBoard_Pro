@@ -67,8 +67,8 @@ typedef struct _process_state{
    
    uint8_t phone_power_on_flag; //WT.EDIT 2025.12.16
    uint8_t decoder_flag;
+   uint8_t last_read_index ;
 
-   uint8_t read_data_flag;
   
    //send data need copy this is cmd
    uint8_t send_ack_cmd;
