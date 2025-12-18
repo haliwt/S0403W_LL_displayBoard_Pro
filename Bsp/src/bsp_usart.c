@@ -23,12 +23,7 @@ uint8_t rx_buf[12];
 volatile uint32_t write_pos = 0;
 //volatile uint32_t last_pos  = 0;
 
-// 状态机缓存
-uint8_t frame_buf[NEW_BUF_SIZE];   // 临时存放一帧数据
-uint8_t frame_index = 0;           // 当前已收集字节数
-uint8_t frame_state = 0;           // 状态机状态：0=等待头1, 1=等待头2, 2=收集数据
 
-//extern QueueHandle_t xUartRxQueue = NULL;
 
 typedef enum {
     UART_STATE_WAIT_HEADER = 0,
@@ -91,7 +86,7 @@ MSG_T   gl_tMsg;
 
 
 
- volatile uint8_t rx_data_counter=0;
+ volatile uint8_t rx_data_counter=0,rx_numbers ;
 
 // BCC校验函数
 uint8_t bcc_check(const unsigned char *data, int len) {
@@ -110,14 +105,14 @@ uint8_t bcc_check(const unsigned char *data, int len) {
 	*Return Ref:NO
 	*
 *******************************************************************************/
-#if 1
+#if 0
 void usart1_isr_callback_handler(uint8_t data)
 {
      static uint8_t state;
     // BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-	uint8_t  inputBuf[1];
 	// memcpy(inputBuf,rx_buf,sizeof(rx_buf)) ;       
-	
+	static uint8_t inputBuf[2];
+	inputBuf[0]=data;
      switch(state)
 		{
 		case UART_STATE_WAIT_HEADER:  //#0
@@ -136,7 +131,7 @@ void usart1_isr_callback_handler(uint8_t data)
 
              if(inputBuf[1] == FRAME_NUM ||inputBuf[0] == FRAME_ACK_NUM){  // 0x5A --main board singla or copy cmd
                rx_data_counter++;
-               gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
+               gl_tMsg.usData[rx_data_counter] = inputBuf[0];
 			   if(inputBuf[0] == FRAME_ACK_NUM){
                   gl_tMsg.copy_cmd_notice  = 0x80; //new version protocol is copy cmd notice.
                    state=UART_STATE_CMD_NOTICE; //=1
@@ -158,7 +153,7 @@ void usart1_isr_callback_handler(uint8_t data)
 
         case UART_STATE_CMD_NOTICE://2 -> odler version 1. 0xFF ->COPY CMD
                rx_data_counter++;
-               gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
+               gl_tMsg.usData[rx_data_counter] = inputBuf[0];
 			   gl_tMsg.cmd_notice = inputBuf[0];
 			   if(gl_tMsg.cmd_notice == 0xFF){//this is older version protocol 0x02 -> copy command.
 				   gl_tMsg.copy_cmd_notice = 0xFF;
@@ -174,7 +169,7 @@ void usart1_isr_callback_handler(uint8_t data)
 
         case UART_STATE_EXEC_CMD_OR_LEN://3 -> 1. execuite cmd or ontice . 2. copy cmd or notice .3. data id = 0x0F
             rx_data_counter++;
-            gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
+            gl_tMsg.usData[rx_data_counter] = inputBuf[0];
             if(gl_tMsg.usData[rx_data_counter] !=0x0F && gl_tMsg.copy_cmd_notice != 0xFF){
                 gl_tMsg.execuite_cmd_notice =  gl_tMsg.usData[rx_data_counter];
 				gl_tMsg.rx_data_flag =  0x0;
@@ -198,7 +193,7 @@ void usart1_isr_callback_handler(uint8_t data)
 
 		case UART_STATE_FRAME_CMD_0X0: //0x04 //receive comd and notice frame  0x00
 			rx_data_counter++;
-			gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
+			gl_tMsg.usData[rx_data_counter] = inputBuf[0];
 			if(inputBuf[0] == 0x0){  // frame is tail of end "0xFE"
 
 				state=UART_STATE_FRAME_END; //=1
@@ -223,7 +218,7 @@ void usart1_isr_callback_handler(uint8_t data)
 
     case  UART_STATE_FRAME_END://5 //receive comd and notice frame  end
             rx_data_counter++;
-            gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
+            gl_tMsg.usData[rx_data_counter] = inputBuf[0];
             if(inputBuf[0] == 0xFE){  // frame is tail of end "0xFE"
              
 			   state=UART_STATE_BCC_CHECK; //=1
@@ -245,7 +240,7 @@ void usart1_isr_callback_handler(uint8_t data)
 
         case UART_STATE_BCC_CHECK: //frem end bcc check code
             rx_data_counter++;
-            gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
+            gl_tMsg.usData[rx_data_counter] = inputBuf[0];
 	        gl_tMsg.bcc_check_code =  gl_tMsg.usData[rx_data_counter];
 			gl_tMsg.data_length = rx_data_counter;
 	        //if(gl_tMsg.bcc_check_code == bcc_check(gl_tMsg.usData, gl_tMsg.data_length))
@@ -279,7 +274,7 @@ void usart1_isr_callback_handler(uint8_t data)
 		case UART_STATE_DATA_LEN: //receive is data ->"0x04"
 
              rx_data_counter++;
-             gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
+             gl_tMsg.usData[rx_data_counter] = inputBuf[0];
 
               gl_tMsg.receive_data_length = gl_tMsg.usData[rx_data_counter];
              
@@ -298,7 +293,7 @@ void usart1_isr_callback_handler(uint8_t data)
         case UART_STATE_DATA:
 
         rx_data_counter++;
-        gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
+        gl_tMsg.usData[rx_data_counter] = inputBuf[0];
 		gl_tMsg.rx_data[gl_tMsg.data_length]=inputBuf[rx_data_counter]; //receive data be save rx_data[]
 		 gl_tMsg.data_length ++;
 		//gl_tMsg.rc_data_length++;
@@ -319,7 +314,7 @@ void usart1_isr_callback_handler(uint8_t data)
 		case UART_STATE_FRAME_DATA_END:
 
 		    rx_data_counter++;
-            gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
+            gl_tMsg.usData[rx_data_counter] = inputBuf[0];
             if(inputBuf[0] == 0xFE){  // frame is tail of end "0xFE"
              
 			   state=UART_STATE_BCC_CHECK; //=1
@@ -340,7 +335,7 @@ void usart1_isr_callback_handler(uint8_t data)
 
 	     case UART_STATE_DATA_BCC_CHECK: //frem end bcc check code
             rx_data_counter++;
-            gl_tMsg.usData[rx_data_counter] = inputBuf[rx_data_counter];
+            gl_tMsg.usData[rx_data_counter] = inputBuf[0];
 	        gl_tMsg.bcc_check_code =  gl_tMsg.usData[rx_data_counter];
 			gl_tMsg.data_length = rx_data_counter;
 	        //if(gl_tMsg.bcc_check_code == bcc_check(gl_tMsg.usData, gl_tMsg.data_length))
@@ -678,6 +673,7 @@ static void receive_cmd_or_data_handler(void)
 	if(gl_tMsg.execuite_cmd_notice == 0x01){ //open
 		run_t.wifi_link_net_success=1;
 		gpro_t.phone_power_on_flag = 1;
+	    run_t.power_on = power_on;
 		SendWifiData_Answer_Cmd(0x31,0x01);
 	    vTaskDelay(5);
 	   
@@ -686,6 +682,7 @@ static void receive_cmd_or_data_handler(void)
 	}
 	else if(gl_tMsg.execuite_cmd_notice == 0x0){ //close 
 		run_t.wifi_link_net_success=1;
+		 run_t.power_on = power_off;
 		 gpro_t.phone_power_on_flag = 2;
 		SendWifiData_Answer_Cmd(0x031,0x0);
 		vTaskDelay(5);
@@ -1185,6 +1182,7 @@ void parse_decoder_handler(void)
 {
      
 	uint8_t i;
+	memcpy(inputBuf,rx_buf,rx_numbers);
 	
 	//while(extract_frame()){
 
@@ -1261,22 +1259,18 @@ void parse_handler(void)
 		
 	
 	  }
-
-
-
 }
-
-
-
-
-
-
-// 最终输出缓冲区
-//uint8_t inputBuf[NEW_BUF_SIZE];
-
+/******************************************************************************
+	*
+	*Function Name
+	*Funcion: handle of tall process 
+	*Input Ref:
+	*Return Ref:
+	*
+******************************************************************************/
 void USART1_IRQHandler(void)
 {
-   uint8_t data ;
+   volatile uint8_t data ;
 
 	if (LL_USART_IsActiveFlag_RXNE(USART1))
     {
@@ -1284,9 +1278,9 @@ void USART1_IRQHandler(void)
 
         // 写入环形缓冲区
       
-         read_usart1_data(data);
+        read_usart1_data(data);
 
-        
+       
      
     }
 
@@ -1296,14 +1290,20 @@ void USART1_IRQHandler(void)
     if (LL_USART_IsActiveFlag_NE(USART1))  LL_USART_ClearFlag_NE(USART1);
 }
 
-
+/**
+*@brief
+*@notice 
+*@param
+*/
 static void read_usart1_data(uint8_t data)
 {
-     static uint8_t step_flag;
+    volatile  static uint8_t step_flag,temp_buf[1],frame_index;
+     if( gpro_t.decoder_flag ==0){
+	   temp_buf[0]=data;
         switch (step_flag)
         {
             case 0: // 等待第一个字节
-                if (data == FRAME_HEAD1) {
+                if (temp_buf[0] == FRAME_HEAD1) {
                     rx_buf[frame_index] = FRAME_HEAD1;
 					frame_index++;
 					step_flag= 1;
@@ -1317,7 +1317,7 @@ static void read_usart1_data(uint8_t data)
             break;
 
             case 1: // 等待第二个字节
-                if (data == FRAME_HEAD2) {
+                if (temp_buf[0] == FRAME_HEAD2) {
                   
                    rx_buf[frame_index] = FRAME_HEAD2;
 				   frame_index++;
@@ -1332,9 +1332,15 @@ static void read_usart1_data(uint8_t data)
 
             case 2: // 收集剩余字节
                 
-                rx_buf[frame_index] = data;
+                rx_buf[frame_index] = temp_buf[0];
 			    frame_index++;
-                if (data == 0xFE && frame_index >3) {
+			    if(temp_buf[0] ==0x5A){
+
+				   frame_index = 0;
+				   step_flag=0;
+
+				}
+                else if(temp_buf[0] == 0xFE && frame_index >3) {
                    
                     step_flag=3;
                 }
@@ -1343,16 +1349,19 @@ static void read_usart1_data(uint8_t data)
 		  break;
 
 		  case 3:
-		     rx_buf[frame_index] = data;
-			 memcpy(inputBuf,rx_buf,frame_index);
-		     memset(rx_buf,0,sizeof(rx_buf));
+		     rx_buf[frame_index] = temp_buf[0];
+			// memcpy(inputBuf,rx_buf,frame_index);
+		    // memset(rx_buf,0,sizeof(rx_buf));
+		     rx_numbers = frame_index;
 		     frame_index = 0;
              gpro_t.decoder_flag = 1;
 		     step_flag=0;
 
 		  break;
         }
-   }
+
+     }
+ }
 
   
 

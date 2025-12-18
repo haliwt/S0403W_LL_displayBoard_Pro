@@ -429,7 +429,7 @@ static void vTaskStart(void *pvParameters)
 		 
 		    parse_handler();
 			
-			  gpro_t.decoder_flag++; 
+			  gpro_t.decoder_flag=0; 
 	}
 
 
