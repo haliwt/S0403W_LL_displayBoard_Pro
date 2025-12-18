@@ -666,10 +666,7 @@ static void receive_cmd_or_data_handler(void)
 
 	break;
 
-
-
-
-	//smart phone data
+    //smart phone data
 	case 0x20: //new version smart phone normal power on and off command.
 
 	case 0x31: //smart phone app timer that power on command,is normal power on and off
@@ -699,13 +696,17 @@ static void receive_cmd_or_data_handler(void)
 	if(gl_tMsg.execuite_cmd_notice==0x01){ //power on by smart phone APP
 		gpro_t.smart_phone_app_timer_power_on_flag =1;
 		run_t.wifi_link_net_success=1;
+        run_t.power_on= power_on; //WT.EDIT 2025.12.18
+       // smartPhone_appTimer_powerOn();
 
-		xTask_PowerOn_Handler() ; 
+		//xTask_PowerOn_Handler() ; 
 
 	}
 	else{  //power off by smart phone APP
 		run_t.wifi_link_net_success=1;
-		xTask_PowerOff_Handler() ;     
+		run_t.power_on= power_off;
+	    Lcd_PowerOff_Fun();
+		//xTask_PowerOff_Handler() ;     
 	}
 
 	break; 

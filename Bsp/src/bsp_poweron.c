@@ -264,7 +264,22 @@ void power_on_off_handler(void)
     }
     
 }
+void smartPhone_appTimer_powerOn(void)
+{
 
+      run_t.wifi_set_temperature=40; //WT.EDIT 2025.01.15
+      run_t.display_set_timer_or_works_time_mode = works_time;//WT.EDIT 2025.01.15
+      run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
+      gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
+
+	  gpro_t.gTimer_mode_key_long=0;
+      LCD_BACK_LIGHT_ON();
+	  POWER_ON_LED() ;
+	  LED_MODEL_ON() ;
+      display_lcd_Icon_init();
+      power_on_display_temp_handler();//WT.EDIT 2025.03.28
+
+}
 
 /**************************************************************************
  * 
