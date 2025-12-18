@@ -23,8 +23,10 @@
 /***********************************************************************************************************
 											ĺ˝ć°ĺŁ°ć
 ***********************************************************************************************************/
+//static void vTaskDecoderPro(void *pvParameters);
+
 static void vTaskRunPro(void *pvParameters);
-static void vTaskDecoderPro(void *pvParameters);
+
 static void vTaskStart(void *pvParameters);
 static void AppTaskCreate(void);
 
@@ -37,8 +39,10 @@ static void AppTaskCreate(void);
 /***********************************************************************************************************
 											ĺéĺŁ°ć
 ***********************************************************************************************************/
+//static TaskHandle_t xHandleTaskDecoderPro= NULL;
+
 static TaskHandle_t xHandleTaskRunPro = NULL;
-static TaskHandle_t xHandleTaskDecoderPro= NULL;
+
 static TaskHandle_t xHandleTaskStart = NULL;
 
 
@@ -100,22 +104,23 @@ void freeRTOS_Handler(void)
 *   Return Ref:
 *
 **********************************************************************************************************/
+#if 0
 static void vTaskDecoderPro(void *pvParameters)
 {
-	BaseType_t xResult;
-	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(300); /* �?0�?7���?0�?0�?0�?1���?0�?6�?0�?7���?0�?8�?0�?6�?0�?7�?0�?5�?0�?8���?0�?4�?0�?1�?0�?2�?0�?9300ms */
+	//BaseType_t xResult;
+	//const TickType_t xMaxBlockTime = pdMS_TO_TICKS(300); /* �?0�?7���?0�?0�?0�?1���?0�?6�?0�?7���?0�?8�?0�?6�?0�?7�?0�?5�?0�?8���?0�?4�?0�?1�?0�?2�?0�?9300ms */
 	//uint8_t ucQueueMsgValue[10];
-	 uint32_t ulValue;
+	// uint32_t ulValue;
 	
     while(1)
     {
-	  xResult = xTaskNotifyWait(0x00000000,      
-						          0xFFFFFFFF,      
-						          &ulValue,        /*  */
-						          portMAX_DELAY);  /* block times,releas cpu power right */
+//	  xResult = xTaskNotifyWait(0x00000000,      
+//						          0xFFFFFFFF,      
+//						          &ulValue,        /*  */
+//						          portMAX_DELAY);  /* block times,releas cpu power right */
 		
-        if( xResult == pdPASS )
-        {
+//        if( xResult == pdPASS )
+//        {
 //            if((ulValue & POWER_KEY_BIT_0) != 0)
 //            {
 //            //run_t.power_on= power_on;
@@ -143,15 +148,27 @@ static void vTaskDecoderPro(void *pvParameters)
 //            }
 //            else 
 
-			if((ulValue & DECODER_BIT_9) != 0){
-               parse_recieve_data_handler();
-            }
+//			if((ulValue & DECODER_BIT_9) != 0){
+//               parse_recieve_data_handler();
+//            }
          
-        }
-	}
-		
-}
+//        }
+//	}
 
+	if( gpro_t.decoder_flag ==1 ){
+	        
+			parse_decoder_handler();
+		 
+		 //   parse_handler();
+			
+			gpro_t.decoder_flag=0;
+	 }
+
+	vTaskDelay(50);
+   
+    }	
+}
+#endif 
 
 /**********************************************************************************************************
 *	
@@ -334,11 +351,9 @@ static void vTaskRunPro(void *pvParameters)
 
        }
 
-	 
-       
-		
-    
-         vTaskDelay(10);
+	   
+
+	 vTaskDelay(10);
          
           
     }
@@ -422,17 +437,16 @@ static void vTaskStart(void *pvParameters)
          }
 
     }
-    else if( gpro_t.decoder_flag ==1 ){
-	     
-			  
+	
+
+    if( gpro_t.decoder_flag ==1 ){
+	        
 			parse_decoder_handler();
 		 
-		    parse_handler();
+		 //   parse_handler();
 			
-			  gpro_t.decoder_flag=0; 
-	}
-
-
+			gpro_t.decoder_flag=0;
+	 }
 	 
     vTaskDelay(20);
      
@@ -447,13 +461,14 @@ static void vTaskStart(void *pvParameters)
 **********************************************************************************************************/
 void AppTaskCreate (void)
 {
+  #if 0
    xTaskCreate( vTaskDecoderPro,    		/* fucntion name  */
                  "vTaskDecoderPro",  		/* alias name   */
                  128,         		    /* stack heap capacity */
                  NULL,        		    /* param  */
-                 3,           		    /* priority  */
+                 2,           		    /* priority  */
                  &xHandleTaskDecoderPro);   /* task handler  */
-
+   #endif 
 
 	xTaskCreate( vTaskRunPro,    		/* fucntion name  */
                  "vTaskRunPro",  		/* alias name   */
@@ -505,9 +520,9 @@ void AppTaskCreate (void)
 void xTask_PowerOff_Handler(void)
 {
      
-     xTaskNotify(xHandleTaskDecoderPro, /*  */
-	 POWER_OFF_BIT_4 ,            /* bit0  */
-	 eSetBits);             /* BIT_*/
+//     xTaskNotify(xHandleTaskDecoderPro, /*  */
+//	 POWER_OFF_BIT_4 ,            /* bit0  */
+//	 eSetBits);             /* BIT_*/
      
 
 }
@@ -515,21 +530,21 @@ void xTask_PowerOff_Handler(void)
 void xTask_PowerOn_Handler(void)
 {
      
-     xTaskNotify(xHandleTaskDecoderPro,  
-	 POWER_KEY_BIT_0 ,            /*  */
-	 eSetBits);             /* */
+//     xTaskNotify(xHandleTaskDecoderPro,  
+//	 POWER_KEY_BIT_0 ,            /*  */
+//	 eSetBits);             /* */
      
 
 }
 
 void xtask_decoder_task_isr_handler(void)
 {
-	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-	xTaskNotifyFromISR(xHandleTaskDecoderPro,  /*  */
-						DECODER_BIT_9,     /*   */
-						eSetBits,  /*  */
-						&xHigherPriorityTaskWoken);
-     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+//	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+//	xTaskNotifyFromISR(xHandleTaskDecoderPro,  /*  */
+//						DECODER_BIT_9,     /*   */
+//						eSetBits,  /*  */
+//						&xHigherPriorityTaskWoken);
+//     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
 

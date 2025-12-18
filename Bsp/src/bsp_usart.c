@@ -446,7 +446,7 @@ static void receive_cmd_or_data_handler(void)
 		    run_t.dry = open;
 			run_t.ptc_on_off_flag = 0;
 			SendData_Set_Command(0x12,0x01); //close ptc 
-			osDelay(3);
+			osDelay(5);
 			gpro_t.gTimer_copy_cmd_counter=0; 
 			gpro_t.receive_copy_buff[2]=copy_null;
 			Display_Kill_Dry_Ster_Icon();
@@ -455,7 +455,7 @@ static void receive_cmd_or_data_handler(void)
 			run_t.dry = close;
 			run_t.ptc_on_off_flag = 1;
 			SendData_Set_Command(0x12,0x0); //close ptc 
-		    osDelay(3);
+		    osDelay(5);
 			gpro_t.gTimer_copy_cmd_counter=0; 
 	        gpro_t.receive_copy_buff[2]=copy_null;
 			Display_Kill_Dry_Ster_Icon();
@@ -465,19 +465,21 @@ static void receive_cmd_or_data_handler(void)
 
 	case plasma_on_off://plasma
 	if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
-		run_t.plasma = open;
-		SendData_Set_Command(0x13,0x01); //close ptc 
-		 osDelay(3);
+		 run_t.plasma = open;
+		 SendData_Set_Command(0x13,0x01); //close ptc 
+		 osDelay(5);
 		 gpro_t.gTimer_copy_cmd_counter=0; 
 	     gpro_t.receive_copy_buff[3]=copy_null;
+		 Display_Kill_Dry_Ster_Icon();
 
 		}
 		else{//power off 
 		run_t.plasma = close;
 		SendData_Set_Command(0x13,0x0); //close ptc 
-		 osDelay(3);
+		 osDelay(5);
 		 gpro_t.gTimer_copy_cmd_counter=0; 
 	     gpro_t.receive_copy_buff[3]=copy_null;
+		 Display_Kill_Dry_Ster_Icon();
 	}
 
 	break;
@@ -486,17 +488,19 @@ static void receive_cmd_or_data_handler(void)
 	if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
 		run_t.ultrasonic = open;
 		SendData_Set_Command(0x14,0x01); //close ptc 
-		 osDelay(3);
+		 osDelay(5);
 		 gpro_t.gTimer_copy_cmd_counter=0; 
 	     gpro_t.receive_copy_buff[4]=copy_null;
+		 Display_Kill_Dry_Ster_Icon();
 
 		}
 		else{//power off 
 		run_t.ultrasonic = close;
 		SendData_Set_Command(0x13,0x0); //close ptc 
-		 osDelay(3);
+		 osDelay(5);
 		 gpro_t.gTimer_copy_cmd_counter=0; 
 	     gpro_t.receive_copy_buff[4]=copy_null;
+		 Display_Kill_Dry_Ster_Icon();
 	}
 
 	break;
@@ -1180,11 +1184,11 @@ bool extract_frame(void)
 ******************************************************************************/
 void parse_decoder_handler(void)
 {
-     
+    static uint8_t parse_run_flag ; 
 	uint8_t i;
 	memcpy(inputBuf,rx_buf,rx_numbers);
-	
-	//while(extract_frame()){
+	parse_run_flag=1;
+	while(parse_run_flag==1){
 
 
          if(inputBuf[2]==0xFF){ //copy command 
@@ -1222,9 +1226,9 @@ void parse_decoder_handler(void)
                }
 			   rx_data_counter=0;
    
-			    parse_decoder_flag=1;
+			   parse_decoder_flag=1;
 			
-				 return ;
+				 
            }
 		   else if(inputBuf[3]!=0x0F){
                 gl_tMsg.execuite_cmd_notice =  inputBuf[3];
@@ -1233,15 +1237,22 @@ void parse_decoder_handler(void)
                 parse_decoder_flag=1;
 		
 		  
-				return ;
-
+			
             }
 		  
 
 		 }
 
+	  if(parse_decoder_flag == 1){
+		  
+		parse_recieve_data_handler();
+		parse_decoder_flag ++;
+	    parse_run_flag=0;
+	
+	  }
 
-	// }
+	}
+	
   
  }
 /******************************************************************************
@@ -1275,7 +1286,7 @@ void USART1_IRQHandler(void)
 
 	if (LL_USART_IsActiveFlag_RXNE(USART1))
     {
-        data = LL_USART_ReceiveData8(USART1);
+        data = LL_USART_ReceiveData8(USART1); 
 
         // 写入环形缓冲区
       
@@ -1299,7 +1310,7 @@ void USART1_IRQHandler(void)
 static void read_usart1_data(uint8_t data)
 {
     volatile  static uint8_t step_flag,temp_buf[1],frame_index;
-     if( gpro_t.decoder_flag ==0){
+     if(gpro_t.decoder_flag ==0){
 	   temp_buf[0]=data;
         switch (step_flag)
         {
