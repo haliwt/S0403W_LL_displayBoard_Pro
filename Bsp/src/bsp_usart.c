@@ -1205,7 +1205,7 @@ void parse_decoder_handler(void)
 			 parse_decoder_flag=1;
 
 			 rx_data_counter=0;
-			 return ;
+			
 			 
 		 }
 		 else{
