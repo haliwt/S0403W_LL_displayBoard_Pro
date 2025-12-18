@@ -21,7 +21,7 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
-uint8_t rx_buf[MAX_BUFFER_SIZE];
+//uint8_t rx_buf[MAX_BUFFER_SIZE];
 
 /* USER CODE END 0 */
 
@@ -73,7 +73,7 @@ void MX_USART1_UART_Init(void)
 
   LL_DMA_SetChannelPriorityLevel(DMA1, LL_DMA_CHANNEL_1, LL_DMA_PRIORITY_LOW);
 
-  LL_DMA_SetMode(DMA1, LL_DMA_CHANNEL_1, LL_DMA_MODE_CIRCULAR); //WT.EDIT 2025.12.17////LL_DMA_MODE_NORMAL);
+  LL_DMA_SetMode(DMA1, LL_DMA_CHANNEL_1, LL_DMA_MODE_NORMAL); //WT.EDIT 2025.12.17////LL_DMA_MODE_NORMAL);
 
   LL_DMA_SetPeriphIncMode(DMA1, LL_DMA_CHANNEL_1, LL_DMA_PERIPH_NOINCREMENT);
 
@@ -134,17 +134,17 @@ void MX_USART1_UART_Init(void)
   /* USER CODE BEGIN USART1_Init 2 */
   // 3. 配置 DMA 通道 (假设使用 DMA1 Channel1) 
  
-  LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_1, 
-                         LL_USART_DMA_GetRegAddr(USART1, LL_USART_DMA_REG_DATA_RECEIVE), 
-                         (uint32_t)rx_buf, 
-                         LL_DMA_DIRECTION_PERIPH_TO_MEMORY); 
-  LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, MAX_BUFFER_SIZE); 
+ // LL_DMA_ConfigAddresses(DMA1, LL_DMA_CHANNEL_1, 
+  //                       LL_USART_DMA_GetRegAddr(USART1, LL_USART_DMA_REG_DATA_RECEIVE), 
+   //                      (uint32_t)rx_buf, 
+   //                      LL_DMA_DIRECTION_PERIPH_TO_MEMORY); 
+  ///LL_DMA_SetDataLength(DMA1, LL_DMA_CHANNEL_1, RECEIVE_DATA_USART1);//MAX_BUFFER_SIZE); 
   // 4. 使能 USART1 DMA 接收 
   // 使能传输完成中断 
-  LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_1); 
+  //LL_DMA_EnableIT_TC(DMA1, LL_DMA_CHANNEL_1); 
   // 使能 DMA 通道 
-  LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1);
-  LL_USART_EnableDMAReq_RX(USART1);
+   LL_DMA_EnableChannel(DMA1, LL_DMA_CHANNEL_1);
+ // LL_USART_EnableDMAReq_RX(USART1);
  
   // 5. 开启 USART1 IDLE 中断 
   // 4. 使能 USART1 DMA 接收 
@@ -152,8 +152,8 @@ void MX_USART1_UART_Init(void)
 
 
   
-  LL_USART_EnableIT_IDLE(USART1);
-   //LL_USART_EnableIT_RXNE(USART1);
+ // LL_USART_EnableIT_IDLE(USART1);
+   LL_USART_EnableIT_RXNE_RXFNE(USART1);
   // LL_USART_EnableIT_TC(USART1);
   /* USER CODE END USART1_Init 2 */
 

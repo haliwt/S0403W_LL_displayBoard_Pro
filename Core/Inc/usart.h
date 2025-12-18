@@ -36,7 +36,7 @@ extern "C" {
 /* USER CODE BEGIN Private defines */
 
 
-extern uint8_t rx_buf[MAX_BUFFER_SIZE];
+//extern uint8_t rx_buf[MAX_BUFFER_SIZE];
 
 /* USER CODE END Private defines */
 

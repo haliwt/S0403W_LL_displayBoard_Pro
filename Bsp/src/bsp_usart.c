@@ -11,8 +11,22 @@
 #define ACK_SUCCESS 0x00U
 #define ACK_FAILURE 0x01U
 
-#define NEW_BUF_SIZE 11 // 需要复制的字节数 
+#define NEW_BUF_SIZE 12 // 需要复制的字节数 
+#define FRAME_HEAD1 0x5A 
+#define FRAME_HEAD2 0x10
 
+
+
+
+// 环形缓冲区
+uint8_t rx_buf[12];
+volatile uint32_t write_pos = 0;
+//volatile uint32_t last_pos  = 0;
+
+// 状态机缓存
+uint8_t frame_buf[NEW_BUF_SIZE];   // 临时存放一帧数据
+uint8_t frame_index = 0;           // 当前已收集字节数
+uint8_t frame_state = 0;           // 状态机状态：0=等待头1, 1=等待头2, 2=收集数据
 
 //extern QueueHandle_t xUartRxQueue = NULL;
 
@@ -73,6 +87,7 @@ MSG_T   gl_tMsg;
 
  static void receive_cmd_or_data_handler(void);
  static void receive_copy_cmd_or_data_handler(void);
+ static void read_usart1_data(uint8_t data);
 
 
 
@@ -100,8 +115,8 @@ void usart1_isr_callback_handler(uint8_t data)
 {
      static uint8_t state;
     // BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-	 //inputBuf[0] = data;
-	 memcpy(inputBuf,rx_buf,sizeof(rx_buf)) ;       
+	uint8_t  inputBuf[1];
+	// memcpy(inputBuf,rx_buf,sizeof(rx_buf)) ;       
 	
      switch(state)
 		{
@@ -387,8 +402,8 @@ void parse_recieve_data_handler(void)
 	case 0:
       
        receive_cmd_or_data_handler();
-	   clear_rx_buff();
-	   memset(rx_buf,0,sizeof(rx_buf));
+	  // clear_rx_buff();
+	  // memset(rx_buf,0,sizeof(rx_buf));
 	 
 
    break;
@@ -400,8 +415,8 @@ void parse_recieve_data_handler(void)
 
    case 0xFF: //copy cmd or notice,this is older version protocol.
 		receive_copy_cmd_or_data_handler();
-		clear_rx_buff();
-         memset(rx_buf,0,sizeof(rx_buf));
+		//clear_rx_buff();
+       //  memset(rx_buf,0,sizeof(rx_buf));
 
 	break;
 
@@ -695,6 +710,8 @@ static void receive_cmd_or_data_handler(void)
 	break; 
 
 	case 0x2A: //new version main board or smart phone app set temperature value
+
+	break;
 
 	case 0x3A: // smart phone APP set temperature value 
 
@@ -1052,13 +1069,18 @@ uint8_t parse_decoder_flag;
 	*Return Ref:
 	*
 ******************************************************************************/
-#define RX_BUF_SIZE 64 // 假设接收缓冲区大小 
+//#define RX_BUF_SIZE 64 // 假设接收缓冲区大小 
 // 定义全局或静态变量记录读位置
 static uint32_t last_pos = 0;
+uint8_t inputBuf[12];
 
+#if 0
 bool extract_frame(void) 
 {
-    // 获取当前 DMA 写指针
+   
+
+   #if 0
+   // 获取当前 DMA 写指针
     uint32_t curr_pos = MAX_BUFFER_SIZE - LL_DMA_GetDataLength(DMA1, LL_DMA_CHANNEL_1);
     
     // 如果读写指针一致，说明没有新数据
@@ -1085,7 +1107,7 @@ bool extract_frame(void)
                 for (uint8_t j = 0; j < NEW_BUF_SIZE; j++) {
                     inputBuf[j] = rx_buf[(i + j) % MAX_BUFFER_SIZE];
                 }
-
+              //  memset(rx_buf,0,128);
                 // 重点：更新读指针，跳过这完整的一帧数据
                 last_pos = (i + NEW_BUF_SIZE) % MAX_BUFFER_SIZE;
                 return true; // 提取成功，返回 true
@@ -1094,6 +1116,7 @@ bool extract_frame(void)
             {
                 // 找到了帧头，但后面的数据还没收齐
                 // 此时不要移动 last_pos，等下一次中断补齐数据后再处理
+              /// memset(rx_buf,0,128);
                 return false; 
             }
         }
@@ -1104,11 +1127,51 @@ bool extract_frame(void)
 
     // 如果遍历了一圈都没找到帧头，说明这段数据是垃圾数据
     // 同步指针到当前位置，清空搜索范围
+    //memset(rx_buf,0,sizeof(rx_buf));
     last_pos = curr_pos;
     return false;
+
+	#else 
+
+   uint32_t curr_pos = write_pos; 
+	while (last_pos != curr_pos) { 
+	uint8_t byte = rx_buf[last_pos]; 
+	last_pos = (last_pos + 1) % MAX_BUFFER_SIZE; 
+	switch (frame_state) { 
+		case 0: // 等待第一个字节 
+		if (byte == FRAME_HEAD1) { 
+			frame_state = 1; 
+		} 
+	     break; 
+
+		case 1: // 等待第二个字节 
+		if (byte == FRAME_HEAD2) { 
+			frame_buf[0] = FRAME_HEAD1; 
+			frame_buf[1] = FRAME_HEAD2; 
+		     frame_index = 2; 
+			 frame_state = 2; // 进入收集数据状态 
+
+			 } 
+            else {
+			 	frame_state = 0; 
+				// 回到初始状态
+				} break; 
+			case 2: // 收集剩余字节 
+			frame_buf[frame_index++] = byte; 
+			if (frame_index >= NEW_BUF_SIZE) {
+				memcpy(inputBuf, frame_buf, NEW_BUF_SIZE); 
+				frame_state = 0; 
+			   return true; // 完整帧提取成功 
+			   } 
+			 break; 
+			} 
+		} return false;
+
+   #endif 
+
 } 
 
-
+#endif 
 
 /******************************************************************************
 	*
@@ -1123,7 +1186,7 @@ void parse_decoder_handler(void)
      
 	uint8_t i;
 	
-	while(extract_frame()){
+	//while(extract_frame()){
 
 
          if(inputBuf[2]==0xFF){ //copy command 
@@ -1161,7 +1224,7 @@ void parse_decoder_handler(void)
 			   rx_data_counter=0;
    
 			    parse_decoder_flag=1;
-			    memset(inputBuf,0,sizeof(inputBuf));
+			
 				 return ;
            }
 		   else{
@@ -1170,7 +1233,7 @@ void parse_decoder_handler(void)
 				
                 parse_decoder_flag=1;
 		
-		        memset(inputBuf,0,sizeof(inputBuf));
+		  
 				return ;
 
             }
@@ -1179,7 +1242,7 @@ void parse_decoder_handler(void)
 		 }
 
 
-	 }
+	// }
   
  }
 /******************************************************************************
@@ -1192,17 +1255,106 @@ void parse_decoder_handler(void)
 ******************************************************************************/
 void parse_handler(void)
 {
-    if( parse_decoder_flag	== 1){
-		 
-		// receive_cmd_or_data_handler();
+   if( parse_decoder_flag	== 1){
+		 parse_decoder_flag ++; 
 		parse_recieve_data_handler();
-
-		 parse_decoder_flag ++;
+		
 	
 	  }
 
 
 
 }
+
+
+
+
+
+
+// 最终输出缓冲区
+//uint8_t inputBuf[NEW_BUF_SIZE];
+
+void USART1_IRQHandler(void)
+{
+   uint8_t data ;
+
+	if (LL_USART_IsActiveFlag_RXNE(USART1))
+    {
+        data = LL_USART_ReceiveData8(USART1);
+
+        // 写入环形缓冲区
+      
+         read_usart1_data(data);
+
+        
+     
+    }
+
+    // 清除错误标志
+    if (LL_USART_IsActiveFlag_ORE(USART1)) LL_USART_ClearFlag_ORE(USART1);
+    if (LL_USART_IsActiveFlag_FE(USART1))  LL_USART_ClearFlag_FE(USART1);
+    if (LL_USART_IsActiveFlag_NE(USART1))  LL_USART_ClearFlag_NE(USART1);
+}
+
+
+static void read_usart1_data(uint8_t data)
+{
+     static uint8_t step_flag;
+        switch (step_flag)
+        {
+            case 0: // 等待第一个字节
+                if (data == FRAME_HEAD1) {
+                    rx_buf[frame_index] = FRAME_HEAD1;
+					frame_index++;
+					step_flag= 1;
+                }
+				else{
+					rx_buf[0]=0;
+					step_flag= 0;
+					frame_index=0;
+
+					}
+            break;
+
+            case 1: // 等待第二个字节
+                if (data == FRAME_HEAD2) {
+                  
+                   rx_buf[frame_index] = FRAME_HEAD2;
+				   frame_index++;
+                   step_flag =2;
+                } 
+				else {
+					rx_buf[1]=0;
+					frame_index=0;
+                    step_flag = 0; // 回到初始状态
+                }
+            break;
+
+            case 2: // 收集剩余字节
+                
+                rx_buf[frame_index] = data;
+			    frame_index++;
+                if (data == 0xFE && frame_index >3) {
+                   
+                    step_flag=3;
+                }
+				
+
+		  break;
+
+		  case 3:
+		     rx_buf[frame_index] = data;
+			 memcpy(inputBuf,rx_buf,frame_index);
+		     memset(rx_buf,0,sizeof(rx_buf));
+		     frame_index = 0;
+             gpro_t.decoder_flag = 1;
+		     step_flag=0;
+
+		  break;
+        }
+   }
+
+  
+
 
 

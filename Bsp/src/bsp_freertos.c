@@ -422,16 +422,15 @@ static void vTaskStart(void *pvParameters)
          }
 
     }
-    
-	if( gpro_t.decoder_flag ==1 ){
-	
+    else if( gpro_t.decoder_flag ==1 ){
+	     
 			  
 			parse_decoder_handler();
-		  //usart1_dma_receive_config();
-		   parse_handler();
-			gpro_t.decoder_flag++;
-			 
-		 }
+		 
+		    parse_handler();
+			
+			  gpro_t.decoder_flag++; 
+	}
 
 
 	 

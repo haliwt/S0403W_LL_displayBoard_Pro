@@ -189,18 +189,20 @@ void TIM17_IRQHandler(void)
 /**
   * @brief This function handles USART1 global interrupt / USART1 wake-up interrupt through EXTI line 25.
   */
+#if 0
 void USART1_IRQHandler(void)
 {
   /* USER CODE BEGIN USART1_IRQn 0 */
-	volatile uint8_t data;
+	
 
- #if 0
+ #if 1
     volatile uint8_t data;
+    static uint8_t write_pos, last_pos;
    if(LL_USART_IsActiveFlag_RXNE_RXFNE(USART1)){
    
     data = LL_USART_ReceiveData8(USART1);
 
-        usart1_isr_callback_handler(data);
+     //   usart1_isr_callback_handler(data);
 	   // 存入缓冲区（简单环形缓冲）
 //        usart1_rx_buffer[usart1_rx_index++] = data;
 //       if (usart1_rx_index >= RX_BUFFER_SIZE)
@@ -208,43 +210,51 @@ void USART1_IRQHandler(void)
 //          usart1_rx_index = 0; // 环回
 //        }
         
-     
-
+      data = LL_USART_ReceiveData8(USART1); 
+	   // 写入环形缓冲区 
+	   rx_buf[write_pos] = data; 
+	   write_pos = (write_pos + 1) % MAX_BUFFER_SIZE; 
+	   // 如果写指针追上读指针，说明溢出，可以选择丢弃或覆盖 
+	   if (write_pos == last_pos) { 
+	   	// 缓冲区满，丢弃一个字节 
+	   	last_pos = (last_pos + 1) % MAX_BUFFER_SIZE;
+	   }
+        
    }
    #else
    if (LL_USART_IsActiveFlag_IDLE(USART1)) { 
    	   LL_USART_ClearFlag_IDLE(USART1); 
-
+      extract_frame() ;
       gpro_t.decoder_flag = 1;
-	 // 1. 获取当前 DMA 写入的位置 (写指针)
-        // CNDTR 寄存器是递减的，所以用总长度减去剩余长度
-        uint32_t curr_pos = MAX_BUFFER_SIZE - LL_DMA_GetDataLength(DMA1, LL_DMA_CHANNEL_1);
+//	 // 1. 获取当前 DMA 写入的位置 (写指针)
+//        // CNDTR 寄存器是递减的，所以用总长度减去剩余长度
+//        uint32_t curr_pos = MAX_BUFFER_SIZE - LL_DMA_GetDataLength(DMA1, LL_DMA_CHANNEL_1);
 
-        if (curr_pos != last_pos) 
-        {
-            // 2. 计算本次收到的数据长度
-            uint32_t length = 0;
-            if (curr_pos > last_pos) {
-                length = curr_pos - last_pos;
-                // 数据连续：rx_buf[last_pos] 到 rx_buf[curr_pos-1]
-                memcpy(processing_buf, &rx_buf[last_pos], length);
-            } 
-			else {
-                // 发生了环形回卷 (Wrap around)
-                uint32_t len1 = MAX_BUFFER_SIZE - last_pos;
-                uint32_t len2 = curr_pos;
-                length = len1 + len2;
-                // 分两段拷贝
-                memcpy(inputBuf, &rx_buf[last_pos], len1);
-                memcpy(&inputBuf[len1], &rx_buf[0], len2);
-            }
+//        if (curr_pos != last_pos) 
+//        {
+//            // 2. 计算本次收到的数据长度
+//            uint32_t length = 0;
+//            if (curr_pos > last_pos) {
+//                length = curr_pos - last_pos;
+//                // 数据连续：rx_buf[last_pos] 到 rx_buf[curr_pos-1]
+//                memcpy(processing_buf, &rx_buf[last_pos], length);
+//            } 
+//			else {
+//                // 发生了环形回卷 (Wrap around)
+//                uint32_t len1 = MAX_BUFFER_SIZE - last_pos;
+//                uint32_t len2 = curr_pos;
+//                length = len1 + len2;
+//                // 分两段拷贝
+//                memcpy(inputBuf, &rx_buf[last_pos], len1);
+//                memcpy(&inputBuf[len1], &rx_buf[0], len2);
+//            }
 
-            // 3. 更新长度并通知主循环
-            rx_len = length; 
-            gpro_t.decoder_flag = 1;
-            last_pos = curr_pos; // 更新读指针
+//            // 3. 更新长度并通知主循环
+//            rx_len = length; 
+//            gpro_t.decoder_flag = 1;
+//            last_pos = curr_pos; // 更新读指针
         }
-    }
+    
 
    
 
@@ -269,7 +279,7 @@ void USART1_IRQHandler(void)
 
   /* USER CODE END USART1_IRQn 1 */
 }
-
+#endif 
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */

@@ -4,8 +4,8 @@
 #include "main.h"
 #include "bsp.h"
 
-#define  MAX_BUFFER_SIZE   44
-
+#define  MAX_BUFFER_SIZE   48
+#define  RECEIVE_DATA_USART1  24
 
 typedef enum PROTOCOL{
 
@@ -44,7 +44,7 @@ typedef enum PROTOCOL{
 
 
 
-extern uint8_t inputBuf[MAX_BUFFER_SIZE];
+//extern uint8_t inputBuf[MAX_BUFFER_SIZE];
 extern uint8_t outputBuf[8];
 
 
