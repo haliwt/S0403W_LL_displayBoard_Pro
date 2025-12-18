@@ -33,7 +33,7 @@ void power_on_handler(void)
       break;
 
 	  case 1:
-
+        
 	    disp_temp_humidity_wifi_icon_handler();
 	    power_on_step =2;
 
@@ -77,7 +77,7 @@ void power_on_handler(void)
         if(gpro_t.gTimer_soft_version_counter > 5){
 			gpro_t.gTimer_soft_version_counter=0;
 	   		 sendNotice_toMainBoard(0xF0,0x01); //WT.EDIT 2025.10.31 new version : 0x01 
-			vTaskDelay(pdMS_TO_TICKS(5));
+			vTaskDelay(pdMS_TO_TICKS(10));
 
         }
 	  
@@ -87,14 +87,12 @@ void power_on_handler(void)
 	  break;
 
 	 case 5:
-     if(gpro_t.temp_key_set_value==0 && gpro_t.gTimer_temp_compare_value > 3 ){
+     if(gpro_t.temp_key_set_value==0 && gpro_t.gTimer_temp_compare_value > 5 ){
 	 	gpro_t.gTimer_temp_compare_value =0;
 
 
 	   set_temperature_compare_value_fun();
-	   if(LL_USART_IsActiveFlag_ORE(USART1)){
-          LL_USART_ClearFlag_ORE(USART1);
-       }
+	  
 
      }
 

@@ -675,7 +675,7 @@ static void receive_cmd_or_data_handler(void)
 		gpro_t.phone_power_on_flag = 1;
 	    run_t.power_on = power_on;
 		SendWifiData_Answer_Cmd(0x31,0x01);
-	    vTaskDelay(5);
+	    vTaskDelay(10);
 	   
 		//xTask_PowerOn_Handler() ; 
 
@@ -685,7 +685,7 @@ static void receive_cmd_or_data_handler(void)
 		 run_t.power_on = power_off;
 		 gpro_t.phone_power_on_flag = 2;
 		SendWifiData_Answer_Cmd(0x031,0x0);
-		vTaskDelay(5);
+		vTaskDelay(10);
 		//xTask_PowerOff_Handler() ; 
 	}
 
@@ -1211,6 +1211,7 @@ void parse_decoder_handler(void)
            if(inputBuf[3]==0x0F){ //is data frame ,don't is command 
 
                gl_tMsg.data_length =inputBuf[4]; //receive data of length
+               gl_tMsg.receive_data_length = inputBuf[4];
                gl_tMsg.execuite_cmd_notice=0;
                for(i=0;i<gl_tMsg.data_length;i++){
 		          rx_data_counter++;
@@ -1225,7 +1226,7 @@ void parse_decoder_handler(void)
 			
 				 return ;
            }
-		   else{
+		   else if(inputBuf[3]!=0x0F){
                 gl_tMsg.execuite_cmd_notice =  inputBuf[3];
 				 rx_data_counter=0;
 				
@@ -1350,8 +1351,7 @@ static void read_usart1_data(uint8_t data)
 
 		  case 3:
 		     rx_buf[frame_index] = temp_buf[0];
-			// memcpy(inputBuf,rx_buf,frame_index);
-		    // memset(rx_buf,0,sizeof(rx_buf));
+			 frame_index++;
 		     rx_numbers = frame_index;
 		     frame_index = 0;
              gpro_t.decoder_flag = 1;
