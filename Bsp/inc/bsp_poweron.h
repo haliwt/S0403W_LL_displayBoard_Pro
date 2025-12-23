@@ -4,7 +4,7 @@
 
 
 
-void power_on_key_short_fun(void);
+
 
 void power_on_off_handler(void);
 

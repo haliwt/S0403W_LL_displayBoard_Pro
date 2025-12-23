@@ -134,7 +134,8 @@ void add_key_fun(void)
 
         gpro_t.temp_key_set_value = 1;
         gpro_t.gTimer_set_temp_times = 0;
-        gpro_t.smart_phone_turn_off_ptc_flag =0;
+ 
+		run_t.ptc_on_off_flag = 0; //WT.EDIT 2025.10.31
 		
 	
 	   break;
@@ -197,8 +198,9 @@ void dec_key_fun(void)
 			
              gpro_t.temp_key_set_value = 1;
              gpro_t.gTimer_set_temp_times = 0;
-             gpro_t.smart_phone_turn_off_ptc_flag =0;
-			 
+ 
+			 run_t.ptc_on_off_flag = 0; //WT.EDIT 2025.10.31
+		
 	
 		    break;
 

@@ -324,7 +324,8 @@ static void set_lcd_numbers_from_value(uint8_t value) {
     lcd_t.number2_high = lcd_t.number2_low;
 }
 
-static uint8_t get_dry_plasma_ultra_mask(void) {
+static uint8_t get_dry_plasma_ultra_mask(void) 
+{
     uint8_t mask = 0x01;
     if (run_t.dry)        mask += DRY_Symbol;
     if (run_t.plasma)     mask += KILL_Symbol;

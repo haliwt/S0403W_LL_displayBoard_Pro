@@ -65,14 +65,14 @@ typedef struct _process_state{
 
    uint8_t power_on_every_times;
    
-   uint8_t phone_power_on_flag; //WT.EDIT 2025.12.16
+   uint8_t power_on_step;
    uint8_t decoder_flag;
    uint8_t last_read_index ;
 
   
    //send data need copy this is cmd
-   uint8_t send_ack_cmd;
-   uint8_t ack_cp_cmd_flag ;
+  
+
    uint8_t ack_cp_repeat_counter;
 
   
@@ -90,7 +90,7 @@ typedef struct _process_state{
    uint8_t  temp_real_value;
    uint8_t  smart_phone_app_timer_power_on_flag;
 
-   uint8_t  smart_phone_turn_off_ptc_flag;
+
    uint8_t  stopTwoHours_flag;
 
 
@@ -124,7 +124,7 @@ void set_temperature_compare_value_fun(void);
 void display_timer_and_beijing_time_handler(void);
 
 
-void ack_handler(void);
+void waiting_ack_handler(void);
 
 
 #endif

@@ -446,7 +446,7 @@ static void receive_cmd_or_data_handler(void)
 		    run_t.dry = open;
 			run_t.ptc_on_off_flag = 0;
 			SendData_Set_Command(0x12,0x01); //close ptc 
-			osDelay(5);
+			vTaskDelay(100);
 			gpro_t.gTimer_copy_cmd_counter=0; 
 			gpro_t.receive_copy_buff[2]=copy_null;
 			Display_Kill_Dry_Ster_Icon();
@@ -455,7 +455,7 @@ static void receive_cmd_or_data_handler(void)
 			run_t.dry = close;
 			run_t.ptc_on_off_flag = 1;
 			SendData_Set_Command(0x12,0x0); //close ptc 
-		    osDelay(5);
+		    vTaskDelay(100);
 			gpro_t.gTimer_copy_cmd_counter=0; 
 	        gpro_t.receive_copy_buff[2]=copy_null;
 			Display_Kill_Dry_Ster_Icon();
@@ -467,7 +467,7 @@ static void receive_cmd_or_data_handler(void)
 	if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
 		 run_t.plasma = open;
 		 SendData_Set_Command(0x13,0x01); //close ptc 
-		 osDelay(5);
+		 vTaskDelay(100);
 		 gpro_t.gTimer_copy_cmd_counter=0; 
 	     gpro_t.receive_copy_buff[3]=copy_null;
 		 Display_Kill_Dry_Ster_Icon();
@@ -476,7 +476,7 @@ static void receive_cmd_or_data_handler(void)
 		else{//power off 
 		run_t.plasma = close;
 		SendData_Set_Command(0x13,0x0); //close ptc 
-		 osDelay(5);
+		 vTaskDelay(100);
 		 gpro_t.gTimer_copy_cmd_counter=0; 
 	     gpro_t.receive_copy_buff[3]=copy_null;
 		 Display_Kill_Dry_Ster_Icon();
@@ -488,7 +488,7 @@ static void receive_cmd_or_data_handler(void)
 	if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
 		run_t.ultrasonic = open;
 		SendData_Set_Command(0x14,0x01); //close ptc 
-		 osDelay(5);
+		vTaskDelay(100);
 		 gpro_t.gTimer_copy_cmd_counter=0; 
 	     gpro_t.receive_copy_buff[4]=copy_null;
 		 Display_Kill_Dry_Ster_Icon();
@@ -497,7 +497,7 @@ static void receive_cmd_or_data_handler(void)
 		else{//power off 
 		run_t.ultrasonic = close;
 		SendData_Set_Command(0x13,0x0); //close ptc 
-		 osDelay(5);
+		 vTaskDelay(100);
 		 gpro_t.gTimer_copy_cmd_counter=0; 
 	     gpro_t.receive_copy_buff[4]=copy_null;
 		 Display_Kill_Dry_Ster_Icon();
@@ -530,7 +530,7 @@ static void receive_cmd_or_data_handler(void)
 		//SendData_Set_Command(0x08,0x01); //high temperatue warning .
 
 		SendWifiData_Answer_Cmd(0x08,0x01);
-	   osDelay(5);
+	   vTaskDelay(100);
 
 	}
 	else if(gl_tMsg.execuite_cmd_notice== 0x0){ //close 
@@ -552,7 +552,7 @@ static void receive_cmd_or_data_handler(void)
 		run_t.dry =0;
 		//SendData_Set_Command(0x09,0x01); //
 		SendWifiData_Answer_Cmd(0x09,0x01);
-		osDelay(5);
+		vTaskDelay(100);
 
 	}
 	else if(gl_tMsg.execuite_cmd_notice == 0x0){ //close 
@@ -673,10 +673,10 @@ static void receive_cmd_or_data_handler(void)
 
 	if(gl_tMsg.execuite_cmd_notice == 0x01){ //open
 		run_t.wifi_link_net_success=1;
-		gpro_t.phone_power_on_flag = 1;
+	
 	    run_t.power_on = power_on;
 		SendWifiData_Answer_Cmd(0x31,0x01);
-	    vTaskDelay(10);
+	    vTaskDelay(100);
 	   
 		//xTask_PowerOn_Handler() ; 
 
@@ -684,43 +684,51 @@ static void receive_cmd_or_data_handler(void)
 	else if(gl_tMsg.execuite_cmd_notice == 0x0){ //close 
 		run_t.wifi_link_net_success=1;
 		 run_t.power_on = power_off;
-		 gpro_t.phone_power_on_flag = 2;
-		SendWifiData_Answer_Cmd(0x031,0x0);
-		vTaskDelay(10);
+		 Lcd_PowerOff_Fun();
+		 SendWifiData_Answer_Cmd(0x031,0x0);
+		 vTaskDelay(100);
 		//xTask_PowerOff_Handler() ; 
 	}
 
 	break;
 
-	case 0x21: //smart phone power on or off that App timer .
+
+	case 0x21: //APP smart phone Timer power on or off that App timer ---new .
 	if(gl_tMsg.execuite_cmd_notice==0x01){ //power on by smart phone APP
 		gpro_t.smart_phone_app_timer_power_on_flag =1;
 		run_t.wifi_link_net_success=1;
+	   
         run_t.power_on= power_on; //WT.EDIT 2025.12.18
-       // smartPhone_appTimer_powerOn();
+        gpro_t.power_on_step=0;
 
-		//xTask_PowerOn_Handler() ; 
+
+		  SendWifiData_Answer_Cmd(0x021,0x01);
+		  vTaskDelay(100);
+		
+         
+       
 
 	}
-	else{  //power off by smart phone APP
+	else if(gl_tMsg.execuite_cmd_notice==0x0){  //power off by smart phone APP
 		run_t.wifi_link_net_success=1;
 		run_t.power_on= power_off;
 	    Lcd_PowerOff_Fun();
-		//xTask_PowerOff_Handler() ;     
+		SendWifiData_Answer_Cmd(0x021,0x0);
+		vTaskDelay(100);
+		   
 	}
 
 	break; 
 
 	case 0x2A: //new version main board or smart phone app set temperature value
 
-	break;
 
 	case 0x3A: // smart phone APP set temperature value 
 
 		run_t.wifi_link_net_success=1;
 	    run_t.ptc_on_off_flag = 0; //WT.EDIT 2025.10.31
 	   
-        gpro_t.smart_phone_turn_off_ptc_flag=0; //smart phone app from setup temperature value .
+
 		run_t.wifi_set_temperature = gl_tMsg.rx_data[0];
 
 		//decade_temp =  run_t.wifi_set_temperature / 10 ;
@@ -756,16 +764,14 @@ static void receive_copy_cmd_or_data_handler(void)
 			
 		if(gl_tMsg.execuite_cmd_notice == 0x01){//power on
 		
-		
-			gpro_t.send_ack_cmd=0;
-
-			
+	      
+		   
 
 		}
 		else if(run_t.power_on == power_off){
 	
 
-			   gpro_t.send_ack_cmd=0;
+			
 
 		}
 
@@ -776,12 +782,12 @@ static void receive_copy_cmd_or_data_handler(void)
 	   	
 		if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
 		
-				gpro_t.send_ack_cmd=0;
+			
 			
 		}
 		else {
 			
-			 gpro_t.send_ack_cmd=0;
+		
               
 		 }
 
@@ -792,11 +798,11 @@ static void receive_copy_cmd_or_data_handler(void)
 	   case plasma_on_off:
 	   	
 		if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
-				gpro_t.send_ack_cmd=0;
+			
 			
 			}
 			else {
-				gpro_t.send_ack_cmd=0;
+			
 
 			}
 
@@ -805,11 +811,11 @@ static void receive_copy_cmd_or_data_handler(void)
 	   case ultrasonic_on_off:
 	   	
 		if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
-			gpro_t.send_ack_cmd=0;
+			
 
 		}
 		else {
-		   gpro_t.send_ack_cmd=0;
+	
 		}
 
 	   break;
@@ -817,7 +823,7 @@ static void receive_copy_cmd_or_data_handler(void)
 	   case wifi_link:
 	   	
 	      if(gl_tMsg.execuite_cmd_notice ==1){
-               gpro_t.send_ack_cmd=0;
+            
 			   power_key_long_fun();
    
 		  }
@@ -854,10 +860,10 @@ static void receive_copy_cmd_or_data_handler(void)
 
 	       if(gl_tMsg.execuite_cmd_notice == 0x01){
 	   	
-                 gpro_t.send_ack_cmd=0;
+                 
 	       	 }
 			 else{
-	             gpro_t.send_ack_cmd=0;
+	             
 			}
 
 
@@ -880,17 +886,18 @@ static void receive_copy_cmd_or_data_handler(void)
 *
 */
 
-void ack_handler(void)
+void waiting_ack_handler(void)
 {
   
+#if 0
   //power ack 
-  switch(gpro_t.send_ack_cmd){
+  switch(){
               
 
    case 0x01: //power on or off
 
    
-   if(gpro_t.ack_cp_cmd_flag==0x11){
+   
 	   gpro_t.ack_cp_repeat_counter++;
    if(gpro_t.ack_cp_repeat_counter < 4 && gpro_t.gTimer_copy_cmd_counter > 0 ){
 	       gpro_t.gTimer_copy_cmd_counter =0;
@@ -899,7 +906,7 @@ void ack_handler(void)
 
    }
    }
-   else if(gpro_t.ack_cp_cmd_flag==0x10){ //be should is power off .
+
          gpro_t.ack_cp_repeat_counter++;
 	     if(gpro_t.ack_cp_repeat_counter < 10 && gpro_t.gTimer_copy_cmd_counter > 0){
 	       gpro_t.gTimer_copy_cmd_counter =0;
@@ -911,7 +918,6 @@ void ack_handler(void)
 
 	 if(gpro_t.ack_cp_repeat_counter > 5){
 	  	gpro_t.ack_cp_repeat_counter=6;
-		gpro_t.send_ack_cmd=0;
 
 	  }
 
@@ -923,7 +929,7 @@ void ack_handler(void)
   case 0x02: //PTC ON OR OFF ACK
 
   
-  if(gpro_t.ack_cp_cmd_flag == 0x21){// 0x2 ->
+
       gpro_t.ack_cp_repeat_counter++;
      if(gpro_t.ack_cp_repeat_counter < 4 && gpro_t.gTimer_copy_cmd_counter > 0){
 			gpro_t.gTimer_copy_cmd_counter =0;
@@ -932,7 +938,7 @@ void ack_handler(void)
 	 }
   
 	}
-    else if(	gpro_t.ack_cp_cmd_flag == 0x20){ // 0x2 ->)
+    
 
       gpro_t.ack_cp_repeat_counter++;
 	 if(gpro_t.ack_cp_repeat_counter < 4 && gpro_t.gTimer_copy_cmd_counter > 0){
@@ -945,7 +951,7 @@ void ack_handler(void)
   
 	  if(gpro_t.ack_cp_repeat_counter > 5){
 	  	gpro_t.ack_cp_repeat_counter=6;
-		gpro_t.send_ack_cmd=0;
+		
 
 	  }
 
@@ -956,7 +962,7 @@ void ack_handler(void)
   case 0x22:
   //PTC ON OR OFF BY compare value 
 
-  if(gpro_t.ack_cp_cmd_flag == 0xE1){// 0x1XX ->0XDXX  0X2XX->0XEXX
+
       gpro_t.ack_cp_repeat_counter++;
       if(gpro_t.ack_cp_repeat_counter < 20 && gpro_t.gTimer_copy_cmd_counter > 0){
 			gpro_t.gTimer_copy_cmd_counter =0;
@@ -967,7 +973,7 @@ void ack_handler(void)
 	
 
   }
-  else if(	gpro_t.ack_cp_cmd_flag == 0xE0){ // 0x2 ->)
+
 
       gpro_t.ack_cp_repeat_counter++;
 	 if(gpro_t.ack_cp_repeat_counter < 20 && gpro_t.gTimer_copy_cmd_counter > 0){
@@ -981,7 +987,7 @@ void ack_handler(void)
   
 	 if(gpro_t.ack_cp_repeat_counter > 20){//WT.EDIT 2025.11.19
 	  	gpro_t.ack_cp_repeat_counter=20;
-		gpro_t.send_ack_cmd=0;
+	
 
 	  }
 
@@ -1017,7 +1023,7 @@ void ack_handler(void)
    }
 	 if(gpro_t.ack_cp_repeat_counter > 5){
 	  	gpro_t.ack_cp_repeat_counter=6;
-		gpro_t.send_ack_cmd=0;
+
 
 	  }
 
@@ -1028,7 +1034,7 @@ void ack_handler(void)
 
   case ack_wifi_on:
 
-   if(gpro_t.ack_cp_cmd_flag == 0x31){// 0x1XX ->0XDXX  0X2XX->0XEXX
+
        gpro_t.ack_cp_repeat_counter++;
       if(gpro_t.ack_cp_repeat_counter < 4 && gpro_t.gTimer_copy_cmd_counter > 0){
 
@@ -1039,7 +1045,7 @@ void ack_handler(void)
     }
     }
     if(gpro_t.ack_cp_repeat_counter > 5){
-		gpro_t.send_ack_cmd=0;
+	
 		gpro_t.ack_cp_repeat_counter=6;
 
     }
@@ -1047,7 +1053,7 @@ void ack_handler(void)
   break;
 
 }	
-
+#endif 
 }
 
 

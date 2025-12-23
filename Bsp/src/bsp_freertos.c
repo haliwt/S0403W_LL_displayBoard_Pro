@@ -24,16 +24,49 @@
 											ĺ˝ć°ĺŁ°ć
 ***********************************************************************************************************/
 //static void vTaskDecoderPro(void *pvParameters);
-
+#if 0
 static void vTaskRunPro(void *pvParameters);
 
 static void vTaskStart(void *pvParameters);
+
+#else
+
+/*------------------ 静态任务内存定义 ------------------*/
+
+/* vTaskMsgPro 任务 */
+static StaticTask_t xTaskRunProTCB;
+static StackType_t xTaskRunProStack[256];
+
+/* vTaskStart 任务 */
+static StaticTask_t xTaskStartTCB;
+static StackType_t xTaskStartStack[128];
+
+
+#endif 
 static void AppTaskCreate(void);
+
+/* 定义静态内存块 */
+static StaticTask_t xIdleTaskTCB;
+static StackType_t uxIdleTaskStack[configMINIMAL_STACK_SIZE];
+
+
+/* 内核会自动调用这个回调函数来获取 Idle 任务的内存 */
+void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer,
+                                    StackType_t **ppxIdleTaskStackBuffer,
+                                    uint32_t *pulIdleTaskStackSize )
+{
+    *ppxIdleTaskTCBBuffer = &xIdleTaskTCB;
+    *ppxIdleTaskStackBuffer = uxIdleTaskStack;
+    *pulIdleTaskStackSize = configMINIMAL_STACK_SIZE;
+}
 
 
 
 /* creat task communication  */
 //static void AppObjCreate(void);
+static void key_handler(void);
+static void power_run_handler(void);
+
 
 
 /***********************************************************************************************************
@@ -186,176 +219,10 @@ static void vTaskRunPro(void *pvParameters)
     
     while(1)
     {
-		if( gl_ref.key_power_flag == 1){ //key power key
-
-            if(KEY_POWER_GetValue()  ==KEY_UP){
-               gl_ref.key_power_flag++;
-                
-
-             if(gl_ref.key_long_power_flag ==1){ //WIFI KEY FUNCTION
-        
-                 gl_ref.long_key_power_counter=0; //WT.EDIT 2025.05.10
-                 gpro_t.send_ack_cmd = ack_wifi_on;
-			     gpro_t.ack_cp_cmd_flag =0x31;
-				  gpro_t.ack_cp_repeat_counter=0;
-                 gpro_t.gTimer_cp_timer_counter =0;
-                 SendData_Set_Command(0x05,0x01); // link wifi of command .
-                 vTaskDelay(10);
-                 gpro_t.gTimer_mode_key_long=0;
-               
-
-
-             }
-             else{
-			
-                 gl_ref.long_key_power_counter=0;
-                 power_on_off_handler();
-             }
-
-            	}
-            }
-            else if(gl_ref.key_mode_flag == 1){
-                
-                  if(KEY_MODE_GetValue() == KEY_UP){
-                      gl_ref.key_mode_flag++;
-
-                    if(gl_ref.key_long_mode_flag ==1){
-
-                        gpro_t.gTimer_mode_key_long=0;
-					   gl_ref.long_key_mode_counter=0;
-                      
-
-                        mode_key_long_fun();
-
-
-                    }
-					else{
-						
-						gl_ref.key_long_mode_flag =0;
-					    gl_ref.long_key_mode_counter=0;
-						if(run_t.wifi_link_net_success == 0){	
-                            SendData_Buzzer();
-                            osDelay(5);
-                        }
-                        gl_ref.key_mode_short_flag =1;
-					   // mode_key_short_fun();
-										 
-					}
-               
-
-                 }
-        }
-        else if(gl_ref.smart_phone_app_timer_power_on_flag ==1){
-                gl_ref.smart_phone_app_timer_power_on_flag++;
-                 run_t.power_on= power_on;
-                gl_ref.long_key_power_counter =0;
-                run_t.power_on_disp_smg_number = 0;
-                gpro_t.gTimer_cp_timer_counter =0;
-                power_on_key_short_fun();
-                 
-
-        }
-        else if((gl_ref.key_add_flag ==1 || gl_ref.key_dec_flag ==1)&&run_t.power_on== power_on){
-                
-
-              if(gl_ref.key_add_flag == 1){
-
-                 
-               if(KEY_ADD_GetValue() == KEY_UP){
-                  gl_ref.key_add_flag ++;
-              
-                  
-                   SendData_Buzzer_Has_Ack();//SendData_Buzzer();
-                   osDelay(3);//HAL_Delay(5);
-                   add_key_fun();
-                }
-              
-
-              }
-              else if(gl_ref.key_dec_flag == 1){
-               
-                if(KEY_DEC_GetValue()==KEY_UP){
-                    gl_ref.key_dec_flag ++;
-               
-                   SendData_Buzzer_Has_Ack();//SendData_Buzzer();
-                   osDelay(3);
-   
-                
-                   dec_key_fun();
-                }
-            } 
-        }
-
-        if(gpro_t.phone_power_on_flag == 1){
-		    gpro_t.phone_power_on_flag=3;
-
-            gl_ref.key_long_power_flag=0;
-            gl_ref.long_key_power_counter=0;
-
-			 run_t.power_on= power_on;
-             power_on_key_short_fun();
-
-		}
-		else if(gpro_t.phone_power_on_flag == 2){
-                   
-		      gpro_t.phone_power_on_flag=4;
-              run_t.power_on= power_off;
-			  gl_ref.key_long_power_flag=0;
-			  gl_ref.long_key_power_counter=0;
-
-		}
-
-		
-
-
-        if(run_t.power_on== power_on){
-         
-           if(gl_ref.key_mode_short_flag ==1){
-            gl_ref.key_mode_short_flag ++ ;
-            mode_key_short_fun();
-            display_ai_icon(run_t.gModel) ;
-			//printf("key_shrot_mode !!!\r\n");
-
-           }
-
-           if( gpro_t.gTimer_mode_key_long > 1 && (gl_ref.key_long_mode_flag  ==1 ||gl_ref.key_long_power_flag ==1)){
-                 gl_ref.long_key_mode_counter =0;
-                 gl_ref.long_key_power_counter =0;
-         
-                if(gl_ref.key_long_power_flag ==1){
-
-                     gl_ref.key_long_power_flag=0;
-                     
-                }
-                if(gl_ref.key_long_mode_flag==1){
-                    gl_ref.key_long_mode_flag=0;
-
-                 }
-
-            }
-
-          
-	       power_on_handler();
-		   ack_handler();
-	       disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
-	     
-       }
-       else if(run_t.power_on== power_off){
-          gl_ref.long_key_power_counter =0;
-           gl_ref.key_long_power_flag =0;
-           run_t.power_on_disp_smg_number = 0;
-		   gpro_t.gTimer_two_hours_conter=0; //WT.EDIT 2025.10.30
-		    gpro_t.stopTwoHours_flag=0;
-           power_off_handler();
-	       ack_handler();
-
-       }
-
-	   
-
-	 vTaskDelay(10);
-         
-          
+		key_handler();
+        power_run_handler();
+		//waiting_ack_handler();
+        vTaskDelay(10);
     }
  }
 
@@ -411,6 +278,7 @@ static void vTaskStart(void *pvParameters)
                gpro_t.gTimer_mode_key_long = 0;
             
                 SendData_Buzzer();
+				vTaskDelay(100);
            }
 
          if(run_t.power_on== power_on){
@@ -470,6 +338,8 @@ void AppTaskCreate (void)
                  &xHandleTaskDecoderPro);   /* task handler  */
    #endif 
 
+   #if 0
+
 	xTaskCreate( vTaskRunPro,    		/* fucntion name  */
                  "vTaskRunPro",  		/* alias name   */
                  128,         		    /* stack heap capacity */
@@ -484,17 +354,46 @@ void AppTaskCreate (void)
                  NULL,           		/* param*/
                  2,              		/* priority */
                  &xHandleTaskStart );   /* task handler  */
+
+	#else
+
+	/*------------------ 静态任务创建 ------------------*/
+	
+	xHandleTaskRunPro = xTaskCreateStatic(
+			vTaskRunPro,			/* 任务函数 */
+			"vTaskRunPro",			/* 任务名 */
+			256,					/* 栈大小（word） */
+			NULL,					/* 参数 */
+			2,						/* 优先级 */
+			xTaskRunProStack,		/* 栈数组 */
+			&xTaskRunProTCB 		/* TCB */
+	);
+	
+	xHandleTaskStart = xTaskCreateStatic(
+			vTaskStart, 			/* 任务函数 */
+			"vTaskStart",			/* 任务名 */
+			128,					/* 栈大小（word） */
+			NULL,					/* 参数 */
+			1,						/* 优先级 */
+			xTaskStartStack,		/* 栈数组 */
+			&xTaskStartTCB			/* TCB */
+	);
+
+
+
+	#endif 
 }
  
 
-/*
-*********************************************************************************************************
+/*************************************************************************
+*
 *	Funtion Name: AppObjCreate
 *	Function: 
 *	Input Ref: 
-*	Return Ref: 
-*********************************************************************************************************
-*/
+*	Return Ref:
+*
+**************************************************************************/
+
 //static void AppObjCreate (void)
 //{
 //	/* �?0�?7�?0�?7�?0�?5��10�?0�?0�?0�?2uint8_t�?0�?4�?0�?1�?0�?3�?0�?4�?0�?3�?0�?4�?0�?9�?0�?7�?0�?9�?0�?4 */
@@ -548,11 +447,173 @@ void xtask_decoder_task_isr_handler(void)
 }
 
 
+/*************************************************************************
+*
+*	Funtion Name: static void key_handler(void)
+*	Function: 
+*	Input Ref: 
+*	Return Ref:
+*
+**************************************************************************/
+static void key_handler(void)
+{
+  if( gl_ref.key_power_flag == 1){ //key power key
+
+            if(KEY_POWER_GetValue()  ==KEY_UP){
+               gl_ref.key_power_flag++;
+                
+
+             if(gl_ref.key_long_power_flag ==1){ //WIFI KEY FUNCTION
+        
+                 gl_ref.long_key_power_counter=0; //WT.EDIT 2025.05.10
+  
+		
+				  gpro_t.ack_cp_repeat_counter=0;
+                 gpro_t.gTimer_cp_timer_counter =0;
+                 SendData_Set_Command(0x05,0x01); // link wifi of command .
+                 vTaskDelay(100);
+                 gpro_t.gTimer_mode_key_long=0;
+               
 
 
+             }
+             else{
+			
+                 gl_ref.long_key_power_counter=0;
+                 power_on_off_handler();
+             }
+
+        }
+   }
+   else if(gl_ref.key_mode_flag == 1){
+                
+                  if(KEY_MODE_GetValue() == KEY_UP){
+                      gl_ref.key_mode_flag++;
+
+                    if(gl_ref.key_long_mode_flag ==1){
+
+                        gpro_t.gTimer_mode_key_long=0;
+					   gl_ref.long_key_mode_counter=0;
+                      
+
+                        mode_key_long_fun();
 
 
+                    }
+					else{
+						
+						gl_ref.key_long_mode_flag =0;
+					    gl_ref.long_key_mode_counter=0;
+						if(run_t.wifi_link_net_success == 0){	
+                            SendData_Buzzer();
+                            vTaskDelay(100);
+                        }
+                        gl_ref.key_mode_short_flag =1;
+					   // mode_key_short_fun();
+										 
+					}
+               
 
+                 }
+   }
+   else if((gl_ref.key_add_flag ==1 || gl_ref.key_dec_flag ==1)&&run_t.power_on== power_on){
+                
+
+              if(gl_ref.key_add_flag == 1){
+
+                 
+               if(KEY_ADD_GetValue() == KEY_UP){
+                  gl_ref.key_add_flag ++;
+              
+                  
+                   SendData_Buzzer_Has_Ack();//SendData_Buzzer();
+                   vTaskDelay(100);
+                   add_key_fun();
+				   
+                }
+              
+
+              }
+              else if(gl_ref.key_dec_flag == 1){
+               
+                if(KEY_DEC_GetValue()==KEY_UP){
+                    gl_ref.key_dec_flag ++;
+               
+                   SendData_Buzzer_Has_Ack();//SendData_Buzzer();
+                   vTaskDelay(100);
+   
+                
+                   dec_key_fun();
+				  
+				   
+                }
+            } 
+    }
+
+
+}
+/*************************************************************************
+*
+*	Funtion Name: static void power_run_handler(void)
+*	Function: 
+*	Input Ref: 
+*	Return Ref:
+*
+**************************************************************************/
+static void power_run_handler(void)
+{
+
+     switch(run_t.power_on){
+
+	 case power_on:
+
+
+           if(gl_ref.key_mode_short_flag ==1){
+            gl_ref.key_mode_short_flag ++ ;
+            mode_key_short_fun();
+            display_ai_icon(run_t.gModel) ;
+
+
+           }
+           else if( gpro_t.gTimer_mode_key_long > 1 && (gl_ref.key_long_mode_flag  ==1 ||gl_ref.key_long_power_flag ==1)){
+                 gl_ref.long_key_mode_counter =0;
+                 gl_ref.long_key_power_counter =0;
+         
+                if(gl_ref.key_long_power_flag ==1){
+
+                     gl_ref.key_long_power_flag=0;
+                     
+                }
+                if(gl_ref.key_long_mode_flag==1){
+                    gl_ref.key_long_mode_flag=0;
+
+                 }
+
+            }
+
+          
+	       power_on_handler();
+		   
+	       disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
+	     
+       
+	 break;
+	 
+	 case power_off:
+    
+          gl_ref.long_key_power_counter =0;
+           gl_ref.key_long_power_flag =0;
+           run_t.power_on_disp_smg_number = 0;
+		   gpro_t.gTimer_two_hours_conter=0; //WT.EDIT 2025.10.30
+		    gpro_t.stopTwoHours_flag=0;
+           power_off_handler();
+	       waiting_ack_handler();
+
+       
+	 break;
+
+     }
+}
 
 
 
