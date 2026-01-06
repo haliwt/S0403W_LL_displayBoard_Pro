@@ -74,6 +74,7 @@ typedef struct _process_state{
   
 
    uint8_t ack_cp_repeat_counter;
+   uint8_t again_confirm_power_off_flag ;
 
   
    uint8_t two_hours_cp_flag ;

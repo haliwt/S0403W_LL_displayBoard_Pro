@@ -222,6 +222,14 @@ static void vTaskRunPro(void *pvParameters)
 		key_handler();
         power_run_handler();
 		//waiting_ack_handler();
+		if( gpro_t.decoder_flag ==1 ){
+	        
+			parse_decoder_handler();
+		 
+		 //   parse_handler();
+			
+			gpro_t.decoder_flag=0;
+	    }
         vTaskDelay(10);
     }
  }
@@ -307,14 +315,7 @@ static void vTaskStart(void *pvParameters)
     }
 	
 
-    if( gpro_t.decoder_flag ==1 ){
-	        
-			parse_decoder_handler();
-		 
-		 //   parse_handler();
-			
-			gpro_t.decoder_flag=0;
-	 }
+    
 	 
     vTaskDelay(20);
      
@@ -364,7 +365,7 @@ void AppTaskCreate (void)
 			"vTaskRunPro",			/* 任务名 */
 			256,					/* 栈大小（word） */
 			NULL,					/* 参数 */
-			2,						/* 优先级 */
+			1,						/* 优先级 */
 			xTaskRunProStack,		/* 栈数组 */
 			&xTaskRunProTCB 		/* TCB */
 	);
@@ -374,7 +375,7 @@ void AppTaskCreate (void)
 			"vTaskStart",			/* 任务名 */
 			128,					/* 栈大小（word） */
 			NULL,					/* 参数 */
-			1,						/* 优先级 */
+			2,						/* 优先级 */
 			xTaskStartStack,		/* 栈数组 */
 			&xTaskStartTCB			/* TCB */
 	);
