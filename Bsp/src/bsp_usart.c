@@ -1168,8 +1168,8 @@ void parse_handler(void)
 		 gpro_t.decoder_flag =0; 
 	
 		receive_cmd_or_data_handler();
-
-		printf("CommPro task started!\r\n");
+       
+	//	printf("CommPro task started!\r\n");
 		
 	
    }
