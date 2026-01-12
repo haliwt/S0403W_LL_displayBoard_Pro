@@ -406,12 +406,12 @@ static void receive_cmd_or_data_handler(void)
 	case power_on_off:
 
 	if(frame.func_code == 0x01){//power on
-		//run_t.power_on = power_on;
-		}
-		else{//power off 
-		//run_t.power_on = power_off;
+		run_t.power_on = power_on;
+	}
+	else{//power off 
+		run_t.power_on = power_off;
 
-		}
+	}
 	break;
 
 	case ptc_on_off: //PTC 
@@ -1039,7 +1039,7 @@ void waiting_ack_handler(void)
 //void usart1_isr_callback_handler(uint8_t data) {
 //   app_xusart1_queue_isr_handler(data);
 //}
-uint8_t parse_decoder_flag;
+volatile uint8_t parse_decoder_flag;
 
 
 /******************************************************************************
@@ -1164,15 +1164,17 @@ bool extract_frame(void)
 ******************************************************************************/
 void parse_handler(void)
 {
-   if( parse_decoder_flag	== 1){
-		 parse_decoder_flag =0; 
+   if(gpro_t.decoder_flag == 1){
+		 gpro_t.decoder_flag =0; 
 	
 		receive_cmd_or_data_handler();
+
+		printf("CommPro task started!\r\n");
 		
 	
    }
-   else if( parse_decoder_flag	== 2){
-	    parse_decoder_flag =0; 
+   else if(gpro_t.decoder_flag == 2){
+	    gpro_t.decoder_flag =0; 
         receive_copy_cmd_or_data_handler();
 
    	}
@@ -1222,12 +1224,12 @@ static void read_usart1_data(uint8_t data)
             case S03_STATE_WAIT_HEADER: // 等待第一个字节
                 if (data == FRAME_HEAD1) {
                     rx_buf[0] = FRAME_HEAD1;
-					frame_index++;
+				
 					s_state= S03_STATE_DEV_ADDR;
                 }
 				else{
 					
-					frame_index=0;
+					
 					s_state= S03_STATE_WAIT_HEADER;
 				
 
@@ -1238,20 +1240,20 @@ static void read_usart1_data(uint8_t data)
                 if (data == FRAME_ADDR){
                   
                    rx_buf[1] = data;
-				   frame_index++;
+				  
                    s_state =S03_STATE_CMD_TYPE;
                 } 
 				else{
 			
-					frame_index=0;
-                    s_state = 0; // 回到初始状态
+					
+                   s_state =S03_STATE_WAIT_HEADER; // 回到初始状态
                 }
             break;
 
             case S03_STATE_CMD_TYPE: // 收集剩余字节 2
                 frame.cmd_type = data;
-                rx_buf[frame_index] = data;
-			    frame_index++;
+                rx_buf[2] = data;
+			    
 			   if(frame.cmd_type == 0xFF){
 				 s_state =  S03_STATE_COPY_MODE;
                }
@@ -1265,10 +1267,12 @@ static void read_usart1_data(uint8_t data)
 
 		 case S03_STATE_FUNC_CODE:
 
-		   rx_buf[frame_index] = data;
-		    frame_index++;
+           frame.func_code = data; 
+				
+		   rx_buf[3] = data;
+		   
 		 
-			if(data == 0x0F){
+			if(frame.func_code == 0x0F){
                    
                   s_state = S03_STATE_DATA_LEN;
             }
@@ -1283,17 +1287,13 @@ static void read_usart1_data(uint8_t data)
 
 		 case s03_STATE_CMD_END:
 		      frame.data_id_end = data;
-			  rx_buf[frame_index] = data;
-		        frame_index++;
-		      if(rx_buf[frame_index]==0){
-			  
+			  rx_buf[4] = data;
+		      if(frame.data_id_end ==0) { 
+		      s_state = S03_STATE_TAIL;
 
-		        s_state = S03_STATE_TAIL ;
-		     }
+			 }
 			 else{
-			
-				frame_index=0;
-				s_state = S03_STATE_WAIT_HEADER;
+                 s_state =S03_STATE_WAIT_HEADER; // 回到初始状态
 
 			 }
 
@@ -1302,10 +1302,10 @@ static void read_usart1_data(uint8_t data)
 		 case S03_STATE_TAIL:
 
               frame.tail = data;
-			  rx_buf[frame_index] = data;
-			   frame_index=0;
-			  if(frame.tail == 0xFE){
-			  	 
+			  rx_buf[5] = data;
+			 
+			  if(frame.tail == 0xFE){//data is tail is 0xFE
+			  	frame.rx_data_num =0;
                 s_state = S03_STATE_WAIT_HEADER ;
 				parse_decoder_flag= 1;
 			    gpro_t.decoder_flag = 1;
@@ -1313,7 +1313,7 @@ static void read_usart1_data(uint8_t data)
               
 			  }
 			  else{
-				  frame_index=0;
+		
 
 			      s_state = S03_STATE_WAIT_HEADER ;
 
@@ -1325,8 +1325,7 @@ static void read_usart1_data(uint8_t data)
 		  case S03_STATE_DATA_LEN :
 
 		      frame.data_len = data;
-			  rx_buf[frame_index] = data;
-			  frame_index++;
+			  rx_buf[4] = data;
 			  frame.rx_data_num =0;
 			  s_state = S03_STATE_DATA ;
 
@@ -1397,12 +1396,12 @@ static void read_usart1_data(uint8_t data)
 
 		        if(frame.tail == 0xFE){
 				   s_state = S03_STATE_WAIT_HEADER;
-				   frame_index=0;
+				  
 
 				 
 				   parse_decoder_flag= 2;
 				   
-				   gpro_t.decoder_flag = 1;
+				   gpro_t.decoder_flag = 2;
 				   semaphore_isr();
 				   return;
 

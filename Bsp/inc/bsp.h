@@ -66,7 +66,7 @@ typedef struct _process_state{
    uint8_t power_on_every_times;
    
    uint8_t power_on_step;
-   uint8_t decoder_flag;
+   volatile uint8_t decoder_flag;
    uint8_t last_read_index ;
 
   

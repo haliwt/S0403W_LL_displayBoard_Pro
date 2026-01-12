@@ -162,6 +162,7 @@ static void vTaskCommPro(void *pvParameters)
 	 {
         xResult = xSemaphoreTake(xBinarySemaphore, (TickType_t)xMaxBlockTime);
 		if(xResult == pdTRUE){
+			 
 			  parse_handler();
 	    }
 	 }
