@@ -602,13 +602,21 @@ static void power_run_handler(void)
 	 
 	 case power_off:
     
-          gl_ref.long_key_power_counter =0;
+           gl_ref.long_key_power_counter =0;
            gl_ref.key_long_power_flag =0;
            run_t.power_on_disp_smg_number = 0;
 		   gpro_t.gTimer_two_hours_conter=0; //WT.EDIT 2025.10.30
-		    gpro_t.stopTwoHours_flag=0;
+		   gpro_t.stopTwoHours_flag=0;
            power_off_handler();
 	       waiting_ack_handler();
+		   
+		    if(gpro_t.again_confirm_power_off_flag == 1){
+				
+				SendData_Set_Command(0x30,0); //mainboard.WT.EDIT 2026.01.04
+                vTaskDelay(pdMS_TO_TICKS(100)); //WT.EDIT 2026.01.04
+			    gpro_t.again_confirm_power_off_flag++;
+
+		    }
 
        
 	 break;
