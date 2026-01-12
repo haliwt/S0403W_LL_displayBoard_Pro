@@ -15,6 +15,7 @@ void xtask_decoder_task_isr_handler(void);
 
 void app_xusart1_queue_isr_handler(uint8_t data);
 
+void semaphore_isr(void);
 
 
 #endif 

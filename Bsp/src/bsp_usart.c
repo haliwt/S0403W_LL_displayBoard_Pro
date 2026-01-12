@@ -13,9 +13,9 @@
 
 #define NEW_BUF_SIZE 12 // 需要复制的字节数 
 #define FRAME_HEAD1 0x5A 
-#define FRAME_HEAD2 0x10
+#define FRAME_ADDR 0x10
 
-
+#define S03_MAX_DATA_LEN  4
 
 
 // 环形缓冲区
@@ -62,23 +62,43 @@ typedef enum{
     ack_ultrasonic_on_off = 0x14,
 }signal_parase_t;
 
-typedef struct Msg
+
+typedef struct
 {
-    
-	uint8_t   cmd_notice;
-	uint8_t   copy_cmd_notice;
-    uint8_t   execuite_cmd_notice;
-	uint8_t   rx_data_flag;
-    uint8_t   bcc_check_code;
-    uint8_t   receive_data_length;
-    uint8_t   data_length;
-	uint8_t   rc_data_length;
-	uint8_t   rx_data[4];
-	uint8_t   usData[12];
+    uint8_t header;      // 帧头 0x5A / 0xA5
+    uint8_t dev_addr;    // 设备地址/类型
+    uint8_t cmd_type;    // 命令类型：指令/应答/通知...
+    uint8_t func_code;   // 功能码：0x01 开关机等
+    uint8_t copy_type;   // 复制类型
+    uint8_t data_len;    // 数据长度 N
+    uint8_t data_id_end; //
+    uint8_t data[S03_MAX_DATA_LEN]; // 数据区
+    uint8_t tail;        // 帧尾 0xFE
+    uint8_t rx_data_num;
+    uint8_t bcc;         // BCC 校验
 
-}MSG_T;
+} S03Frame_t;
 
-MSG_T   gl_tMsg; 
+
+S03Frame_t frame;
+
+ typedef enum {
+	 S03_STATE_WAIT_HEADER = 0,
+	 S03_STATE_DEV_ADDR,
+	 S03_STATE_CMD_TYPE,
+	 S03_STATE_FUNC_CODE,
+	 S03_STATE_DATA_LEN,
+	 S03_STATE_DATA,
+	 s03_STATE_CMD_END,
+	 S03_STATE_TAIL,
+	 S03_STATE_COPY_MODE,
+	 S03_STATE_COPY_FUNC_CODE,
+	 S03_STATE_COPY_TAIL,
+	 S03_STATE_BCC
+ } S03_State_e;
+
+ S03_State_e s_state;
+
 
  static void receive_cmd_or_data_handler(void);
  static void receive_copy_cmd_or_data_handler(void);
@@ -371,53 +391,6 @@ void usart1_isr_callback_handler(uint8_t data)
 
 
 #endif 
-void clear_rx_buff(void)
-{
-	gl_tMsg.usData[0] = 0;
-	gl_tMsg.usData[1] = 0;
-	//gl_tMsg.usData[2] = 0;
-	//gl_tMsg.usData[3] = 0;
-    gl_tMsg.usData[6] = 0;
-
-}
-/********************************************************************************
-	**
-	*Function Name:void usart1_isr_callback_handler(void)
-	*Function : parse this is receive data from mainboard.
-	*Input Ref:NO
-	*Return Ref:NO
-	*
-*******************************************************************************/
-void parse_recieve_data_handler(void)
-{
-  
-  // if(gl_tMsg.bcc_check_code == bcc_check(gl_tMsg.usData, gl_tMsg.data_length)){
-	switch(gl_tMsg.copy_cmd_notice){ //cmd or notice .
-
-	case 0:
-      
-       receive_cmd_or_data_handler();
-	  // clear_rx_buff();
-	  // memset(rx_buf,0,sizeof(rx_buf));
-	 
-
-   break;
-
-  
-
-   case 0x80:
-
-
-   case 0xFF: //copy cmd or notice,this is older version protocol.
-		receive_copy_cmd_or_data_handler();
-		//clear_rx_buff();
-       //  memset(rx_buf,0,sizeof(rx_buf));
-
-	break;
-
-    }
- }
- 
 
 /**
 * @brief receive cmd or data from mainboard .
@@ -429,10 +402,10 @@ void parse_recieve_data_handler(void)
 static void receive_cmd_or_data_handler(void)
 {
 
-   switch(gl_tMsg.cmd_notice){
+   switch(frame.cmd_type){
 	case power_on_off:
 
-	if(gl_tMsg.execuite_cmd_notice == 0x01){//power on
+	if(frame.func_code == 0x01){//power on
 		//run_t.power_on = power_on;
 		}
 		else{//power off 
@@ -442,7 +415,7 @@ static void receive_cmd_or_data_handler(void)
 	break;
 
 	case ptc_on_off: //PTC 
-	if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
+	if(frame.func_code == 0x01){//ptc on
 		    run_t.dry = open;
 			run_t.ptc_on_off_flag = 0;
 			SendData_Set_Command(0x12,0x01); //close ptc 
@@ -464,7 +437,7 @@ static void receive_cmd_or_data_handler(void)
 	break;
 
 	case plasma_on_off://plasma
-	if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
+	if(frame.func_code == 0x01){//ptc on
 		 run_t.plasma = open;
 		 SendData_Set_Command(0x13,0x01); //close ptc 
 		 vTaskDelay(100);
@@ -485,7 +458,7 @@ static void receive_cmd_or_data_handler(void)
 	break;
 
 	case ultrasonic_on_off:
-	if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
+	if(frame.func_code == 0x01){//ptc on
 		run_t.ultrasonic = open;
 		SendData_Set_Command(0x14,0x01); //close ptc 
 		vTaskDelay(100);
@@ -506,7 +479,7 @@ static void receive_cmd_or_data_handler(void)
 	break;
 
 	case fan_on_off:
-	if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
+	if(frame.func_code == 0x01){//ptc on
 		run_t.fan = open;
 
 		}
@@ -520,7 +493,7 @@ static void receive_cmd_or_data_handler(void)
 
 	case 0x08: //temperature of high warning.
 
-	if(gl_tMsg.execuite_cmd_notice == 0x01){  //warning 
+	if(frame.func_code == 0x01){  //warning 
 
 		run_t.ptc_warning = 1;
 		//run_t.setup_timer_timing_item =  PTC_WARNING; //ptc warning 
@@ -533,7 +506,7 @@ static void receive_cmd_or_data_handler(void)
 	   vTaskDelay(100);
 
 	}
-	else if(gl_tMsg.execuite_cmd_notice== 0x0){ //close 
+	else if(frame.func_code== 0x0){ //close 
 
 		run_t.ptc_warning = 0;
 
@@ -543,7 +516,7 @@ static void receive_cmd_or_data_handler(void)
 
 	case 0x09: //fan of default of warning.
 
-	if(gl_tMsg.execuite_cmd_notice == 0x01){  //warning 
+	if(frame.func_code == 0x01){  //warning 
 
 		run_t.fan_warning = 1;
 
@@ -555,7 +528,7 @@ static void receive_cmd_or_data_handler(void)
 		vTaskDelay(100);
 
 	}
-	else if(gl_tMsg.execuite_cmd_notice == 0x0){ //close 
+	else if(frame.func_code == 0x0){ //close 
 
 		run_t.fan_warning = 0;
 	}
@@ -566,8 +539,8 @@ static void receive_cmd_or_data_handler(void)
 
 
 
-	    gpro_t.humidity_real_value = gl_tMsg.rx_data[0];
-		gpro_t.temp_real_value = gl_tMsg.rx_data[1];
+	    gpro_t.humidity_real_value = frame.data[0];
+		gpro_t.temp_real_value = frame.data[1];
 
 		
 
@@ -593,15 +566,15 @@ static void receive_cmd_or_data_handler(void)
 
 	case 0x1C: //time is hours,minutes,seconds value .
 
-	if(gl_tMsg.receive_data_length == 0x03){ //鏁版嵁
+	if(frame.data_len == 0x03){ //鏁版嵁
 
-	if(gl_tMsg.rx_data[0] < 24){ //WT.EDIT 2024.11.23
+	if(frame.data[0] < 24){ //WT.EDIT 2024.11.23
 
 	lcd_t.display_beijing_time_flag= 1;
 
-	run_t.dispTime_hours  =  gl_tMsg.rx_data[0];
-	run_t.dispTime_minutes = gl_tMsg.rx_data[1];
-	run_t.gTimer_disp_time_seconds =  gl_tMsg.rx_data[2];
+	run_t.dispTime_hours  =  frame.data[0];
+	run_t.dispTime_minutes = frame.data[1];
+	run_t.gTimer_disp_time_seconds =  frame.data[2];
 	}
 
 
@@ -610,18 +583,18 @@ static void receive_cmd_or_data_handler(void)
 
 	case 0x1E: //fan of speed is value 
 
-	if( gl_tMsg.rx_data[0] < 34){
+	if( frame.data[0] < 34){
 		run_t.wifi_link_net_success=1;
 		run_t.disp_wind_speed_grade = 10;
 
 
 	}
-	else if( gl_tMsg.rx_data[0] < 67 &&  gl_tMsg.rx_data[0] > 33){
+	else if( frame.data[0] < 67 &&  frame.data[0] > 33){
 		run_t.wifi_link_net_success=1;
 		run_t.disp_wind_speed_grade = 60;
 
 	}
-	else if( gl_tMsg.rx_data[0] > 66){
+	else if( frame.data[0] > 66){
 		run_t.wifi_link_net_success=1;
 		run_t.disp_wind_speed_grade =100;
 	}
@@ -632,7 +605,7 @@ static void receive_cmd_or_data_handler(void)
 
 	case 0x1F: //link wifi if success data don't command and notice.
 
-	if(gl_tMsg.rx_data[0] == 0x01){  // link wifi 
+	if(frame.data[0] == 0x01){  // link wifi 
 
 		run_t.wifi_link_net_success =1 ;      
 
@@ -649,7 +622,7 @@ static void receive_cmd_or_data_handler(void)
 
 	case 0x27 : //AI mode by smart phone of APP be control.
 
-	if(gl_tMsg.execuite_cmd_notice==2){
+	if(frame.func_code==2){
 		//timer time + don't has ai item
 		run_t.display_set_timer_or_works_time_mode = timer_time;
 		run_t.gTimer_again_switch_works = 0; //WT.EDIT ,if don't define timer_time,wait 3s switch to works_time.
@@ -671,7 +644,7 @@ static void receive_cmd_or_data_handler(void)
 
 	case 0x31: //smart phone app timer that power on command,is normal power on and off
 
-	if(gl_tMsg.execuite_cmd_notice == 0x01){ //open
+	if(frame.func_code== 0x01){ //open
 		run_t.wifi_link_net_success=1;
 	
 	    run_t.power_on = power_on;
@@ -681,7 +654,7 @@ static void receive_cmd_or_data_handler(void)
 		//xTask_PowerOn_Handler() ; 
 
 	}
-	else if(gl_tMsg.execuite_cmd_notice == 0x0){ //close 
+	else if(frame.func_code == 0x0){ //close 
 		run_t.wifi_link_net_success=1;
 		 run_t.power_on = power_off;
 		 Lcd_PowerOff_Fun();
@@ -694,7 +667,7 @@ static void receive_cmd_or_data_handler(void)
 
 
 	case 0x21: //APP smart phone Timer power on or off that App timer ---new .
-	if(gl_tMsg.execuite_cmd_notice==0x01){ //power on by smart phone APP
+	if(frame.func_code==0x01){ //power on by smart phone APP
 		gpro_t.smart_phone_app_timer_power_on_flag =1;
 		run_t.wifi_link_net_success=1;
 	   
@@ -709,7 +682,7 @@ static void receive_cmd_or_data_handler(void)
        
 
 	}
-	else if(gl_tMsg.execuite_cmd_notice==0x0){  //power off by smart phone APP
+	else if(frame.func_code==0x0){  //power off by smart phone APP
 		run_t.wifi_link_net_success=1;
 		run_t.power_on= power_off;
 	    Lcd_PowerOff_Fun();
@@ -729,7 +702,7 @@ static void receive_cmd_or_data_handler(void)
 	    run_t.ptc_on_off_flag = 0; //WT.EDIT 2025.10.31
 	   
 
-		run_t.wifi_set_temperature = gl_tMsg.rx_data[0];
+		run_t.wifi_set_temperature = frame.data[0];
 
 		//decade_temp =  run_t.wifi_set_temperature / 10 ;
 		//unit_temp =	run_t.wifi_set_temperature % 10; //
@@ -758,11 +731,11 @@ static void receive_cmd_or_data_handler(void)
 */
 static void receive_copy_cmd_or_data_handler(void)
 {
-    switch(gl_tMsg.cmd_notice){
+    switch(frame.cmd_type){
 
         case power_on_off:
 			
-		if(gl_tMsg.execuite_cmd_notice == 0x01){//power on
+		if(frame.func_code == 0x01){//power on
 		
 	      
 		   
@@ -780,7 +753,7 @@ static void receive_copy_cmd_or_data_handler(void)
 
 	   case  ptc_on_off:
 	   	
-		if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
+		if(frame.func_code == 0x01){//ptc on
 		
 			
 			
@@ -797,7 +770,7 @@ static void receive_copy_cmd_or_data_handler(void)
 
 	   case plasma_on_off:
 	   	
-		if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
+		if(frame.func_code== 0x01){//ptc on
 			
 			
 			}
@@ -810,7 +783,7 @@ static void receive_copy_cmd_or_data_handler(void)
 
 	   case ultrasonic_on_off:
 	   	
-		if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
+		if(frame.func_code == 0x01){//ptc on
 			
 
 		}
@@ -822,7 +795,7 @@ static void receive_copy_cmd_or_data_handler(void)
 
 	   case wifi_link:
 	   	
-	      if(gl_tMsg.execuite_cmd_notice ==1){
+	      if(frame.func_code ==1){
             
 			   power_key_long_fun();
    
@@ -832,7 +805,7 @@ static void receive_copy_cmd_or_data_handler(void)
 
 	   case fan_on_off:
 
-		if(gl_tMsg.execuite_cmd_notice == 0x01){//ptc on
+		if(frame.func_code == 0x01){//ptc on
 			if(run_t.fan == open){
 			  gpro_t.receive_copy_buff[11]  =copy_ok;
 
@@ -858,7 +831,7 @@ static void receive_copy_cmd_or_data_handler(void)
 
 	   case 0x1C:
 
-	       if(gl_tMsg.execuite_cmd_notice == 0x01){
+	       if(frame.func_code == 0x01){
 	   	
                  
 	       	 }
@@ -1183,87 +1156,6 @@ bool extract_frame(void)
 
 /******************************************************************************
 	*
-	*Function Name:void parse_decoder_handler(void)
-	*Funcion: 
-	*Input Ref:
-	*Return Ref:
-	*
-******************************************************************************/
-void parse_decoder_handler(void)
-{
-    static uint8_t parse_run_flag ; 
-	uint8_t i;
-	memcpy(inputBuf,rx_buf,rx_numbers);
-	parse_run_flag=1;
-	while(parse_run_flag==1){
-
-
-         if(inputBuf[2]==0xFF){ //copy command 
-
-		     gl_tMsg.copy_cmd_notice = 0xFF;
-			  
-		     gl_tMsg.cmd_notice = inputBuf[3];
-		
-		
-		     gl_tMsg.execuite_cmd_notice = inputBuf[4];
-			
-		  
-			 parse_decoder_flag=1;
-
-			 rx_data_counter=0;
-			
-			 
-		 }
-		 else{
-		 	gl_tMsg.copy_cmd_notice = 0;
-			gl_tMsg.cmd_notice = inputBuf[2];
-            //gl_tMsg.usData[rx_data_counter] = inputBuf[3];
-          
-           if(inputBuf[3]==0x0F){ //is data frame ,don't is command 
-
-               gl_tMsg.data_length =inputBuf[4]; //receive data of length
-               gl_tMsg.receive_data_length = inputBuf[4];
-               gl_tMsg.execuite_cmd_notice=0;
-               for(i=0;i<gl_tMsg.data_length;i++){
-		          rx_data_counter++;
-               
-			      gl_tMsg.rx_data[i] = inputBuf[4+rx_data_counter];
-         
-                 
-               }
-			   rx_data_counter=0;
-   
-			   parse_decoder_flag=1;
-			
-				 
-           }
-		   else if(inputBuf[3]!=0x0F){
-                gl_tMsg.execuite_cmd_notice =  inputBuf[3];
-				 rx_data_counter=0;
-				
-                parse_decoder_flag=1;
-		
-		  
-			
-            }
-		  
-
-		 }
-
-	  if(parse_decoder_flag == 1){
-		  
-		parse_recieve_data_handler();
-		parse_decoder_flag ++;
-	    parse_run_flag=0;
-	
-	  }
-
-	}
-	
-  
- }
-/******************************************************************************
-	*
 	*Function Name
 	*Funcion: handle of tall process 
 	*Input Ref:
@@ -1273,11 +1165,17 @@ void parse_decoder_handler(void)
 void parse_handler(void)
 {
    if( parse_decoder_flag	== 1){
-		 parse_decoder_flag ++; 
-		parse_recieve_data_handler();
+		 parse_decoder_flag =0; 
+	
+		receive_cmd_or_data_handler();
 		
 	
-	  }
+   }
+   else if( parse_decoder_flag	== 2){
+	    parse_decoder_flag =0; 
+        receive_copy_cmd_or_data_handler();
+
+   	}
 }
 /******************************************************************************
 	*
@@ -1291,7 +1189,7 @@ void USART1_IRQHandler(void)
 {
    volatile uint8_t data ;
 
-	if (LL_USART_IsActiveFlag_RXNE(USART1))
+	if (LL_USART_IsActiveFlag_RXNE_RXFNE(USART1))
     {
         data = LL_USART_ReceiveData8(USART1); 
 
@@ -1316,70 +1214,218 @@ void USART1_IRQHandler(void)
 */
 static void read_usart1_data(uint8_t data)
 {
-    volatile  static uint8_t step_flag,temp_buf[1],frame_index;
-     if(gpro_t.decoder_flag ==0){
-	   temp_buf[0]=data;
-        switch (step_flag)
+    volatile  static uint8_t step_flag,frame_index;
+
+	
+        switch (s_state)
         {
-            case 0: // 等待第一个字节
-                if (temp_buf[0] == FRAME_HEAD1) {
-                    rx_buf[frame_index] = FRAME_HEAD1;
+            case S03_STATE_WAIT_HEADER: // 等待第一个字节
+                if (data == FRAME_HEAD1) {
+                    rx_buf[0] = FRAME_HEAD1;
 					frame_index++;
-					step_flag= 1;
+					s_state= S03_STATE_DEV_ADDR;
                 }
 				else{
-					rx_buf[0]=0;
-					step_flag= 0;
+					
 					frame_index=0;
-
-					}
-            break;
-
-            case 1: // 等待第二个字节
-                if (temp_buf[0] == FRAME_HEAD2) {
-                  
-                   rx_buf[frame_index] = FRAME_HEAD2;
-				   frame_index++;
-                   step_flag =2;
-                } 
-				else {
-					rx_buf[1]=0;
-					frame_index=0;
-                    step_flag = 0; // 回到初始状态
-                }
-            break;
-
-            case 2: // 收集剩余字节
-                
-                rx_buf[frame_index] = temp_buf[0];
-			    frame_index++;
-			    if(temp_buf[0] ==0x5A){
-
-				   frame_index = 0;
-				   step_flag=0;
+					s_state= S03_STATE_WAIT_HEADER;
+				
 
 				}
-                else if(temp_buf[0] == 0xFE && frame_index >3) {
-                   
-                    step_flag=3;
+            break;
+
+            case S03_STATE_DEV_ADDR: // 等待第二个字节
+                if (data == FRAME_ADDR){
+                  
+                   rx_buf[1] = data;
+				   frame_index++;
+                   s_state =S03_STATE_CMD_TYPE;
+                } 
+				else{
+			
+					frame_index=0;
+                    s_state = 0; // 回到初始状态
                 }
+            break;
+
+            case S03_STATE_CMD_TYPE: // 收集剩余字节 2
+                frame.cmd_type = data;
+                rx_buf[frame_index] = data;
+			    frame_index++;
+			   if(frame.cmd_type == 0xFF){
+				 s_state =  S03_STATE_COPY_MODE;
+               }
+			   else{
+
+			     s_state =	S03_STATE_FUNC_CODE;
+
+			  }
+
+		    break;
+
+		 case S03_STATE_FUNC_CODE:
+
+		   rx_buf[frame_index] = data;
+		    frame_index++;
+		 
+			if(data == 0x0F){
+                   
+                  s_state = S03_STATE_DATA_LEN;
+            }
+			else{
+			    s_state = s03_STATE_CMD_END;//S03_STATE_TAIL ;
+
+               
+			}
 				
 
 		  break;
 
-		  case 3:
-		     rx_buf[frame_index] = temp_buf[0];
-			 frame_index++;
-		     rx_numbers = frame_index;
-		     frame_index = 0;
-             gpro_t.decoder_flag = 1;
-		     step_flag=0;
+		 case s03_STATE_CMD_END:
+		      frame.data_id_end = data;
+			  rx_buf[frame_index] = data;
+		        frame_index++;
+		      if(rx_buf[frame_index]==0){
+			  
+
+		        s_state = S03_STATE_TAIL ;
+		     }
+			 else{
+			
+				frame_index=0;
+				s_state = S03_STATE_WAIT_HEADER;
+
+			 }
+
+		 break;
+
+		 case S03_STATE_TAIL:
+
+              frame.tail = data;
+			  rx_buf[frame_index] = data;
+			   frame_index=0;
+			  if(frame.tail == 0xFE){
+			  	 
+                s_state = S03_STATE_WAIT_HEADER ;
+				parse_decoder_flag= 1;
+			    gpro_t.decoder_flag = 1;
+				semaphore_isr();
+              
+			  }
+			  else{
+				  frame_index=0;
+
+			      s_state = S03_STATE_WAIT_HEADER ;
+
+			  }
+
+		 break;
+
+
+		  case S03_STATE_DATA_LEN :
+
+		      frame.data_len = data;
+			  rx_buf[frame_index] = data;
+			  frame_index++;
+			  frame.rx_data_num =0;
+			  s_state = S03_STATE_DATA ;
+
+
+		 break;
+
+		 case S03_STATE_DATA:
+
+             if(frame.data_len == 1)  // 0~4头信息 + N 数据
+		     {
+		        frame.data[0] = data; //第一个数据
+		          
+			     s_state = S03_STATE_TAIL;
+						
+				
+		      }
+			  else if(frame.data_len == 2){
+
+		           frame.rx_data_num++;
+				   if(frame.rx_data_num==1){
+	                   frame.data[0] = data; //第一个数据
+				   }
+	               else if(frame.rx_data_num ==2){
+				   	frame.rx_data_num=0;
+				    frame.data[1] = data; //第二个数据
+	                s_state = S03_STATE_TAIL;
+	               }
+						
+		       }
+			   else if(frame.data_len == 3){
+		               frame.rx_data_num++;
+					   if(frame.rx_data_num==1){
+		                   frame.data[0] = data; //第一个数据
+					   }
+					   else if(frame.rx_data_num ==2){
+					     frame.data[1] = data; //第一个数据
+                       }
+		               else if(frame.rx_data_num ==3){
+					   	frame.rx_data_num=0;
+					    frame.data[2] = data; //第二个数据
+		                s_state = S03_STATE_TAIL;
+		               }
+		       }
+			   else{
+                   s_state = S03_STATE_WAIT_HEADER ;
+
+			   }
+
+		 break;
+
+
+
+		 //copy command 
+		 case  S03_STATE_COPY_MODE:
+
+		      frame.copy_type = data; 
+		      s_state = S03_STATE_COPY_FUNC_CODE;
+
+          break;
+
+		  case  S03_STATE_COPY_FUNC_CODE:
+                frame.func_code = data;
+				
+                s_state = S03_STATE_COPY_TAIL;
+		  break;
+
+		  case  S03_STATE_COPY_TAIL:
+
+		        if(frame.tail == 0xFE){
+				   s_state = S03_STATE_WAIT_HEADER;
+				   frame_index=0;
+
+				 
+				   parse_decoder_flag= 2;
+				   
+				   gpro_t.decoder_flag = 1;
+				   semaphore_isr();
+				   return;
+
+				}
+				else{
+				   s_state = S03_STATE_WAIT_HEADER;
+
+				   return ;
+
+
+				}
 
 		  break;
-        }
 
-     }
+
+		}
+
+		  
+
  }
+
+     
+ 
 
   
 

@@ -30,7 +30,7 @@ uint8_t bcc_check(const unsigned char *data, int len) ;
 
 void usart1_isr_callback_handler(uint8_t data);
 
-void parse_recieve_data_handler(void);
+
 
 
 //void send_cmd_ack_hanlder(void);
@@ -40,7 +40,7 @@ void clear_rx_buff(void);
 bool extract_frame(void) ;
 
 void parse_handler(void);
-void parse_decoder_handler(void);
+
 
 #endif 
 

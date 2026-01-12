@@ -33,21 +33,43 @@ static void vTaskStart(void *pvParameters);
 
 /*------------------ 静态任务内存定义 ------------------*/
 
+/* CommTask */ 
+static StaticTask_t xTaskCommProTCB; 
+static StackType_t xTaskCommProStack[128];
+
+
 /* vTaskMsgPro 任务 */
-static StaticTask_t xTaskRunProTCB;
-static StackType_t xTaskRunProStack[256];
+static StaticTask_t xTaskUiProTCB;
+static StackType_t xTaskUiProStack[128];
 
 /* vTaskStart 任务 */
-static StaticTask_t xTaskStartTCB;
-static StackType_t xTaskStartStack[128];
+static StaticTask_t xTaskKeyProTCB;
+static StackType_t xTaskKeyProStack[128];
+
+/* 静态缓冲区和句柄（文件作用域或模块静态） */ 
+static StaticSemaphore_t xBinarySemaphoreBuffer; 
+static SemaphoreHandle_t xBinarySemaphore = NULL;
+
 
 
 #endif 
 static void AppTaskCreate(void);
+static void AppObjCreate(void);
+
 
 /* 定义静态内存块 */
 static StaticTask_t xIdleTaskTCB;
 static StackType_t uxIdleTaskStack[configMINIMAL_STACK_SIZE];
+
+
+
+static TaskHandle_t xHandleTaskCommPro = NULL;
+
+
+static TaskHandle_t xHandleTaskUiPro = NULL;
+
+static TaskHandle_t xHandleTaskKeyPro = NULL;
+
 
 
 /* 内核会自动调用这个回调函数来获取 Idle 任务的内存 */
@@ -69,14 +91,6 @@ static void power_run_handler(void);
 
 
 
-/***********************************************************************************************************
-											ĺéĺŁ°ć
-***********************************************************************************************************/
-//static TaskHandle_t xHandleTaskDecoderPro= NULL;
-
-static TaskHandle_t xHandleTaskRunPro = NULL;
-
-static TaskHandle_t xHandleTaskStart = NULL;
 
 
 //TimerHandle_t           Timer1Timer_Handler;/* ĺŽćśĺ1¤71ĺĽć */
@@ -107,6 +121,8 @@ typedef struct GL_TASK{
 }gl_task;
 
 gl_task gl_ref;
+uint8_t error_counter;
+
 
 /**********************************************************************************************************
 *	
@@ -122,7 +138,7 @@ void freeRTOS_Handler(void)
 	  AppTaskCreate();
 	  
 	  /*  */
-	 //  AppObjCreate();
+	   AppObjCreate();
 	  
 	  /*  */
 	   vTaskStartScheduler();
@@ -137,72 +153,19 @@ void freeRTOS_Handler(void)
 *   Return Ref:
 *
 **********************************************************************************************************/
-#if 0
-static void vTaskDecoderPro(void *pvParameters)
+static void vTaskCommPro(void *pvParameters)
 {
-	//BaseType_t xResult;
-	//const TickType_t xMaxBlockTime = pdMS_TO_TICKS(300); /* �?0�?7���?0�?0�?0�?1���?0�?6�?0�?7���?0�?8�?0�?6�?0�?7�?0�?5�?0�?8���?0�?4�?0�?1�?0�?2�?0�?9300ms */
-	//uint8_t ucQueueMsgValue[10];
-	// uint32_t ulValue;
+    BaseType_t xResult;
+	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(500); /* 设置最大等待时间为300ms */
 	
-    while(1)
-    {
-//	  xResult = xTaskNotifyWait(0x00000000,      
-//						          0xFFFFFFFF,      
-//						          &ulValue,        /*  */
-//						          portMAX_DELAY);  /* block times,releas cpu power right */
-		
-//        if( xResult == pdPASS )
-//        {
-//            if((ulValue & POWER_KEY_BIT_0) != 0)
-//            {
-//            //run_t.power_on= power_on;
-           
-//            gl_ref.key_long_power_flag=0;
-//            gl_ref.long_key_power_counter=0;
-
-//			 run_t.power_on= power_on;
-//             power_on_key_short_fun();
-
-//            }
-//            else if((ulValue & POWER_ON_BIT_5) != 0){
-
-//                gl_ref.smart_phone_app_timer_power_on_flag=1;
-
-//            }
-//            else if((ulValue & POWER_OFF_BIT_4) != 0){
-
-            
-//				run_t.power_on= power_off;
-//			    gl_ref.key_long_power_flag=0;
-//				gl_ref.long_key_power_counter=0;
-
-
-//            }
-//            else 
-
-//			if((ulValue & DECODER_BIT_9) != 0){
-//               parse_recieve_data_handler();
-//            }
-         
-//        }
-//	}
-
-	if( gpro_t.decoder_flag ==1 ){
-	        
-			parse_decoder_handler();
-		 
-		 //   parse_handler();
-			
-			gpro_t.decoder_flag=0;
+	 while(1)
+	 {
+        xResult = xSemaphoreTake(xBinarySemaphore, (TickType_t)xMaxBlockTime);
+		if(xResult == pdTRUE){
+			  parse_handler();
+	    }
 	 }
-
-	vTaskDelay(50);
-   
-    }	
 }
-#endif 
-
 /**********************************************************************************************************
 *	
 *   Function Name:
@@ -211,7 +174,7 @@ static void vTaskDecoderPro(void *pvParameters)
 *   Return Ref:
 *
 **********************************************************************************************************/
-static void vTaskRunPro(void *pvParameters)
+static void vTaskUiPro(void *pvParameters)
 {
    // BaseType_t xResult;
 	//const TickType_t xMaxBlockTime = pdMS_TO_TICKS(30); //40//30/* čŽžç˝Žć˘ďż˝ĺ¤§ç­ĺžćśé´ä¸ş30ms */
@@ -221,15 +184,8 @@ static void vTaskRunPro(void *pvParameters)
     {
 		key_handler();
         power_run_handler();
-		//waiting_ack_handler();
-		if( gpro_t.decoder_flag ==1 ){
-	        
-			parse_decoder_handler();
-		 
-		 //   parse_handler();
-			
-			gpro_t.decoder_flag=0;
-	    }
+	
+	
         vTaskDelay(10);
     }
  }
@@ -241,7 +197,7 @@ static void vTaskRunPro(void *pvParameters)
 *	
 *   
 **********************************************************************************************************/
-static void vTaskStart(void *pvParameters)
+static void vTaskKeyPro(void *pvParameters)
 {
   static uint8_t power_on_key;
    while(1)
@@ -330,61 +286,96 @@ static void vTaskStart(void *pvParameters)
 **********************************************************************************************************/
 void AppTaskCreate (void)
 {
-  #if 0
+
+ #if 0
    xTaskCreate( vTaskDecoderPro,    		/* fucntion name  */
                  "vTaskDecoderPro",  		/* alias name   */
                  128,         		    /* stack heap capacity */
                  NULL,        		    /* param  */
                  2,           		    /* priority  */
                  &xHandleTaskDecoderPro);   /* task handler  */
-   #endif 
 
-   #if 0
 
-	xTaskCreate( vTaskRunPro,    		/* fucntion name  */
-                 "vTaskRunPro",  		/* alias name   */
+   xTaskCreate( vTaskCommPro,    		/* fucntion name  */
+                 "vTaskCommPro",  		/* alias name   */
+                 128,         		    /* stack heap capacity */
+                 NULL,        		    /* param  */
+                 2,           		    /* priority  */
+                 &xHandleTaskCommPro);   /* task handler  */
+
+
+
+	xTaskCreate( vTaskUiPro,    		/* fucntion name  */
+                 "vTaskUiPro",  		/* alias name   */
                  128,         		    /* stack heap capacity */
                  NULL,        		    /* param  */
                  1,           		    /* priority  */
-                 &xHandleTaskRunPro);   /* task handler  */
+                 &xHandleTaskUiPro);   /* task handler  */
 
 	
-	xTaskCreate( vTaskStart,     		/* function name*/
-                 "vTaskStart",   		/* alias */
+	xTaskCreate( vTaskKeyPro,     		/* function name*/
+                 "vTaskKeyPro",   		/* alias */
                  128,            		/* stack heap capacity*/
                  NULL,           		/* param*/
                  2,              		/* priority */
-                 &xHandleTaskStart );   /* task handler  */
+                 &xHandleTaskKeyPro );   /* task handler  */
 
 	#else
 
 	/*------------------ 静态任务创建 ------------------*/
+
+	xHandleTaskCommPro = xTaskCreateStatic(
+			vTaskCommPro,			/* 任务函数 */
+			"vTaskCommPro",			/* 任务名 */
+			128,					/* 栈大小（word） */
+			NULL,					/* 参数 */
+			3,						/* 优先级 */
+			xTaskCommProStack,		/* 栈数组 */
+			&xTaskCommProTCB 		/* TCB */
+	);
+
 	
-	xHandleTaskRunPro = xTaskCreateStatic(
-			vTaskRunPro,			/* 任务函数 */
-			"vTaskRunPro",			/* 任务名 */
-			256,					/* 栈大小（word） */
+	
+	xHandleTaskUiPro = xTaskCreateStatic(
+			vTaskUiPro,			/* 任务函数 */
+			"vTaskUiPro",			/* 任务名 */
+			128,					/* 栈大小（word） */
 			NULL,					/* 参数 */
 			1,						/* 优先级 */
-			xTaskRunProStack,		/* 栈数组 */
-			&xTaskRunProTCB 		/* TCB */
+			xTaskUiProStack,		/* 栈数组 */
+			&xTaskUiProTCB 		/* TCB */
 	);
 	
-	xHandleTaskStart = xTaskCreateStatic(
-			vTaskStart, 			/* 任务函数 */
-			"vTaskStart",			/* 任务名 */
+	xHandleTaskKeyPro = xTaskCreateStatic(
+			vTaskKeyPro, 			/* 任务函数 */
+			"vTaskKeyPro",			/* 任务名 */
 			128,					/* 栈大小（word） */
 			NULL,					/* 参数 */
 			2,						/* 优先级 */
-			xTaskStartStack,		/* 栈数组 */
-			&xTaskStartTCB			/* TCB */
+			xTaskKeyProStack,		/* 栈数组 */
+			&xTaskKeyProTCB			/* TCB */
 	);
 
 
 
 	#endif 
 }
- 
+/**********************************************************************
+*	函 数 名: AppObjCreate
+*	功能说明: 创建任务通信机制
+*	形    参: 无
+*	返 回 值: 无
+***********************************************************************/
+static void AppObjCreate (void)
+{
+	/* 创建后信号量处于“空”状态（计数为0） */ 
+	xBinarySemaphore = xSemaphoreCreateBinaryStatic(&xBinarySemaphoreBuffer); 
+	if (xBinarySemaphore == NULL) {
+		/* 创建失败处理 */ 
+	    error_counter++;
+	}
+}
+
 
 /*************************************************************************
 *
@@ -510,7 +501,7 @@ static void key_handler(void)
                             vTaskDelay(100);
                         }
                         gl_ref.key_mode_short_flag =1;
-					   // mode_key_short_fun();
+					  
 										 
 					}
                
@@ -628,6 +619,19 @@ static void power_run_handler(void)
 
 
 
+void semaphore_isr(void)
+{
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+	
+	/* 发送同步信号 */
+	xSemaphoreGiveFromISR(xBinarySemaphore, &xHigherPriorityTaskWoken);
+
+	/* 如果xHigherPriorityTaskWoken = pdTRUE，那么退出中断后切到当前最高优先级任务执行 */
+	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+	#if DEBUG_FLAG
+    printf("ISR fired!\r\n");
+	#endif 
+}
 
 
 
