@@ -81,6 +81,8 @@ typedef struct _process_state{
    uint8_t receive_copy_buff[20];
    /********end*****/
    uint8_t disp_time_colon_flag;
+    uint8_t key_mode_short_flag ;
+	uint8_t switch_not_ai_mode;
    
    uint8_t disp_fan_switch_flag ;
    uint8_t key_be_pressed_flag;
@@ -127,7 +129,7 @@ void display_timer_and_beijing_time_handler(void);
 
 void waiting_ack_handler(void);
 
-void display_not_ai_timee_mode(void);
+void display_not_ai_timer_mode(void);
 
 
 #endif

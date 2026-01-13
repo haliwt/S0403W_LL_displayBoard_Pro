@@ -5,7 +5,7 @@ process_state gpro_t;
 
 //static void  disp_set_timer_timing_value_fun(void);
 
-static void disp_normal_timing_handler(void);
+static void counter_time_timing_fun(void);
 
 static void fan_default_warning_fun(void);
 
@@ -104,7 +104,7 @@ void display_timer_and_beijing_time_handler(void)
        
 
       }
-      disp_normal_timing_handler(); 
+      counter_time_timing_fun(); 
     
     
      Setup_Timer_Times_Donot_Display();
@@ -133,6 +133,15 @@ void display_timer_and_beijing_time_handler(void)
 			 vTaskDelay(100);
 
         }
+
+       if(run_t.gTimer_again_switch_works < 5 && gpro_t.switch_not_ai_mode==1){ //WT.EDIT ,if don't define timer_time,wait 3s switch to works_time.
+			
+		 display_not_ai_timer_mode();
+        }
+	    else{
+           gpro_t.switch_not_ai_mode=0;
+		}
+	   
        disp_timer_run_times();
        Works_Counter_Time();
 
@@ -181,13 +190,13 @@ void display_timer_and_beijing_time_handler(void)
 
 /******************************************************************************
 	*
-	*Function Name:void disp_normal_timing_handler(void)
+	*Function Name:void counter_time_timing_fun(void)
 	*Function: display of icon , "1" -> ON ,"0"-> OFF
 	*Input Ref:NO
 	*Return Ref:NO
 	*
 ******************************************************************************/
-static void disp_normal_timing_handler(void)
+static void counter_time_timing_fun(void)
 {
 
    if(run_t.gTimer_disp_time_seconds >59){ //minute
@@ -235,7 +244,7 @@ static void power_on_init_disp_time_numbers(void)
 
 }
 
-void display_not_ai_timee_mode(void)
+void display_not_ai_timer_mode(void)
 {
     display_ai_icon(0) ;
 
