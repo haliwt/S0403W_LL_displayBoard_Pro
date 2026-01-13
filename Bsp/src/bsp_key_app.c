@@ -151,7 +151,7 @@ void add_key_fun(void)
                 
 
 			}
-		    gpro_t.key_be_pressed_flag=1;
+		    gpro_t.key_set_timer_flag=1;
       
 		break;
 		}	
@@ -183,7 +183,7 @@ void dec_key_fun(void)
 	
 	   
 			run_t.wifi_set_temperature--;
-			if(run_t.wifi_set_temperature<20) run_t.wifi_set_temperature=40;
+			if(run_t.wifi_set_temperature<20) run_t.wifi_set_temperature=20;
 	      
 
 
@@ -217,7 +217,7 @@ void dec_key_fun(void)
 					
 					
 				}
-                gpro_t.key_be_pressed_flag=1;
+                gpro_t.key_set_timer_flag=1;
         
              break;
 

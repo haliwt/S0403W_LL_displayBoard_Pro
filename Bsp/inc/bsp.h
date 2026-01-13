@@ -85,7 +85,7 @@ typedef struct _process_state{
 	uint8_t switch_not_ai_mode;
    
    uint8_t disp_fan_switch_flag ;
-   uint8_t key_be_pressed_flag;
+   uint8_t key_set_timer_flag;
    
    uint8_t temp_key_set_value ;
    uint8_t set_temp_value_success;
