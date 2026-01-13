@@ -337,18 +337,31 @@ static void display_icons_0xC2(uint8_t and_mask)
 {
     TM1723_Write_Display_Data(0xC2, (get_dry_plasma_ultra_mask() + lcdNumber1_High[lcd_t.number1_high]) & and_mask);
 }
-
+/**
+*@ brief :
+*@ parame:
+*@ retval:
+**/
 void display_ai_icon(uint8_t data) 
 {
 	static uint8_t ai_symbol;
 	ai_symbol = data ? AI_Symbol : AI_NO_Symbol;
     TM1723_Write_Display_Data(0xC3, (ai_symbol+lcdNumber1_Low[lcd_t.number1_low] +lcdNumber2_High[lcd_t.number2_high]));
 }
-
-static void display_temp_unit(uint8_t and_mask) {
+/**
+*@ brief :
+*@ parame:
+*@ retval:
+**/
+static void display_temp_unit(uint8_t and_mask) 
+{
     TM1723_Write_Display_Data(0xC4, (0x01 + lcdNumber2_Low[lcd_t.number2_low] + lcdNumber3_High[lcd_t.number3_high]) & and_mask);
 }
-
+/**
+*@ brief :
+*@ parame:
+*@ retval:
+**/
 static void display_wifi_icon(void) 
 {
     uint8_t wifi_symbol;

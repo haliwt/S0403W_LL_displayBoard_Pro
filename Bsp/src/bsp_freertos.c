@@ -376,70 +376,6 @@ static void AppObjCreate (void)
 	    error_counter++;
 	}
 }
-
-
-/*************************************************************************
-*
-*	Funtion Name: AppObjCreate
-*	Function: 
-*	Input Ref: 
-*	Return Ref:
-*
-**************************************************************************/
-
-//static void AppObjCreate (void)
-//{
-//	/* �?0�?7�?0�?7�?0�?5��10�?0�?0�?0�?2uint8_t�?0�?4�?0�?1�?0�?3�?0�?4�?0�?3�?0�?4�?0�?9�?0�?7�?0�?9�?0�?4 */
-//	xUartRxQueue = xQueueCreate(20, sizeof(uint8_t));
-//    if(xUartRxQueue == 0 )
-//    {
-//        /* creat quenu is fail !!! */
-//    }
-//	
-//	/* �?0�?7�?0�?7�?0�?5��10�?0�?0�?0�?2�?0�?7�?0�?3�?0�?7�?0�?4�?0�?0�?0�?0�?0�?9�?0�?5���?0�?1�?0�?9�?0�?7�?0�?8�?0�?2�?0�?3�?0�?4�?0�?3�?0�?4�?0�?9�?0�?7�?0�?9�?0�?4�?0�?5�?0�?1�?0�?7�?0�?7�?0�?7�?0�?3CM3/CM4�?0�?2�?0�?3�?0�?2�?0�?9�?0�?8�?0�?532�?0�?2�?0�?3�?0�?3���?0�?5�?0�?1�?0�?6�?0�?3�?0�?0�?0�?2�?0�?0�?0�?0�?0�?9�?0�?5���?0�?1�?0�?9�?0�?7�?0�?9�?0�?4�?0�?7�?0�?14�?0�?0�?0�?2���?0�?0�?0�?5�?0�?3 */
-//
-//}
-
-
-/****************************************************************************
- * 
- * Function Name: void App_PowerOnOff_Handler(void)
- * Function:
- * Input Ref: NO
- * Return Ref: NO
- * 
-*****************************************************************************/
-void xTask_PowerOff_Handler(void)
-{
-     
-//     xTaskNotify(xHandleTaskDecoderPro, /*  */
-//	 POWER_OFF_BIT_4 ,            /* bit0  */
-//	 eSetBits);             /* BIT_*/
-     
-
-}
-
-void xTask_PowerOn_Handler(void)
-{
-     
-//     xTaskNotify(xHandleTaskDecoderPro,  
-//	 POWER_KEY_BIT_0 ,            /*  */
-//	 eSetBits);             /* */
-     
-
-}
-
-void xtask_decoder_task_isr_handler(void)
-{
-//	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-//	xTaskNotifyFromISR(xHandleTaskDecoderPro,  /*  */
-//						DECODER_BIT_9,     /*   */
-//						eSetBits,  /*  */
-//						&xHigherPriorityTaskWoken);
-//     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-}
-
-
 /*************************************************************************
 *
 *	Funtion Name: static void key_handler(void)
@@ -627,9 +563,9 @@ void semaphore_isr(void)
 
 	/* 如果xHigherPriorityTaskWoken = pdTRUE，那么退出中断后切到当前最高优先级任务执行 */
 	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-	#if DEBUG_FLAG
-    printf("ISR fired!\r\n");
-	#endif 
+//	#if DEBUG_FLAG
+//    printf("ISR fired!\r\n");
+//	#endif 
 }
 
 

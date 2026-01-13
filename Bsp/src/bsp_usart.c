@@ -621,24 +621,7 @@ static void receive_cmd_or_data_handler(void)
 
 	break;
 
-	case 0x27 : //AI mode by smart phone of APP be control.
-
-	if(frame.func_code==2){
-		//timer time + don't has ai item
-		run_t.display_set_timer_or_works_time_mode = timer_time;
-		run_t.gTimer_again_switch_works = 0; //WT.EDIT ,if don't define timer_time,wait 3s switch to works_time.
-		run_t.gModel=0;
-	}
-	else{
-		//beijing time + ai item
-		run_t.display_set_timer_or_works_time_mode = works_time;
-
-		run_t.gModel=1;
-
-	}
-
-
-	break;
+	
 
     //smart phone data
 	case 0x20: //new version smart phone normal power on and off command.
@@ -692,7 +675,51 @@ static void receive_cmd_or_data_handler(void)
 		   
 	}
 
-	break; 
+	break;
+
+
+	case 0x07:
+
+
+	case 0x27 : //AI mode by smart phone of APP be control.
+
+	if(frame.func_code==2){
+		//timer time + don't has ai item
+		if(run_t.gModel==0){//donot AI
+		     run_t.display_set_timer_or_works_time_mode = works_time;
+			run_t.gTimer_again_switch_works = 20;
+		
+			run_t.gModel=1;
+
+
+		}
+		else{
+		run_t.display_set_timer_or_works_time_mode = timer_time;
+		run_t.gTimer_again_switch_works = 0; //WT.EDIT ,if don't define timer_time,wait 3s switch to works_time.
+		run_t.gModel=0;
+		//display_not_ai_timee_mode();
+		}
+	}
+	else{
+		//beijing time + ai item
+		if(run_t.gModel == 0){
+			run_t.display_set_timer_or_works_time_mode = works_time;
+			run_t.gTimer_again_switch_works = 0;
+
+			run_t.gModel=1;
+		}
+		else{
+			run_t.display_set_timer_or_works_time_mode = timer_time;
+			run_t.gTimer_again_switch_works = 20; //WT.EDIT ,if don't define timer_time,wait 3s switch to works_time.
+			run_t.gModel=0;
+			//display_not_ai_timee_mode();
+
+		}
+
+	}
+
+
+	break;
 
 	
 
@@ -736,9 +763,9 @@ static void receive_cmd_or_data_handler(void)
 		   lcd_t.number8_high= 0;
 	
 		 
-		   display_digits(0x0F, 0);
+		   display_digits(0x0F, 1);
 		   vTaskDelay(1000);
-	       display_digits(0xFF, 1);
+	       display_digits(0xFF, 0);
 	 
 		   run_t.timer_timing_define_flag = timing_success;
 		   run_t.display_set_timer_or_works_time_mode=timer_time;

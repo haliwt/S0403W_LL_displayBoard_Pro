@@ -79,7 +79,7 @@ void mode_key_short_fun(void)
 			//beijing time + ai item
 			run_t.display_set_timer_or_works_time_mode = works_time;
 			run_t.gTimer_again_switch_works = 0;
-			run_t.gModel=1;
+			run_t.gModel=1; //AI MODE
 			#if DEBUG_FLAG
 			printf("key_shrot_mode-1 !!!\r\n");
 			#endif 

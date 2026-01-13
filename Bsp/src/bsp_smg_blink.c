@@ -18,7 +18,7 @@
 volatile bool blink_on = true;       // 闪烁状态
 volatile uint16_t blink_counter = 0; // 闪烁计数
 
-static void works_time_fun(void);
+static void display_works_or_timer_timing_fun(void);
 static void disp_fan_speed_level(void);
 static void donot_disp_T13_icon_fan_speed_level(void);
 //static void fan_set_timer_disp_leaf(uint8_t disp);
@@ -398,7 +398,7 @@ void disp_fan_leaf_run_icon(void)
             gpro_t.disp_fan_switch_flag  ^= 1;
 
             /* 更新要显示的数字（小时/分钟）并写入公共位,数字5678 */
-            works_time_fun();
+            display_works_or_timer_timing_fun();
             TM1723_Write_Display_Data(0xC9,
                 (T8_HUM + lcdNumber4_Low[lcd_t.number4_low] + lcdNumber5_High[lcd_t.number5_high]) & 0xFF);
 
@@ -522,7 +522,7 @@ void disp_fan_leaf_run_icon(void)
 * @param
 * @return
 */
-static void works_time_fun(void)
+static void display_works_or_timer_timing_fun(void)
 {
       
     if(run_t.display_set_timer_or_works_time_mode ==works_time){//switch(run_t.setup_timer_timing_item){

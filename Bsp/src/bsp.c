@@ -216,7 +216,7 @@ static void disp_normal_timing_handler(void)
 /******************************************************************************
 	*
 	*Function Name:static void power_on_init_disp_time_numbers(void)
-	*Function: display of icon , "1" -> ON ,"0"-> OFF
+	*Function: 显示时间的4位数字-小时:分钟
 	*Input Ref:NO
 	*Return Ref:NO
 	*
@@ -232,6 +232,14 @@ static void power_on_init_disp_time_numbers(void)
     else 
 		 TM1723_Write_Display_Data(0xCB,TIME_NO_COLON+lcdNumber6_Low[lcd_t.number6_low]+lcdNumber7_High[lcd_t.number7_high]);//d
     fan_disp_speed_leaf(1);
+
+}
+
+void display_not_ai_timee_mode(void)
+{
+    display_ai_icon(0) ;
+	power_on_init_disp_time_numbers();
+
 
 }
 

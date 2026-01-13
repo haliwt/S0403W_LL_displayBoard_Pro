@@ -127,6 +127,8 @@ void display_timer_and_beijing_time_handler(void);
 
 void waiting_ack_handler(void);
 
+void display_not_ai_timee_mode(void);
+
 
 #endif
 

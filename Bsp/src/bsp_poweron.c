@@ -205,48 +205,16 @@ void power_on_off_handler(void)
 
 	
 		gpro_t.power_on_step =0;
-      #if 0         
-		
-       // gpro_t.long_key_power_counter =0; 
-        run_t.power_on_disp_smg_number = 1;
-	   //copy 
-  
 
-		 gpro_t.ack_cp_repeat_counter=0;
-        gpro_t.gTimer_cp_timer_counter =0;
-		//end
-        run_t.wifi_set_temperature=40; //WT.EDIT 2025.01.15
-        run_t.display_set_timer_or_works_time_mode = works_time;//WT.EDIT 2025.01.15
-        run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
-        gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
-       
-       
-     gpro_t.gTimer_mode_key_long=0;
-      LCD_BACK_LIGHT_ON();
-	  POWER_ON_LED() ;
-	  LED_MODEL_ON() ;
-      display_lcd_Icon_init();
-      power_on_display_temp_handler();//WT.EDIT 2025.03.28
-        //printf("power on !!!\r\n");
-     #endif 
 
     }
     else if(run_t.power_on== power_on){ //power off .
         run_t.power_on= power_off;
         SendData_PowerOnOff(0);
 	    vTaskDelay(100);
-        //cp
+      
  
-	#if 0
-		 gpro_t.ack_cp_repeat_counter=0;
-        gpro_t.gTimer_cp_timer_counter =0;
-		//cp_end 
-        run_t.wifi_set_temperature =40;//WT.EDIT 2025.01.15
-        run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
-        gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
-        Lcd_PowerOff_Fun();
-   
-       #endif 
+
 
     }
     
