@@ -279,7 +279,7 @@ void disp_set_timer_timing_value_fun(void)
             gpro_t.disp_fan_switch_flag  ^= 1;
 	  	}
 
-    if (run_t.gTimer_key_timing < 4) {
+    if(run_t.gTimer_key_timing < 4) {
         tim_bit_2_hours = run_t.timer_time_hours / 10;
         tim_bit_1_hours = run_t.timer_time_hours % 10;
 

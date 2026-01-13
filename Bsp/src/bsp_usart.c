@@ -489,13 +489,11 @@ static void receive_cmd_or_data_handler(void)
 
 	break;
 
-
-
-	case 0x08: //temperature of high warning.
+    case 0x08: //temperature of high warning.
 
 	if(frame.func_code == 0x01){  //warning 
 
-		run_t.ptc_warning = 1;
+
 		//run_t.setup_timer_timing_item =  PTC_WARNING; //ptc warning 
 		run_t.display_set_timer_or_works_time_mode = PTC_WARNING;
 
@@ -535,7 +533,8 @@ static void receive_cmd_or_data_handler(void)
 
 	break;
 
-	case 0x1A: //read sensor "DHT11" temperature and humidity value .
+
+   case 0x1A: //read sensor "DHT11" temperature and humidity value .
 
 
 
@@ -563,18 +562,20 @@ static void receive_cmd_or_data_handler(void)
 	
 	
 	break;
+	
+
 
 	case 0x1C: //time is hours,minutes,seconds value .
 
 	if(frame.data_len == 0x03){ //鏁版嵁
 
-	if(frame.data[0] < 24){ //WT.EDIT 2024.11.23
+		if(frame.data[0] < 24){ //WT.EDIT 2024.11.23
 
-	lcd_t.display_beijing_time_flag= 1;
+		lcd_t.display_beijing_time_flag= 1;
 
-	run_t.dispTime_hours  =  frame.data[0];
-	run_t.dispTime_minutes = frame.data[1];
-	run_t.gTimer_disp_time_seconds =  frame.data[2];
+		run_t.dispTime_hours  =  frame.data[0];
+		run_t.dispTime_minutes = frame.data[1];
+		run_t.gTimer_disp_time_seconds =  frame.data[2];
 	}
 
 
@@ -693,21 +694,20 @@ static void receive_cmd_or_data_handler(void)
 
 	break; 
 
-	case 0x2A: //new version main board or smart phone app set temperature value
+	
+
+	case 0x2A: // set up temperature value 
 
 
 	case 0x3A: // smart phone APP set temperature value 
 
-		run_t.wifi_link_net_success=1;
+		 
 	    run_t.ptc_on_off_flag = 0; //WT.EDIT 2025.10.31
 	   
 
 		run_t.wifi_set_temperature = frame.data[0];
-
-		//decade_temp =  run_t.wifi_set_temperature / 10 ;
-		//unit_temp =	run_t.wifi_set_temperature % 10; //
-
-		lcd_t.number1_low=run_t.wifi_set_temperature / 10 ;
+	
+ 		lcd_t.number1_low=run_t.wifi_set_temperature / 10 ;
 		lcd_t.number1_high =run_t.wifi_set_temperature / 10 ;
 
 		lcd_t.number2_low = run_t.wifi_set_temperature % 10; //
@@ -719,6 +719,37 @@ static void receive_cmd_or_data_handler(void)
        
 
 	break;
+
+	case 0x2B:
+		
+           if(frame.data[0]>0){
+		   run_t.timer_time_hours = frame.data[0];
+		  
+		   lcd_t.number5_low =	run_t.timer_time_hours / 10;
+		   lcd_t.number5_high = run_t.timer_time_hours / 10;
+		   lcd_t.number6_low =	run_t.timer_time_hours % 10;
+		   lcd_t.number6_high = run_t.timer_time_hours % 10;
+		   
+		   lcd_t.number7_low = 0 ;
+		   lcd_t.number7_high =0;
+		   lcd_t.number8_low = 0 ;
+		   lcd_t.number8_high= 0;
+	
+		 
+		   display_digits(0x0F, blink_on);
+		   vTaskDelay(500);
+	       display_digits(0xFF, blink_on);
+	 
+		  
+		   run_t.display_set_timer_or_works_time_mode=timer_time;
+	
+		   
+	  }
+   	
+
+	break;
+
+	
 	}
 
 }
