@@ -722,7 +722,7 @@ static void receive_cmd_or_data_handler(void)
 
 	case 0x2B:
 		
-           if(frame.data[0]>0){
+           if(frame.data[0]>0 && run_t.ptc_warning==0 && run_t.fan_warning==0){
 		   run_t.timer_time_hours = frame.data[0];
 		  
 		   lcd_t.number5_low =	run_t.timer_time_hours / 10;
@@ -737,11 +737,14 @@ static void receive_cmd_or_data_handler(void)
 	
 		 
 		   display_digits(0x0F, 0);
-		   vTaskDelay(500);
+		   vTaskDelay(1000);
 	       display_digits(0xFF, 1);
 	 
-		  
+		   run_t.timer_timing_define_flag = timing_success;
 		   run_t.display_set_timer_or_works_time_mode=timer_time;
+		   run_t.gTimer_again_switch_works = 0;
+		   run_t.gModel = 0;
+		   display_ai_icon(run_t.gModel) ;
 	
 		   
 	  }

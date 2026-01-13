@@ -480,34 +480,32 @@ static void key_handler(void)
    }
    else if(gl_ref.key_mode_flag == 1){
                 
-                  if(KEY_MODE_GetValue() == KEY_UP){
-                      gl_ref.key_mode_flag++;
+		if(KEY_MODE_GetValue() == KEY_UP){
+			gl_ref.key_mode_flag++;
 
-                    if(gl_ref.key_long_mode_flag ==1){
+			if(gl_ref.key_long_mode_flag ==1){
 
-                        gpro_t.gTimer_mode_key_long=0;
-					   gl_ref.long_key_mode_counter=0;
-                      
-
-                        mode_key_long_fun();
+			gpro_t.gTimer_mode_key_long=0;
+			gl_ref.long_key_mode_counter=0;
 
 
-                    }
-					else{
-						
-						gl_ref.key_long_mode_flag =0;
-					    gl_ref.long_key_mode_counter=0;
-						if(run_t.wifi_link_net_success == 0){	
-                            SendData_Buzzer();
-                            vTaskDelay(100);
-                        }
-                        gl_ref.key_mode_short_flag =1;
-					  
-										 
-					}
-               
+			mode_key_long_fun();
 
-                 }
+
+		}
+		else{
+
+		gl_ref.key_long_mode_flag =0;
+		gl_ref.long_key_mode_counter=0;
+		if(run_t.wifi_link_net_success == 0){	
+		SendData_Buzzer();
+		vTaskDelay(100);
+		}
+		gl_ref.key_mode_short_flag =1;
+
+
+		}
+	}
    }
    else if((gl_ref.key_add_flag ==1 || gl_ref.key_dec_flag ==1)&&run_t.power_on== power_on){
                 
