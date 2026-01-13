@@ -71,6 +71,9 @@ void SendCmd_fun(uint8_t cmd,uint8_t data);
 
 void sendNotice_toMainBoard(uint8_t notice,uint8_t tdata);
 
+void SendData_Data(uint8_t cmd ,uint8_t tdata);
+
+
 #endif 
 
 

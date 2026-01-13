@@ -694,7 +694,7 @@ static void receive_cmd_or_data_handler(void)
 		    display_not_ai_timer_mode();
 		
 	}
-	else{
+	else{ //AI mode 
 		//beijing time + ai item
 	
 			run_t.display_set_timer_or_works_time_mode = works_time;

@@ -120,7 +120,7 @@ void add_key_fun(void)
 		
 		run_t.wifi_set_temperature= run_t.wifi_set_temperature+1;
 
-		if(run_t.wifi_set_temperature > 40)run_t.wifi_set_temperature= 20;
+		if(run_t.wifi_set_temperature > 40)run_t.wifi_set_temperature= 40;
 
 		
 	    decade_temp =  run_t.wifi_set_temperature / 10 ;

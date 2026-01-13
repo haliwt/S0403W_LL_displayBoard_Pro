@@ -250,6 +250,34 @@ void SendWifiData_Answer_Cmd(uint8_t cmd ,uint8_t data)
 	
 }
 
+/*********************************************************
+ * 
+ * Function Name:void SendData_Temp_Data(uint8_t tdata)
+ * Function:send temperature value 
+ * 
+*********************************************************/
+void SendData_Data(uint8_t cmd ,uint8_t tdata)
+{
+
+    outputBuf[0]=0xA5; //display board head = 0xA5
+	outputBuf[1]= 0x01; //display device Number:is 0x01
+	outputBuf[2]=cmd; // command type = 0x1A -> temperature of value 
+	outputBuf[3]=0x0f; // command order -> 0x0f -> is data , don't order.
+	outputBuf[4]=0x01; // data is length: 00 ->don't data 
+	outputBuf[5]=tdata; // frame of end code -> 0xFE.
+	outputBuf[6]=0xFE; // frame of end code -> 0xFE.
+    outputBuf[7] = bcc_check(outputBuf,7);
+		
+	transferSize=8;
+	usart1_dma_send(outputBuf,transferSize);
+		// if(transferSize)
+		// {
+		// 	while(transOngoingFlag);
+		// 	transOngoingFlag=1;
+		// 	//HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
+		// }
+
+}
 
 /********************************************************************************
 **
