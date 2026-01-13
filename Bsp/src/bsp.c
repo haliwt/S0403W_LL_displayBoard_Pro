@@ -246,12 +246,11 @@ static void power_on_init_disp_time_numbers(void)
 
 void display_not_ai_timer_mode(void)
 {
-    display_ai_icon(0) ;
-
-
-     switch(run_t.display_set_timer_or_works_time_mode){//switch(run_t.setup_timer_timing_item){
+    switch(run_t.display_set_timer_or_works_time_mode){//switch(run_t.setup_timer_timing_item){
 
       case works_time:
+
+	    display_ai_icon(1) ;
         
          lcd_t.number5_low=(run_t.dispTime_hours ) /10;
          lcd_t.number5_high =lcd_t.number5_low;//(run_t.dispTime_hours) /10;
@@ -272,7 +271,7 @@ void display_not_ai_timer_mode(void)
 
      case timer_time:
  
-
+           display_ai_icon(0) ;
            	lcd_t.number5_low=(run_t.timer_time_hours ) /10;
 			lcd_t.number5_high =lcd_t.number5_low;//(run_t.timer_time_hours) /10;
 

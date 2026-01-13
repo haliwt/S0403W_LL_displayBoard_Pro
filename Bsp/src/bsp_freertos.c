@@ -107,7 +107,7 @@ typedef struct GL_TASK{
    uint8_t  long_key_power_counter;
    uint8_t  key_long_power_flag;
    uint8_t  key_long_mode_flag;
- 
+   uint8_t key_mode_short_flag ;
    uint8_t  key_power_flag;
    uint8_t  key_mode_flag ;
    uint8_t  key_dec_flag;
@@ -437,7 +437,7 @@ static void key_handler(void)
 		SendData_Buzzer();
 		vTaskDelay(100);
 		}
-		gpro_t.key_mode_short_flag =1;
+		gl_ref.key_mode_short_flag =1;
 
 
 		}
@@ -495,10 +495,20 @@ static void power_run_handler(void)
 	 case power_on:
 
 
-           if(gpro_t.key_mode_short_flag ==1){
-            gpro_t.key_mode_short_flag ++ ;
+           if(gl_ref.key_mode_short_flag ==1){
+            gl_ref.key_mode_short_flag ++ ;
             mode_key_short_fun();
             display_ai_icon(run_t.gModel) ;
+			if(run_t.gModel == 1){
+				
+               SendData_Set_Command(0x07,0x02);
+			   vTaskDelay(10);
+			}
+			else{
+			   SendData_Set_Command(0x07,0x01);
+				vTaskDelay(10);
+
+			}
 
 
            }
