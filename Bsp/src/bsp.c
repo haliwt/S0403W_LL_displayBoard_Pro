@@ -238,6 +238,52 @@ static void power_on_init_disp_time_numbers(void)
 void display_not_ai_timee_mode(void)
 {
     display_ai_icon(0) ;
+
+
+     switch(run_t.display_set_timer_or_works_time_mode){//switch(run_t.setup_timer_timing_item){
+
+      case works_time:
+        
+         lcd_t.number5_low=(run_t.dispTime_hours ) /10;
+         lcd_t.number5_high =lcd_t.number5_low;//(run_t.dispTime_hours) /10;
+
+    	 lcd_t.number6_low = (run_t.dispTime_hours ) %10;;
+    	 lcd_t.number6_high =  lcd_t.number6_low ;//(run_t.dispTime_hours ) %10;
+         
+         lcd_t.number7_low = (run_t.dispTime_minutes )/10;
+    	 lcd_t.number7_high = lcd_t.number7_low;//(run_t.dispTime_minutes )/10;
+
+    	 lcd_t.number8_low = (run_t.dispTime_minutes )%10;
+    	 lcd_t.number8_high = lcd_t.number8_low ;//(run_t.dispTime_minutes )%10;
+
+     
+      
+    
+    break;
+
+     case timer_time:
+ 
+
+           	lcd_t.number5_low=(run_t.timer_time_hours ) /10;
+			lcd_t.number5_high =lcd_t.number5_low;//(run_t.timer_time_hours) /10;
+
+			lcd_t.number6_low = (run_t.timer_time_hours ) %10;;
+			lcd_t.number6_high = lcd_t.number6_low;//(run_t.timer_time_hours ) %10;
+
+			lcd_t.number7_low = (run_t.timer_time_minutes )/10;
+			lcd_t.number7_high =lcd_t.number7_low ;//(run_t.timer_time_minutes)/10;
+
+			lcd_t.number8_low = (run_t.timer_time_minutes)%10;
+			lcd_t.number8_high = lcd_t.number8_low ;//(run_t.timer_time_minutes )%10;
+
+
+    break;
+
+     }
+
+     
+
+
 	power_on_init_disp_time_numbers();
 
 

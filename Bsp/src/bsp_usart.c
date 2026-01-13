@@ -685,24 +685,24 @@ static void receive_cmd_or_data_handler(void)
 
 	if(frame.func_code==2){
 		//timer time + don't has ai item
-		if(run_t.gModel==0){//donot AI
+		if(run_t.gModel!=1){//donot AI
 		     run_t.display_set_timer_or_works_time_mode = works_time;
-			run_t.gTimer_again_switch_works = 20;
+			run_t.gTimer_again_switch_works = 0;
 		
 			run_t.gModel=1;
 
 
 		}
 		else{
-		run_t.display_set_timer_or_works_time_mode = timer_time;
-		run_t.gTimer_again_switch_works = 0; //WT.EDIT ,if don't define timer_time,wait 3s switch to works_time.
-		run_t.gModel=0;
-		//display_not_ai_timee_mode();
+			run_t.display_set_timer_or_works_time_mode = timer_time;
+			run_t.gTimer_again_switch_works = 0; //WT.EDIT ,if don't define timer_time,wait 3s switch to works_time.
+			run_t.gModel=0;
+		    display_not_ai_timee_mode();
 		}
 	}
 	else{
 		//beijing time + ai item
-		if(run_t.gModel == 0){
+		if(run_t.gModel ==0 ||  run_t.gModel ==2){
 			run_t.display_set_timer_or_works_time_mode = works_time;
 			run_t.gTimer_again_switch_works = 0;
 
@@ -710,9 +710,9 @@ static void receive_cmd_or_data_handler(void)
 		}
 		else{
 			run_t.display_set_timer_or_works_time_mode = timer_time;
-			run_t.gTimer_again_switch_works = 20; //WT.EDIT ,if don't define timer_time,wait 3s switch to works_time.
+			run_t.gTimer_again_switch_works = 0; //WT.EDIT ,if don't define timer_time,wait 3s switch to works_time.
 			run_t.gModel=0;
-			//display_not_ai_timee_mode();
+			display_not_ai_timee_mode();
 
 		}
 
