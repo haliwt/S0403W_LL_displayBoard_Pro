@@ -77,7 +77,7 @@ static void display_digits(uint8_t mask, bool blink)
 }
 
 #else 
-static void display_digits(uint8_t mask, bool blink) 
+void display_digits(uint8_t mask, bool blink) 
 {
   // uint8_t colon ;
    	uint8_t t15_base ,t14_base,t13_base,t10_base;

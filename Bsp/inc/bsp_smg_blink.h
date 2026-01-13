@@ -12,6 +12,7 @@ void disp_fan_leaf_run_icon(void);
 
 void fan_disp_speed_leaf(uint8_t dsip);
 
+void display_digits(uint8_t mask, bool blink) ;
 
 
 

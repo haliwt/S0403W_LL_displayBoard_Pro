@@ -736,9 +736,9 @@ static void receive_cmd_or_data_handler(void)
 		   lcd_t.number8_high= 0;
 	
 		 
-		   display_digits(0x0F, blink_on);
+		   display_digits(0x0F, 0);
 		   vTaskDelay(500);
-	       display_digits(0xFF, blink_on);
+	       display_digits(0xFF, 1);
 	 
 		  
 		   run_t.display_set_timer_or_works_time_mode=timer_time;
