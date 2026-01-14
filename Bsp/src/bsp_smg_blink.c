@@ -390,7 +390,7 @@ void disp_fan_leaf_run_icon(void)
 {
     
     static uint8_t colon_base,colon_flag;
-    static uint8_t t15_base;
+    static uint8_t t15_base, counter_ai;
 
 
     /* 主显示更新：仅当无风扇/ptc 报警时执行 */
@@ -398,13 +398,13 @@ void disp_fan_leaf_run_icon(void)
 
         if (run_t.display_set_timer_or_works_time_mode != setup_timer){
             if(lcd_t.gTimer_leaf_counter > LEAF_TOGGLE_THRESHOLD){ //3*100ms
-
+              
             lcd_t.gTimer_leaf_counter = 0;
             gpro_t.disp_fan_switch_flag  ^= 1;
 
             /* 更新要显示的数字（小时/分钟）并写入公共位,数字5678 */
 			if(gpro_t.switch_not_ai_mode == 0){
-               display_works_or_timer_timing_fun();
+			    display_works_or_timer_timing_fun();
 			}
 			//
             TM1723_Write_Display_Data(0xC9,

@@ -47,14 +47,14 @@ static StaticTask_t xTaskKeyProTCB;
 static StackType_t xTaskKeyProStack[128];
 
 /* 静态缓冲区和句柄（文件作用域或模块静态） */ 
-static StaticSemaphore_t xBinarySemaphoreBuffer; 
-static SemaphoreHandle_t xBinarySemaphore = NULL;
+//static StaticSemaphore_t xBinarySemaphoreBuffer; 
+//static SemaphoreHandle_t xBinarySemaphore = NULL;
 
 
 
 #endif 
 static void AppTaskCreate(void);
-static void AppObjCreate(void);
+//static void AppObjCreate(void);
 
 
 /* 定义静态内存块 */
@@ -138,7 +138,7 @@ void freeRTOS_Handler(void)
 	  AppTaskCreate();
 	  
 	  /*  */
-	   AppObjCreate();
+	 //  AppObjCreate();
 	  
 	  /*  */
 	   vTaskStartScheduler();
@@ -157,14 +157,20 @@ static void vTaskCommPro(void *pvParameters)
 {
     BaseType_t xResult;
 	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(2000); /* 设置最大等待时间为300ms */
+	uint32_t ulValue;
 	
 	 while(1)
 	 {
-        xResult = xSemaphoreTake(xBinarySemaphore, (TickType_t)xMaxBlockTime);
-		if(xResult == pdTRUE){
-			 
-			  parse_handler();
-	    }
+          xResult = xTaskNotifyWait(0x00000000,      
+						           0xFFFFFFFF,      
+						          &ulValue,        /* ??ulNotifiedValue???ulValue? */
+						          xMaxBlockTime);  /* ????????,????-block portMAX_DELAY */
+        if(xResult == pdPASS){
+             if((ulValue & DECODER_BIT_9 ) != 0)
+             {
+   			   parse_handler();
+	         }
+		 }
 	 }
 }
 /**********************************************************************************************************
@@ -367,15 +373,15 @@ void AppTaskCreate (void)
 *	形    参: 无
 *	返 回 值: 无
 ***********************************************************************/
-static void AppObjCreate (void)
-{
-	/* 创建后信号量处于“空”状态（计数为0） */ 
-	xBinarySemaphore = xSemaphoreCreateBinaryStatic(&xBinarySemaphoreBuffer); 
-	if (xBinarySemaphore == NULL) {
-		/* 创建失败处理 */ 
-	    error_counter++;
-	}
-}
+//static void AppObjCreate (void)
+//{
+//	/* 创建后信号量处于“空”状态（计数为0） */ 
+//	xBinarySemaphore = xSemaphoreCreateBinaryStatic(&xBinarySemaphoreBuffer); 
+//	if (xBinarySemaphore == NULL) {
+//		/* 创建失败处理 */ 
+//	    error_counter++;
+//	}
+//}
 /*************************************************************************
 *
 *	Funtion Name: static void key_handler(void)
@@ -400,7 +406,7 @@ static void key_handler(void)
 				  gpro_t.ack_cp_repeat_counter=0;
                  gpro_t.gTimer_cp_timer_counter =0;
                  SendData_Set_Command(0x05,0x01); // link wifi of command .
-                 vTaskDelay(100);
+                 vTaskDelay(10);
                  gpro_t.gTimer_mode_key_long=0;
                
 
@@ -567,7 +573,7 @@ static void power_run_handler(void)
 void semaphore_isr(void)
 {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-	
+	#if 0
 	/* 发送同步信号 */
 	xSemaphoreGiveFromISR(xBinarySemaphore, &xHigherPriorityTaskWoken);
 
@@ -575,7 +581,13 @@ void semaphore_isr(void)
 	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 //	#if DEBUG_FLAG
 //    printf("ISR fired!\r\n");
-//	#endif 
+	#endif
+	 xTaskNotifyFromISR(xHandleTaskCommPro,  /* ???? */
+                DECODER_BIT_9,     /* ???????????bit0  */
+                eSetBits,  /* ????????????BIT_0?????, ??????????? */
+                &xHigherPriorityTaskWoken);
+
+	 portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
 

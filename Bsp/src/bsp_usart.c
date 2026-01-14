@@ -489,6 +489,8 @@ static void receive_cmd_or_data_handler(void)
 
 	break;
 
+	
+
     case 0x08: //temperature of high warning.
 
 	if(frame.func_code == 0x01){  //warning 
@@ -532,6 +534,42 @@ static void receive_cmd_or_data_handler(void)
 	}
 
 	break;
+
+    case 0x20: //compatablie older version .
+	case 0x15: //传递三个参数 ---通知
+      
+	   if(frame.data_len==0x03){ //power on by smart phone APP
+	
+		run_t.dry =frame.data[0];
+		if(run_t.dry == 0){
+
+
+		}
+		else{
+
+		}
+
+		run_t.plasma=frame.data[1];
+		if(run_t.plasma ==1){
+
+		}
+		else{
+		 
+
+		}
+
+		run_t.ultrasonic =frame.data[2];
+		if(run_t.ultrasonic==1){
+		 
+		}
+		else{
+
+
+		}
+	  }
+	
+   break;
+		
 
 
    case 0x1A: //read sensor "DHT11" temperature and humidity value .
@@ -604,6 +642,7 @@ static void receive_cmd_or_data_handler(void)
 
 	break;
 
+
 	case 0x1F: //link wifi if success data don't command and notice.
 
 	if(frame.data[0] == 0x01){  // link wifi 
@@ -624,30 +663,28 @@ static void receive_cmd_or_data_handler(void)
 	
 
     //smart phone data
-	case 0x20: //new version smart phone normal power on and off command.
+//	case 0x21: //new version smart phone normal power on and off command.
 
-	case 0x31: //smart phone app timer that power on command,is normal power on and off
-
-	if(frame.func_code== 0x01){ //open
-		run_t.wifi_link_net_success=1;
+//	if(frame.func_code== 0x01){ //open
+//		run_t.wifi_link_net_success=1;
 	
-	    run_t.power_on = power_on;
-		SendWifiData_Answer_Cmd(0x31,0x01);
-	    vTaskDelay(100);
+//	    run_t.power_on = power_on;
+//		SendWifiData_Answer_Cmd(0x31,0x01);
+//	    vTaskDelay(100);
 	   
-		//xTask_PowerOn_Handler() ; 
+//		//xTask_PowerOn_Handler() ; 
 
-	}
-	else if(frame.func_code == 0x0){ //close 
-		run_t.wifi_link_net_success=1;
-		 run_t.power_on = power_off;
-		 Lcd_PowerOff_Fun();
-		 SendWifiData_Answer_Cmd(0x031,0x0);
-		 vTaskDelay(100);
-		//xTask_PowerOff_Handler() ; 
-	}
+//	}
+//	else if(frame.func_code == 0x0){ //close 
+//		run_t.wifi_link_net_success=1;
+//		 run_t.power_on = power_off;
+//		 Lcd_PowerOff_Fun();
+//		 SendWifiData_Answer_Cmd(0x031,0x0);
+//		 vTaskDelay(100);
+//		//xTask_PowerOff_Handler() ; 
+//	}
 
-	break;
+//	break;
 
 
 	case 0x21: //APP smart phone Timer power on or off that App timer ---new .
@@ -714,11 +751,7 @@ static void receive_cmd_or_data_handler(void)
 
 	case 0x2A: // set up temperature value 
 
-
-	case 0x3A: // smart phone APP set temperature value 
-
-		 
-	    run_t.ptc_on_off_flag = 0; //WT.EDIT 2025.10.31
+        run_t.ptc_on_off_flag = 0; //WT.EDIT 2025.10.31
 	   
 
 		run_t.wifi_set_temperature = frame.data[0];
@@ -736,7 +769,7 @@ static void receive_cmd_or_data_handler(void)
 
 	break;
 
-	case 0x2B:
+	case 0x2B: //set up timer timing value .
 		
            if(frame.data[0]>0 && run_t.ptc_warning==0 && run_t.fan_warning==0){
 		   run_t.timer_time_hours = frame.data[0];
@@ -783,7 +816,7 @@ static void receive_cmd_or_data_handler(void)
 */
 static void receive_copy_cmd_or_data_handler(void)
 {
-    switch(frame.cmd_type){
+    switch(frame.copy_type){
 
         case power_on_off:
 			
@@ -845,7 +878,7 @@ static void receive_copy_cmd_or_data_handler(void)
 
 	   break;
 
-	   case wifi_link:
+	   case wifi_link://0x05
 	   	
 	      if(frame.func_code ==1){
             
@@ -1448,10 +1481,7 @@ static void read_usart1_data(uint8_t data)
 
 		        if(frame.tail == 0xFE){
 				   s_state = S03_STATE_WAIT_HEADER;
-				  
-
-				 
-				   parse_decoder_flag= 2;
+				  parse_decoder_flag= 2;
 				   
 				   gpro_t.decoder_flag = 2;
 				   semaphore_isr();

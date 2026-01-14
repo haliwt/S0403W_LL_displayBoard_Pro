@@ -1,6 +1,14 @@
 #include "bsp.h"
 
 
+// 定义宏，提高代码可读性
+#define FRAME_HEADER        0xA5
+#define DEVICE_NUMBER       0x01
+#define FRAME_END           0xFE
+#define NO_DATA             0x00
+#define HAS_DATA            0x0F
+
+
 volatile static uint8_t transOngoingFlag; //interrupt Transmit flag bit , 1---stop,0--run
 uint8_t outputBuf[8];
 static uint8_t transferSize;
@@ -21,7 +29,7 @@ void SendData_PowerOnOff(uint8_t index)
 	
    //crc=0x55;
 	outputBuf[0]=0xA5; //display board head = 0xA5
-	outputBuf[1]= 0x01; //display device Number:is 0x01
+	outputBuf[1]= DEVICE_NUMBER; //display device Number:is 0x01
 	outputBuf[2]=0x01; // command type = 0x01 ->power on or power off 
 	outputBuf[3]=index; // command order -> 01 - power on , 00- power off
 	outputBuf[4]=0x00; // data is length: 00 ->don't data 
@@ -42,7 +50,7 @@ void SendData_Buzzer(void)
 {
 	
     outputBuf[0]=0xA5; //display board head = 0xA5
-	outputBuf[1]= 0x01; //display device Number:is 0x01
+	outputBuf[1]= DEVICE_NUMBER; //display device Number:is 0x01
 	outputBuf[2]=0x06; // command type = 0x06 ->buzzer sound open or not
 	outputBuf[3]=0x01; // command order -> 01 - buzzer sound done, 00- don't buzzer sound 
 	outputBuf[4]=0x00; // data is length: 00 ->don't data 
@@ -64,7 +72,7 @@ void SendData_Buzzer_Has_Ack(void)
 {
 	
     outputBuf[0]=0xA5; //display board head = 0xA5
-	outputBuf[1]= 0x01; //display device Number:is 0x01
+	outputBuf[1]= DEVICE_NUMBER; //display device Number:is 0x01
 	outputBuf[2]=0x16; // command type = 0x06 ->buzzer sound open or not
 	outputBuf[3]=0x01; // command order -> 01 - buzzer sound done, 00- don't buzzer sound 
 	outputBuf[4]=0x00; // data is length: 00 ->don't data 
@@ -86,7 +94,7 @@ void SendData_Buzzer_Has_Ack(void)
 void SendData_Set_Command(uint8_t cmd,uint8_t data)
 {
     outputBuf[0]=0xA5; //display board head = 0xA5
-	outputBuf[1]= 0x01; //display device Number:is 0x01
+	outputBuf[1]= DEVICE_NUMBER; //display device Number:is 0x01
 	outputBuf[2]=cmd; // command type = 0x06 ->buzzer sound open or not
 	outputBuf[3]= data; // command order -> 01 - buzzer sound done, 00- don't buzzer sound 
 	outputBuf[4]=0x00; // data is length: 00 ->don't data 
@@ -111,7 +119,7 @@ void SendData_Set_Command(uint8_t cmd,uint8_t data)
 void SendCmd_fun(uint8_t cmd,uint8_t excmd)
 {
     outputBuf[0]=0xA5; //display board head = 0xA5
-	outputBuf[1]= 0x01; //display device Number:is 0x01
+	outputBuf[1]= DEVICE_NUMBER; //display device Number:is 0x01
 	outputBuf[2]=cmd; // command type = 0x06 ->buzzer sound open or not
 	outputBuf[3]= excmd; // command order -> 01 - buzzer sound done, 00- don't buzzer sound 
 	outputBuf[4]=0x00; // data is length: 00 ->don't data 
@@ -140,7 +148,7 @@ void SendData_Temp_Data(uint8_t tdata)
 {
 
     outputBuf[0]=0xA5; //display board head = 0xA5
-	outputBuf[1]= 0x01; //display device Number:is 0x01
+	outputBuf[1]= DEVICE_NUMBER; //display device Number:is 0x01
 	outputBuf[2]=0x1A; // command type = 0x1A -> temperature of value 
 	outputBuf[3]=0x0f; // command order -> 0x0f -> is data , don't order.
 	outputBuf[4]=0x01; // data is length: 00 ->don't data 
@@ -162,7 +170,7 @@ void SendData_twoHours_Data(uint8_t tdata)
 {
 
 	   outputBuf[0]=0xA5; //display board head = 0xA5
-	   outputBuf[1]= 0x01; //display device Number:is 0x01
+	   outputBuf[1]= DEVICE_NUMBER; //display device Number:is 0x01
 	   outputBuf[2]= 0x1C; // command type = 0x1A -> temperature of value 
 	   outputBuf[3]=0x0f; // command order -> 0x0f -> is data , don't order.
 	   outputBuf[4]=0x01; // data is length: 00 ->don't data 
@@ -180,7 +188,7 @@ void sendNotice_toMainBoard(uint8_t notice,uint8_t tdata)
 {
 
 	   outputBuf[0]=0xA5; //display board head = 0xA5
-	   outputBuf[1]= 0x01; //display board device Number:is 0x01
+	   outputBuf[1]= DEVICE_NUMBER; //display board device Number:is 0x01
 	   outputBuf[2]= notice; // command or notic type = 
 	   outputBuf[3]=0x0f; // command order -> 0x0f -> is data , don't order.
 	   outputBuf[4]=0x01; // data is length: 00 ->don't data 
@@ -231,7 +239,7 @@ void SendData_Time_Data(uint8_t tdata)
 void SendWifiData_Answer_Cmd(uint8_t cmd ,uint8_t data)
 {
         outputBuf[0]=0x5A; //display board head = 0xA5
-        outputBuf[1]=0x01; //display device Number:is 0x01
+        outputBuf[1]=DEVICE_NUMBER; //display device Number:is 0x01
         outputBuf[2]=0xFF; // answer or copy command
         outputBuf[3]= cmd; // 0x0F : is data ,don't command order.
         outputBuf[4]= data; // don't data ,onlay is command order,recieve data is 1byte .
@@ -260,7 +268,7 @@ void SendData_Data(uint8_t cmd ,uint8_t tdata)
 {
 
     outputBuf[0]=0xA5; //display board head = 0xA5
-	outputBuf[1]= 0x01; //display device Number:is 0x01
+	outputBuf[1]= DEVICE_NUMBER; //display device Number:is 0x01
 	outputBuf[2]=cmd; // command type = 0x1A -> temperature of value 
 	outputBuf[3]=0x0f; // command order -> 0x0f -> is data , don't order.
 	outputBuf[4]=0x01; // data is length: 00 ->don't data 
