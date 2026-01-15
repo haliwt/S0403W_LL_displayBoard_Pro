@@ -478,6 +478,12 @@ static void receive_cmd_or_data_handler(void)
 
 	break;
 
+	case 0x05:
+
+	    power_key_long_fun();
+
+	break;
+
 	case fan_on_off:
 	if(frame.func_code == 0x01){//ptc on
 		run_t.fan = open;

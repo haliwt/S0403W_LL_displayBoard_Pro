@@ -220,7 +220,7 @@ static void vTaskKeyPro(void *pvParameters)
            gl_ref.long_key_mode_counter =0;
            gl_ref.long_key_power_counter++;
 
-         if(gl_ref.long_key_power_counter >65 && run_t.power_on== power_on ){
+         if(gl_ref.long_key_power_counter >75 && run_t.power_on== power_on ){//65
             gl_ref.long_key_power_counter =0;
             gl_ref.key_long_power_flag =1;
             gpro_t.gTimer_mode_key_long = 0;
@@ -392,7 +392,7 @@ void AppTaskCreate (void)
 **************************************************************************/
 static void key_handler(void)
 {
-  if( gl_ref.key_power_flag == 1){ //key power key
+  if( gl_ref.key_power_flag == 1 && gl_ref.long_key_power_counter!=2){ //key power key
 
             if(KEY_POWER_GetValue()  ==KEY_UP){
                gl_ref.key_power_flag++;
@@ -400,7 +400,7 @@ static void key_handler(void)
 
              if(gl_ref.key_long_power_flag ==1){ //WIFI KEY FUNCTION
         
-                 gl_ref.long_key_power_counter=0; //WT.EDIT 2025.05.10
+                 gl_ref.long_key_power_counter++; //WT.EDIT 2025.05.10
   
 		
 				  gpro_t.ack_cp_repeat_counter=0;
@@ -505,20 +505,8 @@ static void power_run_handler(void)
             gl_ref.key_mode_short_flag ++ ;
             mode_key_short_fun();
             display_ai_icon(run_t.gModel) ;
-			if(run_t.gModel == 1){
-				
-               SendData_Set_Command(0x07,0x02);
-			   vTaskDelay(10);
-			}
-			else{
-			   SendData_Set_Command(0x07,0x01);
-				vTaskDelay(10);
-
-			}
-
-
-           }
-           else if( gpro_t.gTimer_mode_key_long > 1 && (gl_ref.key_long_mode_flag  ==1 ||gl_ref.key_long_power_flag ==1)){
+		  }
+           else if( gpro_t.gTimer_mode_key_long > 1 && (gl_ref.key_long_mode_flag  ==1 ||gl_ref.key_long_power_flag ==2)){
                  gl_ref.long_key_mode_counter =0;
                  gl_ref.long_key_power_counter =0;
          
@@ -527,7 +515,7 @@ static void power_run_handler(void)
                      gl_ref.key_long_power_flag=0;
                      
                 }
-                if(gl_ref.key_long_mode_flag==1){
+                if(gl_ref.key_long_mode_flag==2){
                     gl_ref.key_long_mode_flag=0;
 
                  }
