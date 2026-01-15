@@ -65,7 +65,7 @@ static void wifi_icon_blink_reg0xc5_handler(void)
     } 
 	else {
         // 快闪逻辑
-        if(lcd_t.gTimer_wifi_500ms > 14){
+        if(lcd_t.gTimer_wifi_500ms > 9){//10*14=140ms
             lcd_t.gTimer_wifi_500ms=0;
 			wifi_flag = !wifi_flag ;
 		}
