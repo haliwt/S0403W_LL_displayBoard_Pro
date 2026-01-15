@@ -193,7 +193,7 @@ static void vTaskUiPro(void *pvParameters)
         power_run_handler();
 	
 	
-        vTaskDelay(10);
+        vTaskDelay(30);
     }
  }
 
@@ -210,7 +210,7 @@ static void vTaskKeyPro(void *pvParameters)
    while(1)
     {
       
-    if(KEY_POWER_GetValue()  ==KEY_DOWN){
+    if(KEY_POWER_GetValue()  ==KEY_DOWN && gl_ref.key_long_power_flag !=1){
 
           if(power_on_key ==0){
               power_on_key ++;
@@ -224,8 +224,14 @@ static void vTaskKeyPro(void *pvParameters)
             gl_ref.long_key_power_counter =0;
             gl_ref.key_long_power_flag =1;
             gpro_t.gTimer_mode_key_long = 0;
-            
-             SendData_Buzzer();
+
+			
+              gpro_t.ack_cp_repeat_counter=0;
+              gpro_t.gTimer_cp_timer_counter =0;
+              SendData_Set_Command(0x05,0x01); // link wifi of command .
+              vTaskDelay(10);
+              gpro_t.gTimer_mode_key_long=0;
+			  gl_ref.key_power_flag = 0;
 			
          }
         else{
@@ -392,33 +398,16 @@ void AppTaskCreate (void)
 **************************************************************************/
 static void key_handler(void)
 {
-  if( gl_ref.key_power_flag == 1 && gl_ref.long_key_power_counter!=2){ //key power key
+  if(gl_ref.key_power_flag == 1 && gl_ref.long_key_power_counter!=1 && KEY_POWER_GetValue()  ==KEY_UP){ //key power key
 
-            if(KEY_POWER_GetValue()  ==KEY_UP){
-               gl_ref.key_power_flag++;
                 
-
-             if(gl_ref.key_long_power_flag ==1){ //WIFI KEY FUNCTION
-        
-                 gl_ref.long_key_power_counter++; //WT.EDIT 2025.05.10
-  
-		
-				  gpro_t.ack_cp_repeat_counter=0;
-                 gpro_t.gTimer_cp_timer_counter =0;
-                 SendData_Set_Command(0x05,0x01); // link wifi of command .
-                 vTaskDelay(10);
-                 gpro_t.gTimer_mode_key_long=0;
-               
-
-
-             }
-             else{
+               gl_ref.key_power_flag++;
 			
-                 gl_ref.long_key_power_counter=0;
-                 power_on_off_handler();
-             }
+               gl_ref.long_key_power_counter=0;
+               power_on_off_handler();
+             
 
-        }
+        
    }
    else if(gl_ref.key_mode_flag == 1){
                 
@@ -506,7 +495,7 @@ static void power_run_handler(void)
             mode_key_short_fun();
             display_ai_icon(run_t.gModel) ;
 		  }
-           else if( gpro_t.gTimer_mode_key_long > 1 && (gl_ref.key_long_mode_flag  ==1 ||gl_ref.key_long_power_flag ==2)){
+           else if( gpro_t.gTimer_mode_key_long > 1 && (gl_ref.key_long_mode_flag  ==1 ||gl_ref.key_long_power_flag ==1)){
                  gl_ref.long_key_mode_counter =0;
                  gl_ref.long_key_power_counter =0;
          
@@ -515,7 +504,7 @@ static void power_run_handler(void)
                      gl_ref.key_long_power_flag=0;
                      
                 }
-                if(gl_ref.key_long_mode_flag==2){
+                if(gl_ref.key_long_mode_flag==1){
                     gl_ref.key_long_mode_flag=0;
 
                  }
