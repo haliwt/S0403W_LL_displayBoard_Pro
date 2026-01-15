@@ -307,7 +307,7 @@ void display_not_ai_timer_mode(void)
 *****************************************************************************************************/
 void set_temperature_compare_value_fun(void)
 {
-
+    static uint8_t ptc_on_flag =0xff,ptc_off_flag=0xff;
     if(run_t.fan_warning ==1 || run_t.ptc_warning ==1)return ;
    
 	static uint8_t first_on_ptc,first_set_ptc_on;
@@ -335,9 +335,12 @@ void set_temperature_compare_value_fun(void)
 			     gpro_t.ack_cp_repeat_counter=0;
 				 gpro_t.gTimer_cp_timer_counter =0;
 
+               if(ptc_off_flag != run_t.dry){
+			   	   ptc_off_flag = run_t.dry;
+			     SendData_Set_Command(0x22,0x00); //close ptc 
+	              vTaskDelay(pdMS_TO_TICKS(10));
 
-			   SendData_Set_Command(0x22,0x00); //close ptc 
-	           vTaskDelay(pdMS_TO_TICKS(10));
+               	}
 			   
               
 	        
@@ -351,11 +354,15 @@ void set_temperature_compare_value_fun(void)
                 first_set_ptc_on=1;
 				run_t.dry = 1;
 			
-	
+	           
 			    gpro_t.ack_cp_repeat_counter=0;
 			   gpro_t.gTimer_cp_timer_counter =0;
-	            SendData_Set_Command(0x22,0x01); //open ptc 
-	            vTaskDelay(pdMS_TO_TICKS(10));
+			   
+			    if(ptc_on_flag != run_t.dry){
+			   	   ptc_on_flag = run_t.dry;
+	               SendData_Set_Command(0x22,0x01); //open ptc 
+	               vTaskDelay(pdMS_TO_TICKS(10));
+			    }
 	          
             
 	       }
@@ -365,8 +372,12 @@ void set_temperature_compare_value_fun(void)
 		
 			    gpro_t.ack_cp_repeat_counter=0;
 			   gpro_t.gTimer_cp_timer_counter =0;
-	            SendData_Set_Command(0x22,0x01); //open ptc 
-	            vTaskDelay(pdMS_TO_TICKS(10));
+
+			     if(ptc_on_flag != run_t.dry){
+			   	   ptc_on_flag = run_t.dry;
+	            	SendData_Set_Command(0x22,0x01); //open ptc 
+	            	vTaskDelay(pdMS_TO_TICKS(10));
+			     }
 	          
 			}
 
@@ -389,8 +400,11 @@ void set_temperature_compare_value_fun(void)
 			
 			    gpro_t.ack_cp_repeat_counter=0;
 			   gpro_t.gTimer_cp_timer_counter =0;
-               SendData_Set_Command(0x22,0x00); //close ptc 
-               vTaskDelay(pdMS_TO_TICKS(10));
+			     if(ptc_off_flag != run_t.dry){
+			   	   ptc_off_flag = run_t.dry;
+               		SendData_Set_Command(0x22,0x00); //close ptc 
+               		vTaskDelay(pdMS_TO_TICKS(10));
+			     }
           }
           else if(first_on_ptc == 1 &&run_t.ptc_on_off_flag ==0 ){
                
@@ -400,8 +414,12 @@ void set_temperature_compare_value_fun(void)
 		
 				    gpro_t.ack_cp_repeat_counter=0;
 				   gpro_t.gTimer_cp_timer_counter =0;
+				     if(ptc_on_flag != run_t.dry){
+			   	       ptc_on_flag = run_t.dry;
                        SendData_Set_Command(0x22,0x01); //open ptc 
                        vTaskDelay(pdMS_TO_TICKS(10));
+
+				     	}
                 }
                    
 
@@ -413,8 +431,11 @@ void set_temperature_compare_value_fun(void)
 		
 			    gpro_t.ack_cp_repeat_counter=0;
 			   gpro_t.gTimer_cp_timer_counter =0;
-				SendData_Set_Command(0x22,0x01); //open ptc  
-				vTaskDelay(pdMS_TO_TICKS(10));
+			      if(ptc_on_flag != run_t.dry){
+			   	     ptc_on_flag = run_t.dry;
+				    SendData_Set_Command(0x22,0x01); //open ptc  
+				    vTaskDelay(pdMS_TO_TICKS(10));
+			      	}
 			    
 
 
