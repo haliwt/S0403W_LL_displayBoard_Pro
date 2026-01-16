@@ -726,7 +726,7 @@ static void receive_cmd_or_data_handler(void)
 
 	case 0x27 : //AI mode by smart phone of APP be control.
 
-     
+    #if 0
 	if(frame.func_code==2){
 		//timer time + don't has ai item
 	
@@ -749,7 +749,7 @@ static void receive_cmd_or_data_handler(void)
 		
 
 	    }
-
+     #endif 
 
 	break;
 
@@ -769,6 +769,7 @@ static void receive_cmd_or_data_handler(void)
 		lcd_t.number2_high = run_t.wifi_set_temperature % 10; //
 
 		gpro_t.gTimer_set_temp_times=0;//WT.EDIT 2025.10.31
+		run_t.gTimer_timing =0;
 		gpro_t.temp_key_set_value =1;
         run_t.smart_phone_set_temp_value_flag =1;
        
