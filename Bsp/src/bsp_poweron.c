@@ -46,12 +46,9 @@ void power_on_handler(void)
        
        
      gpro_t.gTimer_mode_key_long=0;
-      LCD_BACK_LIGHT_ON();
-	  POWER_ON_LED() ;
-	  LED_MODEL_ON() ;
-      display_lcd_Icon_init();
-      power_on_display_temp_handler();//WT.EDIT 2025.03.28
-        //printf("power on !!!\r\n");
+
+   
+
       break;
 
 	  case 1:
@@ -163,8 +160,13 @@ static void power_on_ref_init(void)
 	  POWER_ON_LED() ;
 	  LED_MODEL_ON() ;
       display_lcd_Icon_init();
+	  vTaskDelay(200);
       power_on_display_temp_handler();//WT.EDIT 2025.03.28
 
+    //      LCD_BACK_LIGHT_ON();
+//	  POWER_ON_LED() ;
+//	  LED_MODEL_ON() ;
+//      display_lcd_Icon_init();
 
     
 }
