@@ -21,7 +21,7 @@ static void display_lcd_Icon_init(void);
 */
 void power_on_handler(void)
 {
-   
+   static uint8_t power_on_times_flag;
    switch(gpro_t.power_on_step){
 
       case 0:
@@ -45,56 +45,35 @@ void power_on_handler(void)
         gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
        
        
-     gpro_t.gTimer_mode_key_long=0;
+        gpro_t.gTimer_mode_key_long=0;
+	     gpro_t.power_on_step =1;
 
    
 
       break;
 
 	  case 1:
-        
-	    disp_temp_humidity_wifi_icon_handler();
-	    gpro_t.power_on_step =2;
 
+	    gpro_t.gTimer_disp_temp_humi_value=20;
+	  	 power_on_display_temp_handler();//WT.EDIT 2025.03.28
+        // display_lcd_Icon_init();
+		 gpro_t.power_on_step =2;
 	  break;
 
 	  case 2:
-	  	display_timer_and_beijing_time_handler();
-        gpro_t.power_on_step =3;
+       
+	    disp_temp_humidity_wifi_icon_handler();
+	    gpro_t.power_on_step =3;
+
 	  break;
 
 	  case 3:
-	  	#if 0
-	  	  if(gpro_t.gTimer_two_hours_conter > 119){ //WT.EDIT2025.10.30
-		   	   gpro_t.gTimer_two_hours_conter=0;
-               gpro_t.stopTwoHours_flag = 1; //WT.EDIT 2025.11.10
-		       gpro_t.send_ack_cmd = 0x1C;
-			   gpro_t.two_hours_cp_flag= 0xC1;
-			    gpro_t.ack_cp_repeat_counter=0;
-			   gpro_t.gTimer_cp_timer_counter =0;
-		       SendData_twoHours_Data(0x78);//120 minutes
-               vTaskDelay(pdMS_TO_TICKS(5));
-
-		   }
-		   else if(gpro_t.stopTwoHours_flag == 1 && gpro_t.gTimer_two_hours_conter > 10){
-		        gpro_t.gTimer_two_hours_conter=0;
-				gpro_t.send_ack_cmd = 0x1C;//WT.EDIT 2025.11.10
-				gpro_t.two_hours_cp_flag=0xC0;
-				 gpro_t.ack_cp_repeat_counter=0;
-			    gpro_t.gTimer_cp_timer_counter =0;
-				gpro_t.stopTwoHours_flag = 0;
-				SendData_twoHours_Data(0x0A);//10 minutes
-                vTaskDelay(pdMS_TO_TICKS(5));
-
-          }
-		 #endif 
-	    gpro_t.power_on_step =4;
-
+	  	display_timer_and_beijing_time_handler();
+        gpro_t.power_on_step =4;
 	  break;
 
-
-
-	 case 4:
+	
+     case 4:
      if(gpro_t.temp_key_set_value==0 && gpro_t.gTimer_temp_compare_value > 5 ){
 	 	gpro_t.gTimer_temp_compare_value =0;
 
@@ -104,7 +83,7 @@ void power_on_handler(void)
 
      }
 
-	 gpro_t.power_on_step =1;
+	 gpro_t.power_on_step =2;
 
 	 break;
 
@@ -160,8 +139,8 @@ static void power_on_ref_init(void)
 	  POWER_ON_LED() ;
 	  LED_MODEL_ON() ;
       display_lcd_Icon_init();
-	  vTaskDelay(200);
-      power_on_display_temp_handler();//WT.EDIT 2025.03.28
+	 // vTaskDelay(200);
+     // power_on_display_temp_handler();//WT.EDIT 2025.03.28
 
     //      LCD_BACK_LIGHT_ON();
 //	  POWER_ON_LED() ;

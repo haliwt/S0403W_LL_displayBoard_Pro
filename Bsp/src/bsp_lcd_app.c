@@ -106,6 +106,7 @@ static void display_lowbit_lunmber4_reg0xc9_handler(void)
 static void display_temperture_humidity_value(void)
 {
    static uint8_t ai_mode_base;
+   
    if(gpro_t.temp_key_set_value !=1 && gpro_t.gTimer_disp_temp_humi_value>4){
 
 		gpro_t.gTimer_disp_temp_humi_value=0;
@@ -400,7 +401,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
 	
 		  //if( run_t.smart_phone_set_temp_value_flag ==0){ //WT.EIDT 2025.10.31
 		    SendData_Data(0x2A,run_t.wifi_set_temperature);
-            vTaskDelay(pdMS_TO_TICKS(10));
+            vTaskDelay(pdMS_TO_TICKS(20));
 		  ///}
 		   set_temperature_compare_value_fun();
 		 
@@ -413,7 +414,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
 	case 0:
         
 	     display_temperture_humidity_value();
-        //set_temperature_compare_value_fun();
+    
      break;
     }
 
