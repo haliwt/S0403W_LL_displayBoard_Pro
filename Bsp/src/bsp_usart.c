@@ -529,7 +529,7 @@ static void receive_cmd_or_data_handler(void)
 		run_t.display_set_timer_or_works_time_mode =FAN_WARNING;  //run_t.display_set_timer_or_works_time_mode
 
 		run_t.dry =0;
-		//SendData_Set_Command(0x09,0x01); //
+	
 		SendWifiData_Answer_Cmd(0x09,0x01);
 		vTaskDelay(100);
 

@@ -156,7 +156,7 @@ void freeRTOS_Handler(void)
 static void vTaskCommPro(void *pvParameters)
 {
     BaseType_t xResult;
-	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(2000); /* 设置最大等待时间为300ms */
+	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(3000); /* 设置最大等待时间为300ms */
 	uint32_t ulValue;
 	
 	 while(1)
@@ -193,7 +193,7 @@ static void vTaskUiPro(void *pvParameters)
         power_run_handler();
 	
 	
-        vTaskDelay(30);
+        vTaskDelay(100);
     }
  }
 
@@ -229,7 +229,7 @@ static void vTaskKeyPro(void *pvParameters)
               gpro_t.ack_cp_repeat_counter=0;
               gpro_t.gTimer_cp_timer_counter =0;
               SendData_Set_Command(0x05,0x01); // link wifi of command .
-              vTaskDelay(20);
+              vTaskDelay(100);
               gpro_t.gTimer_mode_key_long=0;
 			  gl_ref.key_power_flag = 0;
 			
@@ -342,7 +342,7 @@ void AppTaskCreate (void)
 			"vTaskCommPro",			/* 任务名 */
 			128,					/* 栈大小（word） */
 			NULL,					/* 参数 */
-			3,						/* 优先级 */
+			2,						/* 优先级 */
 			xTaskCommProStack,		/* 栈数组 */
 			&xTaskCommProTCB 		/* TCB */
 	);
@@ -352,7 +352,7 @@ void AppTaskCreate (void)
 	xHandleTaskUiPro = xTaskCreateStatic(
 			vTaskUiPro,			/* 任务函数 */
 			"vTaskUiPro",			/* 任务名 */
-			128,					/* 栈大小（word） */
+			256,					/* 栈大小（word） */
 			NULL,					/* 参数 */
 			1,						/* 优先级 */
 			xTaskUiProStack,		/* 栈数组 */
@@ -428,10 +428,10 @@ static void key_handler(void)
 
 		gl_ref.key_long_mode_flag =0;
 		gl_ref.long_key_mode_counter=0;
-		if(run_t.wifi_link_net_success == 0){	
+		
 		SendData_Buzzer();
 		vTaskDelay(100);
-		}
+		
 		gl_ref.key_mode_short_flag =1;
 
 

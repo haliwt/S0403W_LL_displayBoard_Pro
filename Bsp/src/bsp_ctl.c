@@ -78,14 +78,14 @@ void disp_timer_run_times(void)
              run_t.timer_time_minutes =0;
 		     run_t.display_set_timer_or_works_time_mode=works_time;
              run_t.gModel=1;
-             if(wifi_link_net_state()==1){
+//             if(wifi_link_net_state()==1){
             
 		
-			      gpro_t.ack_cp_repeat_counter=0;
-                  gpro_t.gTimer_cp_timer_counter =0;
-			      SendData_Set_Command(0x27,0x01); //MODE_AI,BUR NO_BUZZER);
+//			      gpro_t.ack_cp_repeat_counter=0;
+//                  gpro_t.gTimer_cp_timer_counter =0;
+//			      //SendData_Set_Command(0x27,0x01); //MODE_AI,BUR NO_BUZZER);
 
-              }
+//              }
          }
     }
 }

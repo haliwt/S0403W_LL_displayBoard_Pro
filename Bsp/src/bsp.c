@@ -126,8 +126,8 @@ void display_timer_and_beijing_time_handler(void)
              not_ai_default = not_ai_mode_flag;
              ai_mode_flag++;
    
-			 SendData_Set_Command(0x27,0x02); //NOT_MODE_AI,BUR NO_BUZZER);
-			 vTaskDelay(20);
+			 //SendData_Set_Command(0x27,0x02); //NOT_MODE_AI,BUR NO_BUZZER);
+			 //vTaskDelay(100);
 
         }
 
@@ -335,7 +335,7 @@ void set_temperature_compare_value_fun(void)
                if(ptc_off_flag != run_t.dry){
 			   	   ptc_off_flag = run_t.dry;
 			     SendData_Set_Command(0x22,0x00); //close ptc 
-	              vTaskDelay(pdMS_TO_TICKS(10));
+	              vTaskDelay(pdMS_TO_TICKS(100));
 
                	}
 			   
@@ -358,7 +358,7 @@ void set_temperature_compare_value_fun(void)
 			    if(ptc_on_flag != run_t.dry){
 			   	   ptc_on_flag = run_t.dry;
 	               SendData_Set_Command(0x22,0x01); //open ptc 
-	               vTaskDelay(pdMS_TO_TICKS(10));
+	               vTaskDelay(pdMS_TO_TICKS(100));
 			    }
 	          
             
@@ -373,7 +373,7 @@ void set_temperature_compare_value_fun(void)
 			     if(ptc_on_flag != run_t.dry){
 			   	   ptc_on_flag = run_t.dry;
 	            	SendData_Set_Command(0x22,0x01); //open ptc 
-	            	vTaskDelay(pdMS_TO_TICKS(10));
+	            	vTaskDelay(pdMS_TO_TICKS(100));
 			     }
 	          
 			}
@@ -400,7 +400,7 @@ void set_temperature_compare_value_fun(void)
 			     if(ptc_off_flag != run_t.dry){
 			   	   ptc_off_flag = run_t.dry;
                		SendData_Set_Command(0x22,0x00); //close ptc 
-               		vTaskDelay(pdMS_TO_TICKS(10));
+               		vTaskDelay(pdMS_TO_TICKS(100));
 			     }
           }
           else if(first_on_ptc == 1 &&run_t.ptc_on_off_flag ==0 ){
@@ -414,7 +414,7 @@ void set_temperature_compare_value_fun(void)
 				     if(ptc_on_flag != run_t.dry){
 			   	       ptc_on_flag = run_t.dry;
                        SendData_Set_Command(0x22,0x01); //open ptc 
-                       vTaskDelay(pdMS_TO_TICKS(10));
+                       vTaskDelay(pdMS_TO_TICKS(100));
 
 				     	}
                 }
@@ -431,7 +431,7 @@ void set_temperature_compare_value_fun(void)
 			      if(ptc_on_flag != run_t.dry){
 			   	     ptc_on_flag = run_t.dry;
 				    SendData_Set_Command(0x22,0x01); //open ptc  
-				    vTaskDelay(pdMS_TO_TICKS(10));
+				    vTaskDelay(pdMS_TO_TICKS(100));
 			      	}
 			    
 

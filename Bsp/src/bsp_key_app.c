@@ -67,12 +67,12 @@ void mode_key_short_fun(void)
 			printf("key_shrot_mode-0 !!!\r\n");
 
 			#endif 
-			 
+			#if 0
 			 if(run_t.wifi_link_net_success == 1){
 				SendData_Set_Command(0x07,0x02); //AI command has buzzer sound .
-				vTaskDelay(3);
+				vTaskDelay(100);
 			 }
-			
+			#endif 
 
 		}
 		else if(run_t.display_set_timer_or_works_time_mode == timer_time){
@@ -83,16 +83,16 @@ void mode_key_short_fun(void)
 			#if DEBUG_FLAG
 			printf("key_shrot_mode-1 !!!\r\n");
 			#endif 
+			#if 0
 			 if(run_t.wifi_link_net_success ==1){
     				SendData_Set_Command(0x07,0x01); //MODE_AI,BUR NO_BUZZER);
-					vTaskDelay(3);
+					vTaskDelay(100);
     		 		
     		 }
-
+            #endif 
 		
 		}
 		
-	//	display_ai_icon(run_t.gModel) ;
 			
 	}		
 }
