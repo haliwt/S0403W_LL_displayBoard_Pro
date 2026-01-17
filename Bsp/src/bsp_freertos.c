@@ -340,7 +340,7 @@ void AppTaskCreate (void)
 	xHandleTaskCommPro = xTaskCreateStatic(
 			vTaskCommPro,			/* 任务函数 */
 			"vTaskCommPro",			/* 任务名 */
-			128,					/* 栈大小（word） */
+			256,					/* 栈大小（word） */
 			NULL,					/* 参数 */
 			2,						/* 优先级 */
 			xTaskCommProStack,		/* 栈数组 */
@@ -515,6 +515,11 @@ static void power_run_handler(void)
 	       power_on_handler();
 		   
 	       disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
+
+		   	 if(gpro_t.gTimer_disp_dry_counter> 0){
+		 	gpro_t.gTimer_disp_dry_counter=0;
+             display_dry_temp_fun();//WT.EDIT 2026.0107.28
+		   	 }
 	     
        
 	 break;

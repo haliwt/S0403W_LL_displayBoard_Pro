@@ -104,6 +104,7 @@ void display_timer_and_beijing_time_handler(void)
        
 
       }
+	  power_on_init_disp_time_numbers();
       counter_time_timing_fun(); 
       gpro_t.switch_not_ai_mode=0;
     

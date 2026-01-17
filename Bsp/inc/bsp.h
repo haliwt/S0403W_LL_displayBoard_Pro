@@ -108,6 +108,8 @@ typedef struct _process_state{
    uint8_t  gTimer_copy_cmd_counter;
    uint8_t gTimer_two_hours_second_counter;
    uint8_t gTimer_two_hours_conter;
+
+   uint8_t gTimer_disp_dry_counter;
  
    
 

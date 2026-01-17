@@ -21,6 +21,7 @@ void disp_fan_leaf_init(void);
 
 
 
+void display_dry_temp_fun(void);
 
 
 
