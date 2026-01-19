@@ -524,7 +524,10 @@ static void power_run_handler(void)
 			   
 		 	   gpro_t.gTimer_disp_dry_counter=0;
 
-               
+               if(gpro_t.power_on_counter_temp == 0){
+                  gpro_t.power_on_counter_temp++;
+				   gpro_t.temp_real_value= 25;
+			   }
 		        Display_Kill_Dry_Ster_Icon();
 
               
@@ -535,7 +538,7 @@ static void power_run_handler(void)
 	 break;
 	 
 	 case power_off:
-           
+           power_counter=0;
            gl_ref.long_key_power_counter =0;
            gl_ref.key_long_power_flag =0;
            run_t.power_on_disp_smg_number = 0;

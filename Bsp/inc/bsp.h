@@ -73,6 +73,8 @@ typedef struct _process_state{
    uint8_t set_up_temp_value_done;
    uint8_t first_set_ptc_on;
 
+   uint8_t power_on_counter_temp;
+
   
    //send data need copy this is cmd
   

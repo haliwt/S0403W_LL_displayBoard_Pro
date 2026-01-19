@@ -606,7 +606,7 @@ static void receive_cmd_or_data_handler(void)
    case 0x1A: //read sensor "DHT11" temperature and humidity value .
 
      #if 1
-        if(run_t.power_on  == power_on && gpro_t.temp_key_set_value==0 ){
+        if(run_t.power_on  == power_on && gpro_t.temp_key_set_value==0 && gpro_t.power_on_counter_temp==2){
 	   
 		if(frame.data[1]  < 60){
 			 gpro_t.humidity_real_value = frame.data[0];

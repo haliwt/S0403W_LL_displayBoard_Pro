@@ -44,7 +44,7 @@ void power_on_handler(void)
         run_t.display_set_timer_or_works_time_mode = works_time;//WT.EDIT 2025.01.15
         run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
         gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
-       
+        
        
         gpro_t.gTimer_mode_key_long=0;
 	     gpro_t.power_on_step =1;
@@ -63,7 +63,7 @@ void power_on_handler(void)
     
          }
 	     gpro_t.gTimer_disp_temp_humi_value=20;
-	   
+	     run_t.wifi_set_temperature=40;
          display_lcd_Icon_init();
 		 gpro_t.power_on_step =2;
 	  break;

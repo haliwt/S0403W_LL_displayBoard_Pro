@@ -175,7 +175,7 @@ void power_on_display_temp_handler(void)
    uint8_t temp_value =0xff,power_counter ,switch_value;
 
 
-    if(gpro_t.temp_key_set_value==0){
+    if(gpro_t.temp_key_set_value==0 && (gpro_t.power_on_counter_temp==1 || gpro_t.power_on_counter_temp==2)){
 	if(gpro_t.temp_real_value < 60 ){
 			
        
@@ -206,7 +206,7 @@ void power_on_display_temp_handler(void)
 	
 	  
      }
-    
+      gpro_t.power_on_counter_temp=2;
 	}
 
     }
