@@ -186,8 +186,9 @@ void power_on_display_temp_handler(void)
 	 if(run_t.dry == 1 &&  run_t.plasma ==1 && run_t.ultrasonic ==1){//1
 
 	      //TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
-		  TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+KILL_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
-	 if(run_t.gModel==1){
+		 TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+KILL_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
+
+		 if(run_t.gModel==1){
 			TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
 		 }
 		 else{

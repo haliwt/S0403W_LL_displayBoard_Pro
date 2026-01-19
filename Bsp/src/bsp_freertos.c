@@ -488,7 +488,7 @@ static void key_handler(void)
 **************************************************************************/
 static void power_run_handler(void)
 {
-
+   static uint8_t counter_times;
      switch(run_t.power_on){
 
 	 case power_on:
@@ -520,19 +520,26 @@ static void power_run_handler(void)
 		   
 	       disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
 
-//		   	if(gpro_t.gTimer_disp_dry_counter> 0){
-//		 	  gpro_t.gTimer_disp_dry_counter=0;
+		   	if(gpro_t.gTimer_disp_dry_counter> 0){
+		 	   gpro_t.gTimer_disp_dry_counter=0;
 
-//			 //power_on_display_temp_handler();//WT.EDIT 2025.03.28
-//             Display_Kill_Dry_Ster_Icon();//WT.EDIT 2026.0117
+			    counter_times++;
+              if(gpro_t.smart_phone_app_timer_power_on_flag == 0 && counter_times < 3){
+      
+		          TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+KILL_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);//display digital "temp
+		          TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);
+			 }
+		     else{
+         			Display_Kill_Dry_Ster_Icon();
+              }
              
-//		   	}
+		   	}
 	     
        
 	 break;
 	 
 	 case power_off:
-    
+            counter_times=0;
            gl_ref.long_key_power_counter =0;
            gl_ref.key_long_power_flag =0;
            run_t.power_on_disp_smg_number = 0;

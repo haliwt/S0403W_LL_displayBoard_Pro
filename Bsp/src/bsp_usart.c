@@ -401,7 +401,7 @@ void usart1_isr_callback_handler(uint8_t data)
 */
 static void receive_cmd_or_data_handler(void)
 {
-
+   static uint8_t temp_array[1],temp_default=0xff;
    switch(frame.cmd_type){
 	case power_on_off:
 
@@ -420,19 +420,19 @@ static void receive_cmd_or_data_handler(void)
 			run_t.ptc_on_off_flag = 0;
 			SendWifiData_Answer_Cmd(0x02,0x01); //close ptc 
 			vTaskDelay(100);
-			gpro_t.gTimer_copy_cmd_counter=0; 
-			gpro_t.receive_copy_buff[2]=copy_null;
+			//gpro_t.gTimer_copy_cmd_counter=0; 
+			///gpro_t.receive_copy_buff[2]=copy_null;
 			//Display_Kill_Dry_Ster_Icon();
-		}
-		else{//power off 
+	}
+	else{//power off 
 			run_t.dry = close;
 			run_t.ptc_on_off_flag = 1;
 			SendWifiData_Answer_Cmd(0x02,0x0); //close ptc 
 		    vTaskDelay(100);
-			gpro_t.gTimer_copy_cmd_counter=0; 
-	        gpro_t.receive_copy_buff[2]=copy_null;
+			//gpro_t.gTimer_copy_cmd_counter=0; 
+	       // gpro_t.receive_copy_buff[2]=copy_null;
 			//Display_Kill_Dry_Ster_Icon();
-	    }
+	 }
 
 	break;
 
@@ -581,29 +581,33 @@ static void receive_cmd_or_data_handler(void)
    case 0x1A: //read sensor "DHT11" temperature and humidity value .
 
 
-
+        if(run_t.power_on  == power_on){
 	    gpro_t.humidity_real_value = frame.data[0];
-		gpro_t.temp_real_value = frame.data[1];
-
 		
+		gpro_t.temp_real_value = frame.data[1];
+		temp_array[0]=frame.data[1];
 
-		lcd_t.number3_low= gpro_t.humidity_real_value/ 10;
-		lcd_t.number3_high =gpro_t.humidity_real_value/ 10;
-
-		lcd_t.number4_low = gpro_t.humidity_real_value % 10;
-		lcd_t.number4_high = gpro_t.humidity_real_value % 10;
-
-
-
-	     lcd_t.number1_low= gpro_t.temp_real_value/ 10;
-	     lcd_t.number1_high =gpro_t.temp_real_value/ 10;
+         if(temp_default != temp_array[0]){
+		 	temp_default = temp_array[0];
+		 lcd_t.number1_low= gpro_t.temp_real_value/ 10;
+	     lcd_t.number1_high =  lcd_t.number1_high;
 
 	     lcd_t.number2_low =  gpro_t.temp_real_value% 10;
-	     lcd_t.number2_high =  gpro_t.temp_real_value% 10;
+	     lcd_t.number2_high =  lcd_t.number2_low;
 
-	   //  power_on_display_temp_handler(); //WT.EDIT 2025.03.28
+		 lcd_t.number3_low= gpro_t.humidity_real_value/ 10;
+		lcd_t.number3_high =   lcd_t.number3_low;
 
-	
+		lcd_t.number4_low = gpro_t.humidity_real_value % 10;
+		lcd_t.number4_high = lcd_t.number4_low ;
+		vTaskDelay(100);
+
+        }
+
+	   // Display_Kill_Dry_Ster_Icon();
+		///vTaskDelay(100);
+        }
+
 	
 	break;
 	
