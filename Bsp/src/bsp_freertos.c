@@ -519,7 +519,7 @@ static void power_run_handler(void)
 	       power_on_handler();
 		   
 	       disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
-
+            //data:2026.01.19 wt.edit 
 		   	if(gpro_t.gTimer_disp_dry_counter> 0 && gpro_t.temp_key_set_value==0 && gpro_t.set_up_temp_value_done != 1){
 			   
 		 	   gpro_t.gTimer_disp_dry_counter=0;
