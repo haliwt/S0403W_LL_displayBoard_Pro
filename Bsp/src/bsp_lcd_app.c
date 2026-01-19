@@ -111,11 +111,7 @@ static void display_temperture_humidity_value(void)
 		//display address 0xC2 -> //WT.EDTI 2025.03.28
 		Display_Kill_Dry_Ster_Icon();
 
-	   // display_dry_temp_fun();//WT.EDIT 2026.0117
-
-		
-
-		wifi_icon_blink_reg0xc5_handler();//TM1723_Write_Display_Data(0xC5,((0x01+lcdNumber2_Low[lcd_t.number2_low])+lcdNumber3_High[lcd_t.number3_high])&0xff);
+        wifi_icon_blink_reg0xc5_handler();//TM1723_Write_Display_Data(0xC5,((0x01+lcdNumber2_Low[lcd_t.number2_low])+lcdNumber3_High[lcd_t.number3_high])&0xff);
 		display_lowbit_lunmber4_reg0xc9_handler();
 	   
 	    TIM1723_Write_Cmd(LUM_VALUE);
@@ -150,8 +146,7 @@ void power_on_display_temp_handler(void)
 	#endif 
 
 	// 显示干燥/杀菌/驱蚊图标 + 数字高位
-   // Display_Kill_Dry_Ster_Icon();
-	display_dry_temp_fun();
+    Display_Kill_Dry_Ster_Icon();
 
   
     // WiFi 图标闪烁处理（0xC5）
@@ -507,7 +502,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
          if (gpro_t.gTimer_set_temp_times < 2){
             set_lcd_numbers_from_value(run_t.wifi_set_temperature);
           
-            display_dry_temp_fun();//WT.EDIT 2026.0117
+             Display_Kill_Dry_Ster_Icon();
             
 		 
         } 
