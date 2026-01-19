@@ -25,6 +25,7 @@ void power_on_handler(void)
    switch(gpro_t.power_on_step){
 
       case 0:
+	  	 
           power_on_ref_init();
 	      gpro_t.temp_key_set_value =0;
           gpro_t.power_on_step =1;
@@ -53,15 +54,22 @@ void power_on_handler(void)
       break;
 
 	  case 1:
+         if(gpro_t.smart_phone_app_timer_power_on_flag == 0){
 
-	    gpro_t.gTimer_disp_temp_humi_value=20;
-	  	 power_on_display_temp_handler();//WT.EDIT 2025.03.28
+    	
+    	run_t.plasma=1;
+    	run_t.dry =1;
+    	run_t.ultrasonic =1;
+    
+         }
+	     gpro_t.gTimer_disp_temp_humi_value=20;
+	  //	 power_on_display_temp_handler();//WT.EDIT 2025.03.28
          display_lcd_Icon_init();
 		 gpro_t.power_on_step =2;
 	  break;
 
 	  case 2:
-       
+      //  display_dry_temp_fun();//WT.EDIT 2026.0117
 	    disp_temp_humidity_wifi_icon_handler();
 	    gpro_t.power_on_step =3;
 
@@ -83,7 +91,9 @@ void power_on_handler(void)
 
      }
 
-	 gpro_t.power_on_step =2;
+	    gpro_t.power_on_step =2;
+
+	 
 
 	 break;
 
@@ -138,7 +148,7 @@ static void power_on_ref_init(void)
       LCD_BACK_LIGHT_ON();
 	  POWER_ON_LED() ;
 	  LED_MODEL_ON() ;
-      display_lcd_Icon_init();
+     // display_lcd_Icon_init();
 
 
     

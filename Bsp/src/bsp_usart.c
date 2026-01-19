@@ -418,20 +418,20 @@ static void receive_cmd_or_data_handler(void)
 	if(frame.func_code == 0x01){//ptc on
 		    run_t.dry = open;
 			run_t.ptc_on_off_flag = 0;
-			SendData_Set_Command(0x12,0x01); //close ptc 
+			SendWifiData_Answer_Cmd(0x02,0x01); //close ptc 
 			vTaskDelay(100);
 			gpro_t.gTimer_copy_cmd_counter=0; 
 			gpro_t.receive_copy_buff[2]=copy_null;
-			Display_Kill_Dry_Ster_Icon();
+			//Display_Kill_Dry_Ster_Icon();
 		}
 		else{//power off 
 			run_t.dry = close;
 			run_t.ptc_on_off_flag = 1;
-			SendData_Set_Command(0x12,0x0); //close ptc 
+			SendWifiData_Answer_Cmd(0x02,0x0); //close ptc 
 		    vTaskDelay(100);
 			gpro_t.gTimer_copy_cmd_counter=0; 
 	        gpro_t.receive_copy_buff[2]=copy_null;
-			Display_Kill_Dry_Ster_Icon();
+			//Display_Kill_Dry_Ster_Icon();
 	    }
 
 	break;
@@ -439,20 +439,20 @@ static void receive_cmd_or_data_handler(void)
 	case plasma_on_off://plasma
 	if(frame.func_code == 0x01){//ptc on
 		 run_t.plasma = open;
-		 SendData_Set_Command(0x13,0x01); //close ptc 
+		 SendWifiData_Answer_Cmd(0x03,0x01); //close ptc 
 		 vTaskDelay(100);
 		 gpro_t.gTimer_copy_cmd_counter=0; 
 	     gpro_t.receive_copy_buff[3]=copy_null;
-		 Display_Kill_Dry_Ster_Icon();
+		// Display_Kill_Dry_Ster_Icon();
 
 		}
 		else{//power off 
 		run_t.plasma = close;
-		SendData_Set_Command(0x13,0x0); //close ptc 
-		 vTaskDelay(100);
+	    SendWifiData_Answer_Cmd(0x03,0x0); //close ptc 
+		vTaskDelay(100);
 		 gpro_t.gTimer_copy_cmd_counter=0; 
 	     gpro_t.receive_copy_buff[3]=copy_null;
-		 Display_Kill_Dry_Ster_Icon();
+		 //Display_Kill_Dry_Ster_Icon();
 	}
 
 	break;
@@ -460,20 +460,20 @@ static void receive_cmd_or_data_handler(void)
 	case ultrasonic_on_off:
 	if(frame.func_code == 0x01){//ptc on
 		run_t.ultrasonic = open;
-		SendData_Set_Command(0x14,0x01); //close ptc 
+		SendWifiData_Answer_Cmd(0x04,0x01); //close ptc 
 		vTaskDelay(100);
 		 gpro_t.gTimer_copy_cmd_counter=0; 
 	     gpro_t.receive_copy_buff[4]=copy_null;
-		 Display_Kill_Dry_Ster_Icon();
+		// Display_Kill_Dry_Ster_Icon();
 
 		}
 		else{//power off 
 		run_t.ultrasonic = close;
-		SendData_Set_Command(0x13,0x0); //close ptc 
-		 vTaskDelay(100);
+		SendWifiData_Answer_Cmd(0x04,0x0); //close ptc 
+		vTaskDelay(100);
 		 gpro_t.gTimer_copy_cmd_counter=0; 
 	     gpro_t.receive_copy_buff[4]=copy_null;
-		 Display_Kill_Dry_Ster_Icon();
+		 //Display_Kill_Dry_Ster_Icon();
 	}
 
 	break;
@@ -506,7 +506,7 @@ static void receive_cmd_or_data_handler(void)
 		run_t.display_set_timer_or_works_time_mode = PTC_WARNING;
 
 		run_t.dry=0;
-		//SendData_Set_Command(0x08,0x01); //high temperatue warning .
+	
 
 		SendWifiData_Answer_Cmd(0x08,0x01);
 	   vTaskDelay(100);
@@ -601,7 +601,7 @@ static void receive_cmd_or_data_handler(void)
 	     lcd_t.number2_low =  gpro_t.temp_real_value% 10;
 	     lcd_t.number2_high =  gpro_t.temp_real_value% 10;
 
-	     power_on_display_temp_handler(); //WT.EDIT 2025.03.28
+	   //  power_on_display_temp_handler(); //WT.EDIT 2025.03.28
 
 	
 	
@@ -702,8 +702,8 @@ static void receive_cmd_or_data_handler(void)
         gpro_t.power_on_step=0;
 
 
-		  SendWifiData_Answer_Cmd(0x021,0x01);
-		  vTaskDelay(100);
+		 SendWifiData_Answer_Cmd(0x021,0x01);
+		 vTaskDelay(100);
 		
          
        

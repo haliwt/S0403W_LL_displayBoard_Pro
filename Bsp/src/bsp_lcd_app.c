@@ -17,9 +17,6 @@ static void display_lowbit_lunmber4_reg0xc9_handler(void);
 
 
 
-static void display_temp_unit(uint8_t and_mask) ;
-
-//
 uint8_t display_wifi_icon_flag ;
 
 
@@ -112,19 +109,16 @@ static void display_temperture_humidity_value(void)
 		gpro_t.gTimer_disp_temp_humi_value=0;
 
 		//display address 0xC2 -> //WT.EDTI 2025.03.28
-		Display_Kill_Dry_Ster_Icon();
+		//Display_Kill_Dry_Ster_Icon();
 
-		//display address 0xC3
-		ai_mode_base = run_t.gModel? AI_Symbol : AI_NO_Symbol;
-		TM1723_Write_Display_Data(0xC3,((ai_mode_base+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high])& 0xff);//display	"AI icon"
+	    display_dry_temp_fun();//WT.EDIT 2026.0117
+
 		
-		//display address 0xC4
-		TM1723_Write_Display_Data(0xC4,((0x01+lcdNumber2_Low[lcd_t.number2_low])+lcdNumber3_High[lcd_t.number3_high])&0xff);
 
 		wifi_icon_blink_reg0xc5_handler();//TM1723_Write_Display_Data(0xC5,((0x01+lcdNumber2_Low[lcd_t.number2_low])+lcdNumber3_High[lcd_t.number3_high])&0xff);
 		display_lowbit_lunmber4_reg0xc9_handler();
 	   
-	   
+	    TIM1723_Write_Cmd(LUM_VALUE);
 
        }
 }
@@ -156,14 +150,15 @@ void power_on_display_temp_handler(void)
 	#endif 
 
 	// 显示干燥/杀菌/驱蚊图标 + 数字高位
-    Display_Kill_Dry_Ster_Icon();
+   // Display_Kill_Dry_Ster_Icon();
+	display_dry_temp_fun();
 
     // 显示 AI 图标（0xC3）
     
-    TM1723_Write_Display_Data(0xC3,((run_t.gModel+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high])& 0xff);
+   // TM1723_Write_Display_Data(0xC3,((run_t.gModel+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high])& 0xff);
 
     // 显示温度单位（0xC4）
-	TM1723_Write_Display_Data(0xC4,((0x01+lcdNumber2_Low[lcd_t.number2_low])+lcdNumber3_High[lcd_t.number3_high])&0xff);
+	//TM1723_Write_Display_Data(0xC4,((0x01+lcdNumber2_Low[lcd_t.number2_low])+lcdNumber3_High[lcd_t.number3_high])&0xff);
     // WiFi 图标闪烁处理（0xC5）
     wifi_icon_blink_reg0xc5_handler();
 
@@ -186,15 +181,79 @@ void power_on_display_temp_handler(void)
  void Display_Kill_Dry_Ster_Icon(void)
 {
 
-   uint8_t value ;
+  // uint8_t value ;
+   static uint8_t  T4,T5,T6,T3=1;
+   T4= 0x02; //
+   T5= 0x04;
+   T6= 0x08;
 
-	 value = 0x01
-        + (run_t.dry        ? DRY_Symbol  : DRY_NO_Symbol)
-        + (run_t.plasma     ? KILL_Symbol : KILL_NO_Symbol)
-        + (run_t.ultrasonic ? BUG_Symbol  : BUG_NO_Symbol)
-        + lcdNumber1_High[lcd_t.number1_high];
+//	 value = 0x01
+//        + (run_t.dry        ? DRY_Symbol  : DRY_NO_Symbol)
+//        + (run_t.plasma     ? KILL_Symbol : KILL_NO_Symbol)
+//        + (run_t.ultrasonic ? BUG_Symbol  : BUG_NO_Symbol)
+//        + lcdNumber1_High[lcd_t.number1_high];
 
-    TM1723_Write_Display_Data(0xC2, value);
+	 if(run_t.dry == 1 &&  run_t.plasma ==1 && run_t.ultrasonic ==1){//1
+
+	      //TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
+		  TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+KILL_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
+
+	 }
+	 else if(run_t.dry == 0 && run_t.plasma ==1 && run_t.ultrasonic ==1){//2
+
+	    T4=0;
+	   // TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
+	   TM1723_Write_Display_Data(0xC2,((0X01+KILL_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
+	 }
+	 else if(run_t.dry == 1 && run_t.plasma ==0 && run_t.ultrasonic ==1){//3
+
+	     T5=0;
+	    //TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
+	    TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
+	 }
+	 else if(run_t.dry == 1 && run_t.plasma ==1 && run_t.ultrasonic ==0){//4
+
+	     T6=0;
+	    //TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
+	    TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+KILL_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
+	 
+	 }
+	 else if(run_t.dry == 0 && run_t.plasma ==0 && run_t.ultrasonic ==1){//5
+
+		 T4=0;
+		 T5=0;
+	    //TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
+	    TM1723_Write_Display_Data(0xC2,((0X01+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
+	 }
+	 else if(run_t.dry == 1 && run_t.plasma ==0 && run_t.ultrasonic ==0){//6
+	 
+			
+			 T5=0;
+			 T6=0;
+			//TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
+            TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
+
+	 }
+      else if(run_t.dry == 0 && run_t.plasma ==1 && run_t.ultrasonic ==0){//7
+
+	     T4=0;
+		 T6=0;
+		
+	     //TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
+         TM1723_Write_Display_Data(0xC2,((0X01+KILL_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
+	  }
+	 else if(run_t.dry == 0 && run_t.plasma ==0 && run_t.ultrasonic ==0){//8
+	
+			T4=0;
+			T5=0;
+			T6=0;
+		 //  TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
+         TM1723_Write_Display_Data(0xC2,((0X01)+lcdNumber1_High[lcd_t.number1_high])&0xff);
+	 }
+
+	 
+
+	 
     TIM1723_Write_Cmd(LUM_VALUE);
    
 
@@ -334,10 +393,7 @@ static uint8_t get_dry_plasma_ultra_mask(void)
     return mask;
 }
 
-static void display_icons_0xC2(uint8_t and_mask) 
-{
-    TM1723_Write_Display_Data(0xC2, (get_dry_plasma_ultra_mask() + lcdNumber1_High[lcd_t.number1_high]) & and_mask);
-}
+
 /**
 *@ brief :
 *@ parame:
@@ -354,10 +410,7 @@ void display_ai_icon(uint8_t data)
 *@ parame:
 *@ retval:
 **/
-static void display_temp_unit(uint8_t and_mask) 
-{
-    TM1723_Write_Display_Data(0xC4, (0x01 + lcdNumber2_Low[lcd_t.number2_low] + lcdNumber3_High[lcd_t.number3_high]) & and_mask);
-}
+
 /**
 *@ brief :
 *@ parame:
@@ -387,11 +440,10 @@ void disp_temp_humidity_wifi_icon_handler(void)
 	  case 1:
          if (gpro_t.gTimer_set_temp_times < 2){
             set_lcd_numbers_from_value(run_t.wifi_set_temperature);
-            Display_Kill_Dry_Ster_Icon(); //address 0xC2
-            display_ai_icon(run_t.gModel); //address 0xC3
-            display_temp_unit(0xff);       //address 0xC4
-            display_wifi_icon();           //address 0xC5
-            //osDelay(30);
+          
+            display_dry_temp_fun();//WT.EDIT 2026.0117
+            
+		 
         } 
         else{
           gpro_t.set_temp_value_success=1;
@@ -412,7 +464,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
 	break;
 
 	case 0:
-	
+	     
 	     display_temperture_humidity_value();
 
 		 
