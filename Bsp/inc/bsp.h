@@ -70,6 +70,10 @@ typedef struct _process_state{
    uint8_t last_read_index ;
 
   
+   uint8_t set_up_temp_value_done;
+   uint8_t first_set_ptc_on;
+
+  
    //send data need copy this is cmd
   
 

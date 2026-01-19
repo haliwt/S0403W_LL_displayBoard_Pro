@@ -399,9 +399,12 @@ void usart1_isr_callback_handler(uint8_t data)
 * @return 
 *
 */
+ uint8_t temp_run_flag;
+
 static void receive_cmd_or_data_handler(void)
 {
    static uint8_t temp_array[1],ptc_counter=0xff,plasma_counter = 0xff,ultr_counter= 0xff;
+  
    switch(frame.cmd_type){
 	case power_on_off:
 
@@ -430,7 +433,7 @@ static void receive_cmd_or_data_handler(void)
 	        }
 	}
 	else{//power off 
-	        if(ptc_counter != run_t.dry){
+	       if(ptc_counter != run_t.dry){
 				ptc_counter = run_t.dry;
 			run_t.dry = close;
 			run_t.ptc_on_off_flag = 1;
@@ -479,9 +482,7 @@ static void receive_cmd_or_data_handler(void)
 			run_t.ultrasonic = open;
 			SendWifiData_Answer_Cmd(0x04,0x01); //close ptc 
 			vTaskDelay(100);
-			 gpro_t.gTimer_copy_cmd_counter=0; 
-		     gpro_t.receive_copy_buff[4]=copy_null;
-			// Display_Kill_Dry_Ster_Icon();
+			
 	    }
 
 		}
@@ -495,7 +496,7 @@ static void receive_cmd_or_data_handler(void)
 		vTaskDelay(100);
 		 gpro_t.gTimer_copy_cmd_counter=0; 
 	     gpro_t.receive_copy_buff[4]=copy_null;
-		 //Display_Kill_Dry_Ster_Icon();
+		
 
 	    }
 	}
@@ -604,33 +605,28 @@ static void receive_cmd_or_data_handler(void)
 
    case 0x1A: //read sensor "DHT11" temperature and humidity value .
 
+     #if 1
+        if(run_t.power_on  == power_on && gpro_t.temp_key_set_value==0 ){
+	   
+		if(frame.data[1]  < 60){
+			 gpro_t.humidity_real_value = frame.data[0];
 
-        if(run_t.power_on  == power_on){
-	    gpro_t.humidity_real_value = frame.data[0];
-		
-		gpro_t.temp_real_value = frame.data[1];
-		
-
-         if(temp_array[0] != frame.data[1]){
-		 	temp_array[0] = frame.data[1];
-		 lcd_t.number1_low= gpro_t.temp_real_value/ 10;
-	     lcd_t.number1_high =  lcd_t.number1_high;
-
-	     lcd_t.number2_low =  gpro_t.temp_real_value% 10;
-	     lcd_t.number2_high =  lcd_t.number2_low;
-
-		 lcd_t.number3_low= gpro_t.humidity_real_value/ 10;
-		lcd_t.number3_high =   lcd_t.number3_low;
-
-		lcd_t.number4_low = gpro_t.humidity_real_value % 10;
-		lcd_t.number4_high = lcd_t.number4_low ;
-		vTaskDelay(100);
+		     gpro_t.temp_real_value = frame.data[1];
+			
+          	if(temp_array[0] != frame.data[1]){
+		 			temp_array[0] = frame.data[1];
+		   		 gpro_t.temp_real_value = frame.data[1];
+			
+			
+	        }
+		 
+		 }
+		 
 
         }
 
-	   // Display_Kill_Dry_Ster_Icon();
-		///vTaskDelay(100);
-        }
+	  #endif 
+        
 
 	
 	break;

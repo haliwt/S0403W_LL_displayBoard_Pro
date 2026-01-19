@@ -79,8 +79,7 @@ static void works_timer_disp_numaber(void)
 *****************************************************************************/
 void display_lcd_Icon_init(void)
 {
-     static uint8_t temp1,temp2;
-     static uint8_t hum1,hum2;
+    
 
      TIM1723_Write_Cmd(0x00);
 	 TIM1723_Write_Cmd(0x40);
@@ -92,30 +91,25 @@ void display_lcd_Icon_init(void)
     gpro_t.set_temp_value_success = 0;//WT.EDIT 2025.01.15
     gpro_t.temp_key_set_value =0;//WT.EDIT 2025.01.15
 
-    temp1 =   gpro_t.temp_real_value/ 10;//WT.EDIT 2025.01.15
-    temp2   = gpro_t.temp_real_value% 10;//WT.EDIT 2025.01.15
+    if(gpro_t.temp_real_value < 60){
 
-    hum1 = gpro_t.humidity_real_value /10;
-    hum2 = gpro_t.humidity_real_value %10;
+	    lcd_t.number1_low= gpro_t.temp_real_value/ 10;
+	    lcd_t.number1_high =lcd_t.number1_low;
 
-    lcd_t.number1_low= temp1;
-    lcd_t.number1_high =temp1;
-
-    lcd_t.number2_low = temp2;
-    lcd_t.number2_high = temp2;
+	    lcd_t.number2_low = gpro_t.temp_real_value% 10;
+	    lcd_t.number2_high =  lcd_t.number2_low;
 
 
 
-    lcd_t.number3_low= hum1;
-    lcd_t.number3_high =hum1;
+	    lcd_t.number3_low= gpro_t.humidity_real_value /10;
+	    lcd_t.number3_high = lcd_t.number3_low;
 
-    lcd_t.number4_low = hum2;
-    lcd_t.number4_high = hum2;
-
+	    lcd_t.number4_low = gpro_t.humidity_real_value %10;
+	    lcd_t.number4_high =   lcd_t.number4_low ;
 
     
      if(gpro_t.smart_phone_app_timer_power_on_flag == 0){
-      
+           
           TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+KILL_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);//display digital "temp
           TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);
 	 }
@@ -127,13 +121,14 @@ void display_lcd_Icon_init(void)
 	 
     // TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
     // TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xff);//display "t,c"
-     TM1723_Write_Display_Data(0xC5,(WIFI_Symbol+lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high]) & 0xff); //Wifi
+     TM1723_Write_Display_Data(0xC5,(WIFI_Symbol+lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high]) & 0xfff); //Wifi
 
       disp_fan_leaf_init();
 
 
 
      TIM1723_Write_Cmd(LUM_VALUE);
+    }
 }
 
 

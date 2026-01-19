@@ -123,20 +123,22 @@ void add_key_fun(void)
 		if(run_t.wifi_set_temperature > 40)run_t.wifi_set_temperature= 40;
 
 		
-	    decade_temp =  run_t.wifi_set_temperature / 10 ;
-		unit_temp =  run_t.wifi_set_temperature % 10; //
+	   // decade_temp =  run_t.wifi_set_temperature / 10 ;
+		//unit_temp =  run_t.wifi_set_temperature % 10; //
         
-		lcd_t.number1_low=decade_temp;
-		lcd_t.number1_high =decade_temp;
+		//lcd_t.number1_low=decade_temp;
+		//lcd_t.number1_high =decade_temp;
 
-		lcd_t.number2_low = unit_temp;
-		lcd_t.number2_high = unit_temp;
+		///lcd_t.number2_low = unit_temp;
+		//lcd_t.number2_high = unit_temp;
 
         gpro_t.temp_key_set_value = 1;
         gpro_t.gTimer_set_temp_times = 0;
  
 		run_t.ptc_on_off_flag = 0; //WT.EDIT 2025.10.31
-		
+		gpro_t.set_up_temp_value_done = 1;
+
+		gpro_t.first_set_ptc_on=0;
 	
 	   break;
 
@@ -187,20 +189,21 @@ void dec_key_fun(void)
 	      
 
 
-	        decade_temp =  run_t.wifi_set_temperature / 10;
-			unit_temp =  run_t.wifi_set_temperature % 10; //
+	       // decade_temp =  run_t.wifi_set_temperature / 10;
+			//unit_temp =  run_t.wifi_set_temperature % 10; //
        
-			lcd_t.number1_low=decade_temp;
-			lcd_t.number1_high =decade_temp;
+			//lcd_t.number1_low=decade_temp;
+			///lcd_t.number1_high =decade_temp;
 
-			lcd_t.number2_low = unit_temp;
-			lcd_t.number2_high = unit_temp;
+			///lcd_t.number2_low = unit_temp;
+			//lcd_t.number2_high = unit_temp;
 			
              gpro_t.temp_key_set_value = 1;
              gpro_t.gTimer_set_temp_times = 0;
  
 			 run_t.ptc_on_off_flag = 0; //WT.EDIT 2025.10.31
-		
+		     gpro_t.set_up_temp_value_done = 1;
+			 gpro_t.first_set_ptc_on=0;
 	
 		    break;
 

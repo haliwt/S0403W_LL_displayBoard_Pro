@@ -311,18 +311,17 @@ void set_temperature_compare_value_fun(void)
 {
     static uint8_t ptc_on_flag =0xff,ptc_off_flag=0xff;
     if(run_t.fan_warning ==1 || run_t.ptc_warning ==1)return ;
+
+	if(gpro_t.temp_real_value > 60)return ; //WT.EDIT 2026.01.19
    
 	static uint8_t first_on_ptc,first_set_ptc_on;
 
 	// display_dry_temp_fun();//WT.EDIT 2026.0117
 
-	if(gpro_t.power_on_every_times==2){
-         gpro_t.power_on_every_times++;
-		 first_on_ptc  =0 ;
-	     first_set_ptc_on =0;
 
-	}
 
+
+   
 	switch(gpro_t.set_temp_value_success){
 
 	 case 1:
@@ -333,8 +332,8 @@ void set_temperature_compare_value_fun(void)
       if(run_t.wifi_set_temperature <= gpro_t.temp_real_value){// && gpro_t.smart_phone_turn_off_ptc_flag ==0){
 
                run_t.dry = 0;
-			   if(first_set_ptc_on==1)first_set_ptc_on=2;  //the first open ptc heating //WT.DEDIT 2028.08.27 modify this flow codes
-			
+			   if(gpro_t.first_set_ptc_on==0)gpro_t.first_set_ptc_on==1;  //the first open ptc heating //WT.DEDIT 2028.08.27 modify this flow codes
+			   if(gpro_t.first_set_ptc_on==2)gpro_t.first_set_ptc_on=3;
 				
 			     gpro_t.ack_cp_repeat_counter=0;
 				 gpro_t.gTimer_cp_timer_counter =0;
@@ -353,9 +352,9 @@ void set_temperature_compare_value_fun(void)
       }
       else{
 
-	       if((first_set_ptc_on==0 ||first_set_ptc_on==1) && run_t.ptc_on_off_flag ==0){//the first open ptc heating //WT.DEDIT 2028.08.27 modify this flow codes
+	       if((gpro_t.first_set_ptc_on==1 || gpro_t.first_set_ptc_on==0) && run_t.ptc_on_off_flag ==0){//the first open ptc heating //WT.DEDIT 2028.08.27 modify this flow codes
 	          
-                first_set_ptc_on=1;
+                if(gpro_t.first_set_ptc_on==1)gpro_t.first_set_ptc_on=2;
 				run_t.dry = 1;
 			
 	           
@@ -370,7 +369,7 @@ void set_temperature_compare_value_fun(void)
 	          
             
 	       }
-		   else if(first_set_ptc_on==2 && (run_t.wifi_set_temperature -3) >= gpro_t.temp_real_value && run_t.ptc_on_off_flag ==0 ){//WT.DEDIT 2028.08.27 modify this flow codes
+		   else if(gpro_t.first_set_ptc_on==3 && (run_t.wifi_set_temperature -3) >= gpro_t.temp_real_value && run_t.ptc_on_off_flag ==0 ){//WT.DEDIT 2028.08.27 modify this flow codes
                  run_t.dry = 1;
 	
 		
@@ -402,7 +401,7 @@ void set_temperature_compare_value_fun(void)
                run_t.dry = 0;
 		
 			
-			    gpro_t.ack_cp_repeat_counter=0;
+			   gpro_t.ack_cp_repeat_counter=0;
 			   gpro_t.gTimer_cp_timer_counter =0;
 			     if(ptc_off_flag != run_t.dry){
 			   	   ptc_off_flag = run_t.dry;
