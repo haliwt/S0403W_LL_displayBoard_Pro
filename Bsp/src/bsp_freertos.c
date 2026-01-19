@@ -169,8 +169,11 @@ static void vTaskCommPro(void *pvParameters)
              if((ulValue & DECODER_BIT_9 ) != 0)
              {
    			   parse_handler();
+			  
+			  
 	         }
 		 }
+		
 	 }
 }
 /**********************************************************************************************************
@@ -193,7 +196,7 @@ static void vTaskUiPro(void *pvParameters)
         power_run_handler();
 	
 	
-        vTaskDelay(100);
+        vTaskDelay(60);
     }
  }
 
@@ -494,9 +497,7 @@ static void power_run_handler(void)
           if(gl_ref.key_mode_short_flag ==1){
             gl_ref.key_mode_short_flag ++ ;
             mode_key_short_fun();
-           // display_ai_icon(run_t.gModel) ;
-
-			display_dry_temp_fun();
+            display_ai_icon(run_t.gModel) ;
 		  }
           else if( gpro_t.gTimer_mode_key_long > 1 && (gl_ref.key_long_mode_flag  ==1 ||gl_ref.key_long_power_flag ==1)){
                  gl_ref.long_key_mode_counter =0;
@@ -519,13 +520,13 @@ static void power_run_handler(void)
 		   
 	       disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
 
-		   	if(gpro_t.gTimer_disp_dry_counter> 0){
-		 	  gpro_t.gTimer_disp_dry_counter=0;
+//		   	if(gpro_t.gTimer_disp_dry_counter> 0){
+//		 	  gpro_t.gTimer_disp_dry_counter=0;
 
-			 //power_on_display_temp_handler();//WT.EDIT 2025.03.28
-              display_dry_temp_fun();//WT.EDIT 2026.0117
+//			 //power_on_display_temp_handler();//WT.EDIT 2025.03.28
+//             Display_Kill_Dry_Ster_Icon();//WT.EDIT 2026.0117
              
-		   	}
+//		   	}
 	     
        
 	 break;
@@ -538,7 +539,7 @@ static void power_run_handler(void)
 		   gpro_t.gTimer_two_hours_conter=0; //WT.EDIT 2025.10.30
 		   gpro_t.stopTwoHours_flag=0;
            power_off_handler();
-	       waiting_ack_handler();
+	     
 		   
 		    if(gpro_t.again_confirm_power_off_flag == 1){
 				

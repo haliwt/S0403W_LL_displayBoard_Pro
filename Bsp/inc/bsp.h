@@ -129,7 +129,7 @@ void set_temperature_compare_value_fun(void);
 void display_timer_and_beijing_time_handler(void);
 
 
-void waiting_ack_handler(void);
+
 
 void display_not_ai_timer_mode(void);
 

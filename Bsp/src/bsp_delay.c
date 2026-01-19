@@ -32,26 +32,24 @@ void delay_init(uint8_t SYSCLK)
 //nus:ÒªÑÓÊ±µÄusÊý.	
 //nus:0~190887435(×î´óÖµ¼´2^32/fac_us@fac_us=22.5)	    								   
 void delay_us(uint32_t nus)
-{		
-	uint32_t ticks;
-	uint32_t told,tnow,tcnt=0;
-	uint32_t reload=SysTick->LOAD;				//LOADµÄÖµ	    	 
-	ticks=nus*fac_us; 						//ÐèÒªµÄ½ÚÅÄÊý 
-	//delay_osschedlock();					//×èÖ¹OSµ÷¶È£¬·ÀÖ¹´ò¶ÏusÑÓÊ±
-	told=SysTick->VAL;        				//¸Õ½øÈëÊ±µÄ¼ÆÊýÆ÷Öµ
-	while(1)
-	{
-		tnow=SysTick->VAL;	
-		if(tnow!=told)
-		{	    
-			if(tnow<told)tcnt+=told-tnow;	//ÕâÀï×¢ÒâÒ»ÏÂSYSTICKÊÇÒ»¸öµÝ¼õµÄ¼ÆÊýÆ÷¾Í¿ÉÒÔÁË.
-			else tcnt+=reload-tnow+told;	    
-			told=tnow;
-			if(tcnt>=ticks)break;			//Ê±¼ä³¬¹ý/µÈÓÚÒªÑÓ³ÙµÄÊ±¼ä,ÔòÍË³ö.
-		}  
-	};
-	//delay_osschedunlock();					//»Ö¸´OSµ÷¶È											    
-}  
+{
+    uint32_t ticks = nus * fac_us;          // 需要的节拍数
+    uint32_t reload = SysTick->LOAD;        // SysTick 重装载值
+    uint32_t last = SysTick->VAL;           // 进入时的计数器值
+    uint32_t count = 0;
+
+    while (count < ticks)
+    {
+        uint32_t now = SysTick->VAL;
+        if (now != last)
+        {
+            // SysTick 是递减计数器
+            count += (now < last) ? (last - now) : (reload - now + last);
+            last = now;
+        }
+    }
+}
+  
 //ÑÓÊ±nms
 //nms:ÒªÑÓÊ±µÄmsÊý
 //nms:0~65535

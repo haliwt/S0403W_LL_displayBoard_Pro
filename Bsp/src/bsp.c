@@ -104,7 +104,7 @@ void display_timer_and_beijing_time_handler(void)
        
 
       }
-	 // display_dry_temp_fun();//WT.EDIT 2026.0117
+	
 	  power_on_init_disp_time_numbers();
 	 
       counter_time_timing_fun(); 
@@ -250,8 +250,8 @@ void display_not_ai_timer_mode(void)
 
       case works_time:
 
-	    //display_ai_icon(1) ;
-	    display_dry_temp_fun();
+	    display_ai_icon(1) ;
+	
         
          lcd_t.number5_low=(run_t.dispTime_hours ) /10;
          lcd_t.number5_high =lcd_t.number5_low;//(run_t.dispTime_hours) /10;
@@ -272,8 +272,8 @@ void display_not_ai_timer_mode(void)
 
      case timer_time:
  
-           //display_ai_icon(0) ;
-           display_dry_temp_fun();
+           display_ai_icon(0) ;
+        
            	lcd_t.number5_low=(run_t.timer_time_hours ) /10;
 			lcd_t.number5_high =lcd_t.number5_low;//(run_t.timer_time_hours) /10;
 
@@ -314,7 +314,7 @@ void set_temperature_compare_value_fun(void)
    
 	static uint8_t first_on_ptc,first_set_ptc_on;
 
-	 display_dry_temp_fun();//WT.EDIT 2026.0117
+	// display_dry_temp_fun();//WT.EDIT 2026.0117
 
 	if(gpro_t.power_on_every_times==2){
          gpro_t.power_on_every_times++;
