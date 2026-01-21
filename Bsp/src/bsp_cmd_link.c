@@ -238,7 +238,7 @@ void SendData_Time_Data(uint8_t tdata)
 *******************************************************************************/
 void SendWifiData_Answer_Cmd(uint8_t cmd ,uint8_t data)
 {
-        outputBuf[0]=0x5A; //display board head = 0xA5
+        outputBuf[0]=0xA5; //display board head = 0xA5
         outputBuf[1]=DEVICE_NUMBER; //display device Number:is 0x01
         outputBuf[2]=0xFF; // answer or copy command
         outputBuf[3]= cmd; // 0x0F : is data ,don't command order.

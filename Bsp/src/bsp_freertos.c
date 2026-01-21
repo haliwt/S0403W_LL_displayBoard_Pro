@@ -112,7 +112,7 @@ typedef struct GL_TASK{
    uint8_t  key_mode_flag ;
    uint8_t  key_dec_flag;
    uint8_t  key_add_flag;
-   uint8_t   stopTwoHours_flag;
+
 
    uint8_t smart_phone_app_timer_power_on_flag;
 

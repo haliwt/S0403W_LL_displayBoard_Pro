@@ -25,6 +25,7 @@ void smartPhone_appTimer_powerOn(void);
 
 void power_on_first_again_fun(void);
 
+void two_hours_recoder_fun(void);
 
 #endif 
 

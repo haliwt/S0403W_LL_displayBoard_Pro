@@ -21,7 +21,7 @@ static void display_lcd_Icon_init(void);
 */
 void power_on_handler(void)
 {
-   static uint8_t power_on_times_flag;
+ 
    switch(gpro_t.power_on_step){
 
       case 0:
@@ -31,6 +31,7 @@ void power_on_handler(void)
           gpro_t.power_on_step =1;
           gpro_t.gTimer_two_hours_second_counter=0;
 		  gpro_t.gTimer_two_hours_conter=0;
+		  gpro_t.stopTwoHours_flag=0;
 
 		   // gpro_t.long_key_power_counter =0; 
         run_t.power_on_disp_smg_number = 1;
@@ -94,6 +95,8 @@ void power_on_handler(void)
 
      }
 
+	  two_hours_recoder_fun();
+
 	    gpro_t.power_on_step =2;
 
 	 
@@ -146,7 +149,7 @@ static void power_on_ref_init(void)
 
       }
 
-      gpro_t.stopTwoHours_flag=0;
+   
 	  display_lcd_Icon_init();
       LCD_BACK_LIGHT_ON();
 	  POWER_ON_LED() ;
@@ -250,8 +253,7 @@ void smartPhone_appTimer_powerOn(void)
 *****************************************************************************/
 static void display_lcd_Icon_init(void)
 {
-     static uint8_t temp1,temp2;
-     static uint8_t hum1,hum2;
+    
 
      TIM1723_Write_Cmd(0x00);
 	 TIM1723_Write_Cmd(0x40);
@@ -325,7 +327,7 @@ void power_off_handler(void)
 {
     
     if(run_t.power_off_id_flag == 1 || run_t.power_off_id_flag==2){   
-        run_t.power_off_id_flag++; 
+        if(run_t.power_off_id_flag==1) run_t.power_off_id_flag =3;
 		gpro_t.power_on_step=0;
         //cp_end 
         run_t.wifi_set_temperature =40;//WT.EDIT 2025.01.15
@@ -440,5 +442,26 @@ static void power_off_breath_Led(void)
 	      
 }
 
+void two_hours_recoder_fun(void)
+{
+  
+  if(gpro_t.gTimer_two_hours_conter > 119 && gpro_t.stopTwoHours_flag==0){
+     
+      gpro_t.gTimer_two_hours_conter=0;
+	  gpro_t.gTimer_two_hours_second_counter=0;
+      gpro_t.stopTwoHours_flag=1;
+	  SendData_Set_Command(0x19,0x01);
+	  vTaskDelay(100);
 
+  }
+  else if(gpro_t.stopTwoHours_flag==1 && gpro_t.gTimer_two_hours_conter > 10){
+      gpro_t.gTimer_two_hours_conter=0;
+	  gpro_t.gTimer_two_hours_second_counter=0;
+      gpro_t.stopTwoHours_flag=0;
+       SendData_Set_Command(0x19,0x01);
+	   vTaskDelay(100);
+	    
+
+  }
+}
 

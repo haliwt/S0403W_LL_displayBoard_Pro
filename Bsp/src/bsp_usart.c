@@ -501,6 +501,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 	case 0xFF:
 		
+	    parse_copy_cmd_or_data_handler(pddata);
 
 	break;
 
