@@ -67,7 +67,7 @@ void power_on_handler(void)
          }
 	     gpro_t.gTimer_disp_temp_humi_value=20;
 	     run_t.wifi_set_temperature=40;
-         display_lcd_Icon_init();
+        // display_lcd_Icon_init();
 		 gpro_t.power_on_step =2;
 	  break;
 
@@ -147,14 +147,21 @@ static void power_on_ref_init(void)
       }
 
       gpro_t.stopTwoHours_flag=0;
-	
+	  display_lcd_Icon_init();
       LCD_BACK_LIGHT_ON();
 	  POWER_ON_LED() ;
 	  LED_MODEL_ON() ;
-      display_lcd_Icon_init();
+     
 
 
     
+}
+
+void power_on_first_fun(void)
+{
+
+
+
 }
 
 /**************************************************************************
@@ -224,10 +231,11 @@ void smartPhone_appTimer_powerOn(void)
       gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
 
 	  gpro_t.gTimer_mode_key_long=0;
+	  display_lcd_Icon_init();
       LCD_BACK_LIGHT_ON();
 	  POWER_ON_LED() ;
 	  LED_MODEL_ON() ;
-      display_lcd_Icon_init();
+      
       power_on_display_temp_handler();//WT.EDIT 2025.03.28
 
 }
@@ -292,7 +300,7 @@ static void display_lcd_Icon_init(void)
 
 	 TM1723_Write_Display_Data(0xC5,(WIFI_Symbol+lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high]) & 0xff); //Wifi
 
-      disp_fan_leaf_init();
+     // disp_fan_leaf_init();
 
 
 

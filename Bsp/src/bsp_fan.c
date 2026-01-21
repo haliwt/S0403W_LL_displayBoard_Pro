@@ -123,7 +123,7 @@ void display_lcd_Icon_init(void)
     // TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xff);//display "t,c"
      TM1723_Write_Display_Data(0xC5,(WIFI_Symbol+lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high]) & 0xfff); //Wifi
 
-      disp_fan_leaf_init();
+     // disp_fan_leaf_init(); //WT.EDIT 2026.01.21
 
 
 
