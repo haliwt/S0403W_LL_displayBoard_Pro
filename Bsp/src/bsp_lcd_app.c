@@ -568,15 +568,14 @@ void disp_temp_humidity_wifi_icon_handler(void)
          
            gpro_t.gTimer_temp_compare_value =10; //at once run compare value fun WT.EDIT 2025.10.31
 		 
-	
-		  //if( run_t.smart_phone_set_temp_value_flag ==0){ //WT.EIDT 2025.10.31
-		    SendData_Data(0x2A,run_t.wifi_set_temperature);
-            vTaskDelay(pdMS_TO_TICKS(20));
-		  ///}
-		    Display_Kill_Dry_Ster_Icon();
-		   set_temperature_compare_value_fun();
+	        direct_comparison_temp();
+			
+	        Display_Kill_Dry_Ster_Icon();
+		  
 		    gpro_t.temp_key_set_value =0;
 			gpro_t.set_up_temp_value_done = 2;
+			SendData_Data(0x2A,run_t.wifi_set_temperature);
+            vTaskDelay(pdMS_TO_TICKS(50));
 		 
         }
 

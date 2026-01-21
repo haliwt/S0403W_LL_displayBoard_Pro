@@ -72,6 +72,7 @@ typedef struct _process_state{
   
    uint8_t set_up_temp_value_done;
    uint8_t first_set_ptc_on;
+   uint8_t first_rcoder_ptc_on_flag;
 
    uint8_t power_on_counter_temp;
 
@@ -79,7 +80,7 @@ typedef struct _process_state{
    //send data need copy this is cmd
   
 
-   uint8_t ack_cp_repeat_counter;
+
    uint8_t again_confirm_power_off_flag ;
 
   
@@ -109,7 +110,7 @@ typedef struct _process_state{
    uint8_t gTimer_set_temp_times;
    uint8_t gTimer_temp_compare_value;
    uint8_t gTimer_fan_to_ptc_warning;
-   uint8_t gTimer_cp_timer_counter;
+  
    uint8_t gTimer_disp_temp_humi_value;
    uint8_t  gTimer_copy_cmd_counter;
    uint8_t gTimer_two_hours_second_counter;
@@ -135,6 +136,7 @@ void set_temperature_compare_value_fun(void);
 void display_timer_and_beijing_time_handler(void);
 
 
+void direct_comparison_temp(void);
 
 
 void display_not_ai_timer_mode(void);

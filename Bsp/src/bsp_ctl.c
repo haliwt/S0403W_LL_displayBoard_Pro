@@ -44,11 +44,11 @@ void disp_timer_run_times(void)
                  run_t.power_on= power_off;
                  SendData_PowerOnOff(0); //send power off cmd to mainboard.WT.EDIT 2024.11.17
                  vTaskDelay(pdMS_TO_TICKS(100)); //WT.EDIT 2026.01.04
-                 gpro_t.gTimer_cp_timer_counter =0; //WT.EDIT 2025.11.26
+                
 		
 			
-				 gpro_t.ack_cp_repeat_counter=0;
-		         gpro_t.gTimer_cp_timer_counter =0;
+
+		   
 				 Power_Off_Fun();
 				 gpro_t.again_confirm_power_off_flag = 1;
 				 SendData_Set_Command(0x30,0); //mainboard.WT.EDIT 2026.01.04
@@ -121,15 +121,15 @@ void Setup_Timer_Times_Donot_Display(void)
 			    run_t.timer_time_hours=0;
 				run_t.timer_time_minutes=0;
 
-                gpro_t.gTimer_cp_timer_counter =0;//wt.edit 2024.11.17
+             
           
 			
-				 gpro_t.ack_cp_repeat_counter=0;
+	
 
 				SendData_PowerOnOff(0); //send power off cmd to mainboard.WT.EDIT 2024.11.17
 				osDelay(5);
 				
-                gpro_t.gTimer_cp_timer_counter =0;
+           
 				Power_Off_Fun();
 
 			

@@ -310,19 +310,15 @@ void display_not_ai_timer_mode(void)
 void set_temperature_compare_value_fun(void)
 {
     static uint8_t ptc_on_flag =0xff,ptc_off_flag=0xff;
+
     if(run_t.fan_warning ==1 || run_t.ptc_warning ==1)return ;
 
 	if(gpro_t.temp_real_value > 60)return ; //WT.EDIT 2026.01.19
    
-	static uint8_t first_on_ptc,first_set_ptc_on;
 
 	// display_dry_temp_fun();//WT.EDIT 2026.0117
 
-
-
-
-   
-	switch(gpro_t.set_temp_value_success){
+    switch(gpro_t.set_temp_value_success){
 
 	 case 1:
        if(gpro_t.temp_key_set_value ==0){
@@ -332,11 +328,12 @@ void set_temperature_compare_value_fun(void)
       if(run_t.wifi_set_temperature <= gpro_t.temp_real_value){// && gpro_t.smart_phone_turn_off_ptc_flag ==0){
 
                run_t.dry = 0;
-			   if(gpro_t.first_set_ptc_on==0)gpro_t.first_set_ptc_on==1;  //the first open ptc heating //WT.DEDIT 2028.08.27 modify this flow codes
-			   if(gpro_t.first_set_ptc_on==2)gpro_t.first_set_ptc_on=3;
+			   if(gpro_t.first_set_ptc_on==0)gpro_t.first_set_ptc_on=1;  //the first open ptc heating //WT.DEDIT 2028.08.27 modify this flow codes
+			   else if(gpro_t.first_set_ptc_on==2)gpro_t.first_set_ptc_on=3;
+			   else if(gpro_t.first_set_ptc_on==4)gpro_t.first_set_ptc_on=5;
 				
-			     gpro_t.ack_cp_repeat_counter=0;
-				 gpro_t.gTimer_cp_timer_counter =0;
+		
+			
 
                if(ptc_off_flag != run_t.dry){
 			   	   ptc_off_flag = run_t.dry;
@@ -345,21 +342,17 @@ void set_temperature_compare_value_fun(void)
 
                	}
 			   
-              
-	        
-			
-            
       }
       else{
 
 	       if((gpro_t.first_set_ptc_on==1 || gpro_t.first_set_ptc_on==0) && run_t.ptc_on_off_flag ==0){//the first open ptc heating //WT.DEDIT 2028.08.27 modify this flow codes
 	          
                 if(gpro_t.first_set_ptc_on==1)gpro_t.first_set_ptc_on=2;
+				else if(gpro_t.first_set_ptc_on==0)gpro_t.first_set_ptc_on=4;
 				run_t.dry = 1;
 			
-	           
-			    gpro_t.ack_cp_repeat_counter=0;
-			   gpro_t.gTimer_cp_timer_counter =0;
+	       
+			 
 			   
 			    if(ptc_on_flag != run_t.dry){
 			   	   ptc_on_flag = run_t.dry;
@@ -369,12 +362,12 @@ void set_temperature_compare_value_fun(void)
 	          
             
 	       }
-		   else if(gpro_t.first_set_ptc_on==3 && (run_t.wifi_set_temperature -3) >= gpro_t.temp_real_value && run_t.ptc_on_off_flag ==0 ){//WT.DEDIT 2028.08.27 modify this flow codes
+		   else if((gpro_t.first_set_ptc_on==3 || gpro_t.first_set_ptc_on==5) && (run_t.wifi_set_temperature -3) >= gpro_t.temp_real_value && run_t.ptc_on_off_flag ==0 ){//WT.DEDIT 2028.08.27 modify this flow codes
                  run_t.dry = 1;
 	
 		
-			    gpro_t.ack_cp_repeat_counter=0;
-			   gpro_t.gTimer_cp_timer_counter =0;
+
+			 
 
 			     if(ptc_on_flag != run_t.dry){
 			   	   ptc_on_flag = run_t.dry;
@@ -397,26 +390,26 @@ void set_temperature_compare_value_fun(void)
         
         if(gpro_t.temp_real_value > 39){ // must be clouse ptc.
     
-               first_on_ptc = 1;
+               gpro_t.first_rcoder_ptc_on_flag  = 1;
                run_t.dry = 0;
 		
 			
-			   gpro_t.ack_cp_repeat_counter=0;
-			   gpro_t.gTimer_cp_timer_counter =0;
+	
+			
 			     if(ptc_off_flag != run_t.dry){
 			   	   ptc_off_flag = run_t.dry;
                		SendData_Set_Command(0x22,0x00); //close ptc 
                		vTaskDelay(pdMS_TO_TICKS(100));
 			     }
           }
-          else if(first_on_ptc == 1 &&run_t.ptc_on_off_flag ==0 ){
+          else if(gpro_t.first_rcoder_ptc_on_flag  == 1 && run_t.ptc_on_off_flag ==0 ){
                
                  if(gpro_t.temp_real_value < 38){
                        run_t.dry = 1;
 					 
 		
-				    gpro_t.ack_cp_repeat_counter=0;
-				   gpro_t.gTimer_cp_timer_counter =0;
+				
+			
 				     if(ptc_on_flag != run_t.dry){
 			   	       ptc_on_flag = run_t.dry;
                        SendData_Set_Command(0x22,0x01); //open ptc 
@@ -427,13 +420,13 @@ void set_temperature_compare_value_fun(void)
                    
 
           }
-		  else if(first_on_ptc == 0 && gpro_t.temp_real_value < 40 && run_t.ptc_on_off_flag ==0){ //WT.EDIT 2025.10.31
+		  else if(gpro_t.first_rcoder_ptc_on_flag == 0 && gpro_t.temp_real_value < 40 && run_t.ptc_on_off_flag ==0){ //WT.EDIT 2025.10.31
 
 	            run_t.dry = 1;
 		
 		
-			    gpro_t.ack_cp_repeat_counter=0;
-			   gpro_t.gTimer_cp_timer_counter =0;
+		
+			
 			      if(ptc_on_flag != run_t.dry){
 			   	     ptc_on_flag = run_t.dry;
 				    SendData_Set_Command(0x22,0x01); //open ptc  
@@ -447,6 +440,33 @@ void set_temperature_compare_value_fun(void)
        }
 	break;
 	}
+}
+
+/**
+*@brief 
+*@notice
+*@param 
+**/
+void direct_comparison_temp(void)
+{
+     gpro_t.first_set_ptc_on=0;
+	 gpro_t.first_rcoder_ptc_on_flag =0;
+
+	if(run_t.wifi_set_temperature <= gpro_t.temp_real_value){// && gpro_t.smart_phone_turn_off_ptc_flag ==0){
+
+               run_t.dry = 0;
+			 
+			   SendData_Set_Command(0x22,0x00); //close ptc 
+	           vTaskDelay(pdMS_TO_TICKS(100));
+     }
+     else{
+
+	   run_t.dry = 1;
+		SendData_Set_Command(0x22,0x01); //open ptc 
+	    vTaskDelay(pdMS_TO_TICKS(100));
+			    
+	    }
+
 }
 
 /**************************************************************************************************

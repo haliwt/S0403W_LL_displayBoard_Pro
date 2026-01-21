@@ -229,8 +229,8 @@ static void vTaskKeyPro(void *pvParameters)
             gpro_t.gTimer_mode_key_long = 0;
 
 			
-              gpro_t.ack_cp_repeat_counter=0;
-              gpro_t.gTimer_cp_timer_counter =0;
+
+             
               SendData_Set_Command(0x05,0x01); // link wifi of command .
               vTaskDelay(100);
               gpro_t.gTimer_mode_key_long=0;

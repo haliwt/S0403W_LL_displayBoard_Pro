@@ -43,7 +43,7 @@ void tim16_int_callback_handler(void)
          gpro_t.gTimer_set_temp_times++;
          gpro_t.gTimer_temp_compare_value++ ;
          gpro_t.gTimer_fan_to_ptc_warning++ ;
-         gpro_t.gTimer_cp_timer_counter ++;
+        
 		 gpro_t.gTimer_disp_temp_humi_value++;
          gpro_t.gTimer_soft_version_counter++;
 		 gpro_t.gTimer_disp_dry_counter++;

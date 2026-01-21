@@ -37,13 +37,16 @@ void power_on_handler(void)
 	   //copy 
   
 
-		 gpro_t.ack_cp_repeat_counter=0;
-        gpro_t.gTimer_cp_timer_counter =0;
+
+        
 		//end
         run_t.wifi_set_temperature=40; //WT.EDIT 2025.01.15
         run_t.display_set_timer_or_works_time_mode = works_time;//WT.EDIT 2025.01.15
         run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
         gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
+        
+		gpro_t.first_set_ptc_on =0;
+		gpro_t.first_rcoder_ptc_on_flag=0;
         
        
         gpro_t.gTimer_mode_key_long=0;
@@ -312,10 +315,7 @@ void power_off_handler(void)
     if(run_t.power_off_id_flag == 1){   
         run_t.power_off_id_flag++; 
 		gpro_t.power_on_step=0;
-
-		gpro_t.ack_cp_repeat_counter=0;
-        gpro_t.gTimer_cp_timer_counter =0;
-		//cp_end 
+        //cp_end 
         run_t.wifi_set_temperature =40;//WT.EDIT 2025.01.15
         run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
         gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15

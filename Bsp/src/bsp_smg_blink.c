@@ -315,7 +315,7 @@ void disp_set_timer_timing_value_fun(void)
 			gpro_t.key_set_timer_flag =0;
           
 				
-             gpro_t.gTimer_cp_timer_counter = 0;
+         
           
             
         }
