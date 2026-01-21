@@ -451,21 +451,22 @@ void direct_comparison_temp(void)
 {
      gpro_t.first_set_ptc_on=0;
 	 gpro_t.first_rcoder_ptc_on_flag =0;
+	 run_t.ptc_on_off_flag =0;
 
 	if(run_t.wifi_set_temperature <= gpro_t.temp_real_value){// && gpro_t.smart_phone_turn_off_ptc_flag ==0){
 
                run_t.dry = 0;
 			 
-			   SendData_Set_Command(0x22,0x00); //close ptc 
+			   SendData_Set_Command(0x12,0x00); //close ptc 
 	           vTaskDelay(pdMS_TO_TICKS(100));
-     }
-     else{
+    }
+    else{
 
 	   run_t.dry = 1;
-		SendData_Set_Command(0x22,0x01); //open ptc 
+		SendData_Set_Command(0x12,0x01); //open ptc 
 	    vTaskDelay(pdMS_TO_TICKS(100));
 			    
-	    }
+	  }
 
 }
 
