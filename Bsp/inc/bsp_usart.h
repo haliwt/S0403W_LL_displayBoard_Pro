@@ -39,7 +39,8 @@ void clear_rx_buff(void);
 
 bool extract_frame(void) ;
 
-void parse_handler(void);
+void decoder_handler(void);
+
 
 
 #endif 

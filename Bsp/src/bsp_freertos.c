@@ -156,7 +156,7 @@ void freeRTOS_Handler(void)
 static void vTaskCommPro(void *pvParameters)
 {
     BaseType_t xResult;
-	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(3000); /* 设置最大等待时间为300ms */
+	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(5000); /* 设置最大等待时间为300ms */
 	uint32_t ulValue;
 	
 	 while(1)
@@ -168,7 +168,7 @@ static void vTaskCommPro(void *pvParameters)
         if(xResult == pdPASS){
              if((ulValue & DECODER_BIT_9 ) != 0)
              {
-   			   parse_handler();
+   			  decoder_handler();
 			  
 			  
 	         }
@@ -346,7 +346,7 @@ void AppTaskCreate (void)
 			"vTaskCommPro",			/* 任务名 */
 			256,					/* 栈大小（word） */
 			NULL,					/* 参数 */
-			2,						/* 优先级 */
+			3,						/* 优先级 */
 			xTaskCommProStack,		/* 栈数组 */
 			&xTaskCommProTCB 		/* TCB */
 	);
