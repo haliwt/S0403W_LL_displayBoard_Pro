@@ -308,7 +308,11 @@ static void display_lcd_Icon_init(void)
 }
 
 
+void power_on_first_again_fun(void)
+{
+	display_lcd_Icon_init();
 
+}
 /**************************************************************************
  * 
  *Function Name:void power_on_off_handler(void)
@@ -320,7 +324,7 @@ static void display_lcd_Icon_init(void)
 void power_off_handler(void)
 {
     
-    if(run_t.power_off_id_flag == 1){   
+    if(run_t.power_off_id_flag == 1 || run_t.power_off_id_flag==2){   
         run_t.power_off_id_flag++; 
 		gpro_t.power_on_step=0;
         //cp_end 
@@ -328,7 +332,7 @@ void power_off_handler(void)
         run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
         gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
         Lcd_PowerOff_Fun();
-        lcd_donot_disp_screen();
+        //lcd_donot_disp_screen();
         Power_Off_Fun();
     
 
