@@ -11,7 +11,7 @@
 
 #define T8_HUM        0x01
 
-#define  LEAF_TOGGLE_THRESHOLD   0//1//3
+#define  LEAF_TOGGLE_THRESHOLD   1//3
 
 
 
