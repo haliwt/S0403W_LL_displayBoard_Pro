@@ -61,25 +61,7 @@ uint8_t leaf_step = 0;
 * @param
 * @return
 */
-#if 0
-static void display_digits(uint8_t mask, bool blink) 
-{
-    uint8_t colon;
-	
-	TM1723_Write_Display_Data(ADDR_DIGIT45, (0x01 + lcdNumber4_Low[lcd_t.number4_low] + lcdNumber5_High[lcd_t.number5_high]) & mask);
-    TM1723_Write_Display_Data(ADDR_DIGIT56, (T15 + lcdNumber5_Low[lcd_t.number5_low] + lcdNumber6_High[lcd_t.number6_high]) & mask);
 
-    colon = gpro_t.disp_time_colon_flag ? TIME_COLON : TIME_NO_COLON;
-    TM1723_Write_Display_Data(ADDR_DIGIT67, (colon + lcdNumber6_Low[lcd_t.number6_low] + lcdNumber7_High[lcd_t.number7_high]) & mask);
-
-    TM1723_Write_Display_Data(ADDR_DIGIT78, (lcdNumber7_Low[lcd_t.number7_low] + lcdNumber8_High[lcd_t.number8_high]) & mask);
-
-   // update_wind_speed_display(mask);
-
-    TM1723_Write_Display_Data(ADDR_MISC, blink ? ((T16 + T11) & mask) : ((T16 + T12 + T10) & mask));
-}
-
-#else 
 void display_digits(uint8_t mask, bool blink) 
 {
   // uint8_t colon ;
@@ -88,6 +70,12 @@ void display_digits(uint8_t mask, bool blink)
 	// TM1723_Write_Display_Data(0xC9,(T8_HUM + lcdNumber4_Low[lcd_t.number4_low] + lcdNumber5_High[lcd_t.number5_high]) & 0xFF);
     //  TM1723_Write_Display_Data(0xCB,gpro_t.disp_time_colon_flag + lcdNumber6_Low[lcd_t.number6_low] + lcdNumber7_High[lcd_t.number7_high]);
 	 //fan_runing_fun();
+
+   if(lcd_t.gTimer_leaf_fast_counter > 0){ //3*100ms
+              
+            lcd_t.gTimer_leaf_fast_counter = 0;
+            gpro_t.disp_fan_switch_flag = gpro_t.disp_fan_switch_flag^ 0x01;
+        }
 
 	  switch(gpro_t.disp_fan_switch_flag){
 
@@ -274,7 +262,7 @@ void display_digits(uint8_t mask, bool blink)
    #endif 
    
 
-#endif 
+
 /**
 * @brief 
 * @note
@@ -289,16 +277,16 @@ void disp_set_timer_timing_value_fun(void)
     //gpro_t.gTimer_disp_temp_humi_value = 0;
     uint8_t mask;
 	
-	 if (run_t.gTimer_digital5678_ms>= 3) { // 50*10ms = 500ms
-			 run_t.gTimer_digital5678_ms=0;
-			   blink_on = !blink_on;
-		}
+//	 if (run_t.gTimer_digital5678_ms>= 3) { // 50*10ms = 500ms
+//			 run_t.gTimer_digital5678_ms=0;
+//			   blink_on = !blink_on;
+//		}
 
-	  if(lcd_t.gTimer_leaf_counter > LEAF_TOGGLE_THRESHOLD) {//3*100ms
+//	  if(lcd_t.gTimer_leaf_counter > LEAF_TOGGLE_THRESHOLD) {//3*100ms
 
-            lcd_t.gTimer_leaf_counter = 0;
-            gpro_t.disp_fan_switch_flag  ^= 1;
-	  	}
+//            lcd_t.gTimer_leaf_counter = 0;
+//            gpro_t.disp_fan_switch_flag  ^= 1;
+//	  	}
 
     if(run_t.gTimer_key_timing < 4) {
         tim_bit_2_hours = run_t.timer_time_hours / 10;
@@ -417,15 +405,21 @@ void disp_fan_leaf_run_icon(void)
     static uint8_t t15_base, counter_ai;
   
 
-    if(lcd_t.gTimer_leaf_counter > LEAF_TOGGLE_THRESHOLD){ //3*100ms
-              
-            lcd_t.gTimer_leaf_counter = 0;
-            gpro_t.disp_fan_switch_flag  ^= 1;
-    }
+  
     /* 主显示更新：仅当无风扇/ptc 报警时执行 */
     if (run_t.fan_warning == 0 && run_t.ptc_warning == 0) {
 
+	 
+
         if (run_t.display_set_timer_or_works_time_mode != setup_timer){
+
+
+
+		 if(lcd_t.gTimer_leaf_counter > LEAF_TOGGLE_THRESHOLD){ //3*100ms
+              
+            lcd_t.gTimer_leaf_counter = 0;
+            gpro_t.disp_fan_switch_flag  ^= 1;
+         }
 
 		      fan_runing_fun();
 

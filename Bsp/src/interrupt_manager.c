@@ -22,6 +22,7 @@ void tim16_int_callback_handler(void)
     lcd_t.gTimer_wifi_500ms++;
 	lcd_t.gTimer_fan_10ms++;
 	
+	 lcd_t.gTimer_leaf_fast_counter++;
 
      }
 	
@@ -33,6 +34,7 @@ void tim16_int_callback_handler(void)
        run_t.gTimer_ptc_fan_blink_warning++ ;
 	   lcd_t.gTimer_leaf_counter++;
 	   gpro_t.gTimer_copy_cmd_counter++;
+	   
     }
 
   if(tm0>999){ //1000 *1ms = 1000ms = 1s
