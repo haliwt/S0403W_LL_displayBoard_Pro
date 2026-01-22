@@ -485,8 +485,8 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 	
 		 
 		   display_digits(0x0F, 1);
-		   vTaskDelay(1000);
-	       display_digits(0xFF, 0);
+		   //vTaskDelay(1000);
+	       //display_digits(0xFF, 0);
 	 
 		   run_t.timer_timing_define_flag = timing_success;
 		   run_t.display_set_timer_or_works_time_mode=timer_time;

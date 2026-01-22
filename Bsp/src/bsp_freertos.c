@@ -196,7 +196,7 @@ static void vTaskUiPro(void *pvParameters)
         power_run_handler();
 	
 	
-        vTaskDelay(60);
+        vTaskDelay(70);//60
     }
  }
 
@@ -519,12 +519,12 @@ static void power_run_handler(void)
 	       power_on_handler();
 		   
 	       disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
+	       disp_time_colon_fun();
 	       while(run_t.power_off_id_flag == 1){
 		   	 run_t.power_off_id_flag++;
 			 Display_Kill_Dry_Ster_Icon();
 	          power_on_first_again_fun();
-
-	       	}
+           }
             //data:2026.01.19 wt.edit 
 		   	if(gpro_t.gTimer_disp_dry_counter> 0 && gpro_t.temp_key_set_value==0 && gpro_t.set_up_temp_value_done != 1){
 			   
@@ -534,10 +534,9 @@ static void power_run_handler(void)
                   gpro_t.power_on_counter_temp++;
 				   gpro_t.temp_real_value= 25;
 			   }
+			     counter_time_numbers();
 		        Display_Kill_Dry_Ster_Icon();
 
-              
-              
             }
 	     
        
