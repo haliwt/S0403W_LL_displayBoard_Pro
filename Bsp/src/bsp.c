@@ -61,7 +61,7 @@ void display_timer_and_beijing_time_handler(void)
 {
    
   static uint8_t not_ai_mode_flag,not_ai_default=0xff;
-  static uint8_t ai_mode_flag,ai_default = 0xff;
+  static uint8_t ai_mode_flag,ai_default = 0xff,set_timer_flag;
    switch(run_t.display_set_timer_or_works_time_mode){
 
     case works_time:
@@ -119,7 +119,7 @@ void display_timer_and_beijing_time_handler(void)
     case setup_timer:
 		
       disp_set_timer_timing_value_fun();
-      
+      set_timer_flag =1;
 
     break;
 
@@ -140,6 +140,15 @@ void display_timer_and_beijing_time_handler(void)
         }
 	    else{
            gpro_t.switch_not_ai_mode=0;
+		}
+
+		if(run_t.timer_timing_define_flag==timing_success && gpro_t.key_set_timer_flag==0 && set_timer_flag ==1){
+
+           set_timer_flag =0;
+            SendData_Data(0x2B,run_t.timer_time_hours);
+			vTaskDelay(100);
+		
+
 		}
 	   
        disp_timer_run_times();
