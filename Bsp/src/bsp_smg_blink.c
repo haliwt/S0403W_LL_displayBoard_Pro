@@ -196,10 +196,7 @@ void disp_set_timer_timing_value_fun(void)
             run_t.gModel = 0;
 			gpro_t.key_set_timer_flag =0;
           
-//			if(run_t.timer_time_hours >0){
-//		   		SendData_Data(0x2B,run_t.timer_time_hours);
-//		   		vTaskDelay(100);
-//		     }	
+
          
           
             

@@ -472,6 +472,8 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		
            if(pddata[5]>0 && run_t.ptc_warning==0 && run_t.fan_warning==0){
 		   run_t.timer_time_hours = pddata[5];
+		   run_t.timer_time_minutes=0;
+		   run_t.gTimer_timing =0;
 		  
 		   lcd_t.number5_low =	run_t.timer_time_hours / 10;
 		   lcd_t.number5_high = run_t.timer_time_hours / 10;

@@ -143,7 +143,8 @@ void display_timer_and_beijing_time_handler(void)
 		}
 
 		if(run_t.timer_timing_define_flag==timing_success && gpro_t.key_set_timer_flag==0 && set_timer_flag ==1){
-
+           run_t.timer_time_minutes=0;
+		   run_t.gTimer_timing =0;
            set_timer_flag =0;
             SendData_Data(0x2B,run_t.timer_time_hours);
 			vTaskDelay(100);
