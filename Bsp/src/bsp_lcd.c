@@ -224,10 +224,6 @@ void LCD_Display_Wind_Icon_Handler(void)
 
       power_off_disp_fan_run_handler();
 
-
-
-	
-
-
-
 }
+
+

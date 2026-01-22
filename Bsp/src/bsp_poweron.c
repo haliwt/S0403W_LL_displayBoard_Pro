@@ -328,6 +328,7 @@ void power_off_handler(void)
     
     if(run_t.power_off_id_flag == 1 || run_t.power_off_id_flag==2){   
         if(run_t.power_off_id_flag==1) run_t.power_off_id_flag =3;
+		if(run_t.power_off_id_flag==2) run_t.power_off_id_flag =10;
 		gpro_t.power_on_step=0;
         //cp_end 
         run_t.wifi_set_temperature =40;//WT.EDIT 2025.01.15
@@ -375,7 +376,8 @@ void power_off_handler(void)
     
 	
    
-    power_off_breath_Led();
+    
+	power_off_breath_Led();
 
 	
 	if(run_t.gFan_RunContinue == 1 && gpro_t.gTimer_temp_compare_value < 61){
@@ -387,6 +389,7 @@ void power_off_handler(void)
            gpro_t.gTimer_temp_compare_value=0;
            run_t.gFan_RunContinue =0;
 		   Lcd_PowerOff_Fun();
+		 
 		   if(lcd_t.display_beijing_time_flag == 0 ){
 
 			 run_t.gTimer_disp_time_seconds=0;
@@ -395,6 +398,7 @@ void power_off_handler(void)
             }
 
 	}
+    
 }
 
 /************************************************************************
@@ -433,10 +437,19 @@ void power_off_handler(void)
 ************************************************************************/
 static void power_off_breath_Led(void)
  {
-
+    static uint8_t led_flag;
 	if(gpro_t.gTimer_disp_temp_humi_value> 1){
 	    gpro_t.gTimer_disp_temp_humi_value=0;
-	    POWER_LED_TOGGLE();
+
+	    led_flag = led_flag ^ 0x01;
+	    if(led_flag==1){
+	   
+		   POWER_ON_LED();
+
+	    }
+		else{
+            POWER_OFF_LED();
+		}
 	  
 	}
 	      
