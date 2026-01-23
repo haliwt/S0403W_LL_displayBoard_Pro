@@ -414,25 +414,18 @@ void set_temperature_compare_value_fun(void)
                		vTaskDelay(pdMS_TO_TICKS(100));
 			     }
           }
-          else if(gpro_t.first_rcoder_ptc_on_flag  == 1 && run_t.ptc_on_off_flag ==0 ){
+          else if(gpro_t.first_rcoder_ptc_on_flag  == 1 && gpro_t.temp_real_value < 38 && run_t.ptc_on_off_flag ==0 ){
                
-                 if(gpro_t.temp_real_value < 38){
+                 
                        run_t.dry = 1;
-					 
-		
-				
-			
-				     if(ptc_on_flag != run_t.dry){
+					 if(ptc_on_flag != run_t.dry){
 			   	       ptc_on_flag = run_t.dry;
                        SendData_Set_Command(0x22,0x01); //open ptc 
                        vTaskDelay(pdMS_TO_TICKS(100));
 
 				     	}
-                }
-                   
-
-          }
-		  else if(gpro_t.first_rcoder_ptc_on_flag == 0 && gpro_t.temp_real_value < 40 && run_t.ptc_on_off_flag ==0){ //WT.EDIT 2025.10.31
+            }
+            else if(gpro_t.first_rcoder_ptc_on_flag == 0 && gpro_t.temp_real_value < 40 && run_t.ptc_on_off_flag ==0){ //WT.EDIT 2025.10.31
 
 	            run_t.dry = 1;
 		
