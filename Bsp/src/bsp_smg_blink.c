@@ -181,7 +181,7 @@ void disp_set_timer_timing_value_fun(void)
         //mask = blink_on ? 0xFF : 0x0F; // 闪烁掩码
         display_digits(mask, blink_on);
 		///if(run_t.timer_time_hours >0){
-		///   SendData_Data(0x2B,run_t.timer_time_hours);
+		///   sendCmdNote_to_Data(0x2B,run_t.timer_time_hours);
 		//   vTaskDelay(10);
 		//}
 
@@ -204,7 +204,7 @@ void disp_set_timer_timing_value_fun(void)
 		else if(run_t.timer_timing_define_flag==timing_success && gpro_t.key_set_timer_flag==0){
 
             run_t.display_set_timer_or_works_time_mode=timer_time;
-           // SendData_Data(0x2B,run_t.timer_time_hours);
+           // sendCmdNote_to_Data(0x2B,run_t.timer_time_hours);
 			//vTaskDelay(100);
 		
 
@@ -214,6 +214,12 @@ void disp_set_timer_timing_value_fun(void)
             run_t.display_set_timer_or_works_time_mode = works_time;
 		    gpro_t.key_set_timer_flag =0;
             run_t.gModel = 1;
+			if(gpro_t.add_dec_key_be_pressed == 1){
+				
+			 sendCmdNote_to_Data(0x2B,0);
+             vTaskDelay(100);
+
+			}
         }
     }
 

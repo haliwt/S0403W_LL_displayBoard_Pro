@@ -68,7 +68,8 @@ void disp_timer_run_times(void)
                 
                 }
               }
-            
+           sendCmdNote_to_threeData(0x6B,run_t.timer_time_hours,run_t.timer_time_minutes,run_t.gTimer_timing) ;
+		   vTaskDelay(100);
      }
      }
      else if(run_t.timer_timing_define_flag == timing_not_definition){ 
@@ -78,14 +79,7 @@ void disp_timer_run_times(void)
              run_t.timer_time_minutes =0;
 		     run_t.display_set_timer_or_works_time_mode=works_time;
              run_t.gModel=1;
-//             if(wifi_link_net_state()==1){
-            
-		
-//			      gpro_t.ack_cp_repeat_counter=0;
-//                  gpro_t.gTimer_cp_timer_counter =0;
-//			      //SendData_Set_Command(0x27,0x01); //MODE_AI,BUR NO_BUZZER);
 
-//              }
          }
     }
 }
@@ -152,7 +146,8 @@ void Setup_Timer_Times_Donot_Display(void)
               }
             
 		     }
-
+        sendCmdNote_to_threeData(0x6B,run_t.timer_time_hours,run_t.timer_time_minutes,run_t.gTimer_timing) ;
+		   vTaskDelay(100);
     }
 
 
@@ -165,30 +160,6 @@ void Setup_Timer_Times_Donot_Display(void)
  *
  * 
  **************************************************************/
-void Works_Counter_Time(void)
-{
-  //if(run_t.timer_timing_define_flag == timing_success){
-	  if(run_t.gTimer_disp_time_seconds >59){ //minute
-		
-		run_t.gTimer_disp_time_seconds=0;
-        run_t.dispTime_minutes ++;
-       
-          
-		if(run_t.dispTime_minutes > 59){
-			run_t.dispTime_minutes=0;
-			run_t.dispTime_hours ++;
-		    
-		if(run_t.dispTime_hours >24){
-			run_t.dispTime_hours=0;
-
-		}
-
-		}
-
-
-	  }
- // }
-}
 
 
 

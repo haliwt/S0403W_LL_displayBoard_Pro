@@ -153,6 +153,7 @@ void add_key_fun(void)
                 
 
 			}
+			gpro_t.add_dec_key_be_pressed =1;
 		    gpro_t.key_set_timer_flag=1;
       
 		break;
@@ -220,6 +221,7 @@ void dec_key_fun(void)
 					
 					
 				}
+				gpro_t.add_dec_key_be_pressed =1;
                 gpro_t.key_set_timer_flag=1;
         
              break;

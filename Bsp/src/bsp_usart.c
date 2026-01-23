@@ -470,31 +470,56 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 	case 0x2B: //set up timer timing value .
 		
-           if(pddata[5]>0 && run_t.ptc_warning==0 && run_t.fan_warning==0){
-		   run_t.timer_time_hours = pddata[5];
-		   run_t.timer_time_minutes=0;
-		   run_t.gTimer_timing =0;
-		  
-		   lcd_t.number5_low =	run_t.timer_time_hours / 10;
-		   lcd_t.number5_high = run_t.timer_time_hours / 10;
-		   lcd_t.number6_low =	run_t.timer_time_hours % 10;
-		   lcd_t.number6_high = run_t.timer_time_hours % 10;
-		   
-		   lcd_t.number7_low = 0 ;
-		   lcd_t.number7_high =0;
-		   lcd_t.number8_low = 0 ;
-		   lcd_t.number8_high= 0;
-	
+           if(run_t.ptc_warning==0 && run_t.fan_warning==0){
+		   	if(pddata[5] >0){
+			   run_t.timer_time_hours = pddata[5];
+			   run_t.timer_time_minutes=0;
+			   run_t.gTimer_timing =0;
+			  
+			   lcd_t.number5_low =	run_t.timer_time_hours / 10;
+			   lcd_t.number5_high = run_t.timer_time_hours / 10;
+			   lcd_t.number6_low =	run_t.timer_time_hours % 10;
+			   lcd_t.number6_high = run_t.timer_time_hours % 10;
+			   
+			   lcd_t.number7_low = 0 ;
+			   lcd_t.number7_high =0;
+			   lcd_t.number8_low = 0 ;
+			   lcd_t.number8_high= 0;
+		
+			 
+			   display_digits(0x0F, 1);
+			   //vTaskDelay(1000);
+		       //display_digits(0xFF, 0);
 		 
-		   display_digits(0x0F, 1);
-		   //vTaskDelay(1000);
-	       //display_digits(0xFF, 0);
-	 
-		   run_t.timer_timing_define_flag = timing_success;
-		   run_t.display_set_timer_or_works_time_mode=timer_time;
-		   run_t.gTimer_again_switch_works = 0;
-		   gpro_t.switch_not_ai_mode=1;
-		   run_t.gModel = 0;
+			   run_t.timer_timing_define_flag = timing_success;
+			   run_t.display_set_timer_or_works_time_mode=timer_time;
+			   run_t.gTimer_again_switch_works = 0;
+			   gpro_t.switch_not_ai_mode=1;
+			   run_t.gModel = 0;
+		   }
+		   else if(pddata[5] ==0){
+			   run_t.timer_time_hours=0;
+			   run_t.timer_time_minutes=0;
+			    run_t.gTimer_timing =0;
+
+		       lcd_t.number5_low =	run_t.timer_time_hours / 10;
+			   lcd_t.number5_high = run_t.timer_time_hours / 10;
+			   lcd_t.number6_low =	run_t.timer_time_hours % 10;
+			   lcd_t.number6_high = run_t.timer_time_hours % 10;
+			   
+			   lcd_t.number7_low = 0 ;
+			   lcd_t.number7_high =0;
+			   lcd_t.number8_low = 0 ;
+			   lcd_t.number8_high= 0;
+
+               display_digits(0x0F, 1);
+               run_t.timer_timing_define_flag = timing_not_definition;
+			   run_t.display_set_timer_or_works_time_mode=works_time;
+			   run_t.gTimer_again_switch_works = 0;
+			   gpro_t.switch_not_ai_mode=0;
+			   run_t.gModel = 1;
+
+		   }
 		  
 		}
    	

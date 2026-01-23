@@ -101,6 +101,7 @@ typedef struct _process_state{
    uint8_t  smart_phone_app_timer_power_on_flag;
 
    uint8_t stopTwoHours_flag;
+   uint8_t add_dec_key_be_pressed;
   
 
 

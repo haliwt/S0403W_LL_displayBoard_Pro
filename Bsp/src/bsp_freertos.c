@@ -196,7 +196,7 @@ static void vTaskUiPro(void *pvParameters)
         power_run_handler();
 	
 	
-        vTaskDelay(70);//60
+        vTaskDelay(50);//60
     }
  }
 

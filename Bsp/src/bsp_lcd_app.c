@@ -574,7 +574,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
 		  
 		    gpro_t.temp_key_set_value =0;
 			gpro_t.set_up_temp_value_done = 2;
-			SendData_Data(0x2A,run_t.wifi_set_temperature);
+			sendCmdNote_to_Data(0x2A,run_t.wifi_set_temperature);
             vTaskDelay(pdMS_TO_TICKS(50));
 		 
         }

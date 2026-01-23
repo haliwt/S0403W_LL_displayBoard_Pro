@@ -61,7 +61,7 @@ void display_timer_and_beijing_time_handler(void)
 {
    
   static uint8_t not_ai_mode_flag,not_ai_default=0xff;
-  static uint8_t ai_mode_flag,ai_default = 0xff,set_timer_flag;
+  static uint8_t ai_mode_flag,ai_default = 0xff;
    switch(run_t.display_set_timer_or_works_time_mode){
 
     case works_time:
@@ -101,6 +101,7 @@ void display_timer_and_beijing_time_handler(void)
 
      
       power_on_init_disp_time_numbers();
+	     
        
 
       }
@@ -119,7 +120,7 @@ void display_timer_and_beijing_time_handler(void)
     case setup_timer:
 		
       disp_set_timer_timing_value_fun();
-      set_timer_flag =1;
+
 
     break;
 
@@ -142,18 +143,18 @@ void display_timer_and_beijing_time_handler(void)
            gpro_t.switch_not_ai_mode=0;
 		}
 
-		if(run_t.timer_timing_define_flag==timing_success && gpro_t.key_set_timer_flag==0 && set_timer_flag ==1){
+		if(run_t.timer_timing_define_flag==timing_success && gpro_t.key_set_timer_flag==0 && gpro_t.add_dec_key_be_pressed==1){
            run_t.timer_time_minutes=0;
 		   run_t.gTimer_timing =0;
-           set_timer_flag =0;
-            SendData_Data(0x2B,run_t.timer_time_hours);
+           gpro_t.add_dec_key_be_pressed  =0;
+           sendCmdNote_to_Data(0x2B,run_t.timer_time_hours);
 			vTaskDelay(100);
 		
 
 		}
 	   
        disp_timer_run_times();
-       Works_Counter_Time();
+       counter_time_timing_fun();//Works_Counter_Time();
 
     break;
 
@@ -225,10 +226,11 @@ static void counter_time_timing_fun(void)
 		}
 
 		}
-     
-     
-
-	  } 
+      if(lcd_t.display_beijing_time_flag == 0){
+	      sendCmdNote_to_threeData(0x6C,run_t.dispTime_hours, run_t.dispTime_minutes,run_t.gTimer_disp_time_seconds);
+	      vTaskDelay(100);
+	  }
+   	}
    
 
 }
