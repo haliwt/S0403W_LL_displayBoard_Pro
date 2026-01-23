@@ -330,6 +330,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 	if(pddata[4] == 0x03){ //鏁版嵁
 
 		if(frame.data[5] < 24){ //WT.EDIT 2024.11.23
+		run_t.wifi_link_net_success =1 ;	  
 
 		lcd_t.display_beijing_time_flag= 1;
 

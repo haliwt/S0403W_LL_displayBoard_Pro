@@ -20,6 +20,7 @@ void disp_time_colon_fun(void);
 
 void fan_runing_fun(void);
 
+void display_time_hours_minutes_fun(void);
 
 #endif 
 

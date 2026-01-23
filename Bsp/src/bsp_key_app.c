@@ -63,6 +63,7 @@ void mode_key_short_fun(void)
 			run_t.display_set_timer_or_works_time_mode = timer_time;
 			run_t.gModel=0; //don't display this AI icon.
             run_t.gTimer_again_switch_works = 0;
+			display_time_hours_minutes_fun();
 			#if DEBUG_FLAG
 			printf("key_shrot_mode-0 !!!\r\n");
 
@@ -80,6 +81,7 @@ void mode_key_short_fun(void)
 			run_t.display_set_timer_or_works_time_mode = works_time;
 			run_t.gTimer_again_switch_works = 0;
 			run_t.gModel=1; //AI MODE
+			display_time_hours_minutes_fun();
 			#if DEBUG_FLAG
 			printf("key_shrot_mode-1 !!!\r\n");
 			#endif 
