@@ -357,7 +357,7 @@ void set_temperature_compare_value_fun(void)
       }
       else{
 
-	       if((gpro_t.first_set_ptc_on==1 || gpro_t.first_set_ptc_on==0) && run_t.ptc_on_off_flag ==0){//the first open ptc heating //WT.DEDIT 2028.08.27 modify this flow codes
+	       if((gpro_t.first_set_ptc_on==1 || gpro_t.first_set_ptc_on==0) && run_t.ptc_on_off_flag ==0 && gpro_t.){//the first open ptc heating //WT.DEDIT 2028.08.27 modify this flow codes
 	          
                 if(gpro_t.first_set_ptc_on==1)gpro_t.first_set_ptc_on=2;
 				else if(gpro_t.first_set_ptc_on==0)gpro_t.first_set_ptc_on=4;
@@ -377,11 +377,7 @@ void set_temperature_compare_value_fun(void)
 		   else if((gpro_t.first_set_ptc_on==3 || gpro_t.first_set_ptc_on==5) && (run_t.wifi_set_temperature -3) >= gpro_t.temp_real_value && run_t.ptc_on_off_flag ==0 ){//WT.DEDIT 2028.08.27 modify this flow codes
                  run_t.dry = 1;
 	
-		
-
-			 
-
-			     if(ptc_on_flag != run_t.dry){
+	             if(ptc_on_flag != run_t.dry){
 			   	   ptc_on_flag = run_t.dry;
 	            	SendData_Set_Command(0x22,0x01); //open ptc 
 	            	vTaskDelay(pdMS_TO_TICKS(100));
@@ -429,18 +425,13 @@ void set_temperature_compare_value_fun(void)
 
 	            run_t.dry = 1;
 		
-		
-		
-			
-			      if(ptc_on_flag != run_t.dry){
+				if(ptc_on_flag != run_t.dry){
 			   	     ptc_on_flag = run_t.dry;
 				    SendData_Set_Command(0x22,0x01); //open ptc  
 				    vTaskDelay(pdMS_TO_TICKS(100));
-			      	}
+			    }
 			    
-
-
-		  }
+			}
               
        }
 	break;
