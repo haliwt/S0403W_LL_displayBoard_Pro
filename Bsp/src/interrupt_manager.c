@@ -41,7 +41,7 @@ void tim16_int_callback_handler(void)
 		tm0=0;
 		
 		
-		 gpro_t.gTimer_mode_key_long++;
+		// gpro_t.gTimer_mode_key_long++;
          gpro_t.gTimer_set_temp_times++;
          gpro_t.gTimer_temp_compare_value++ ;
          gpro_t.gTimer_fan_to_ptc_warning++ ;

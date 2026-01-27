@@ -50,7 +50,7 @@ void power_on_handler(void)
 		gpro_t.first_rcoder_ptc_on_flag=0;
         
        
-        gpro_t.gTimer_mode_key_long=0;
+       // gpro_t.gTimer_mode_key_long=0;
 	     gpro_t.power_on_step =1;
 
    
@@ -233,7 +233,7 @@ void smartPhone_appTimer_powerOn(void)
       run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
       gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
 
-	  gpro_t.gTimer_mode_key_long=0;
+	  //gpro_t.gTimer_mode_key_long=0;
 	  display_lcd_Icon_init();
       LCD_BACK_LIGHT_ON();
 	  POWER_ON_LED() ;

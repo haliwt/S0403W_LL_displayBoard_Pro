@@ -278,12 +278,6 @@ void sendCmdNote_to_Data(uint8_t cmd ,uint8_t tdata)
 		
 	transferSize=8;
 	usart1_dma_send(outputBuf,transferSize);
-		// if(transferSize)
-		// {
-		// 	while(transOngoingFlag);
-		// 	transOngoingFlag=1;
-		// 	//HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
-		// }
 
 }
 void sendCmdNote_to_threeData(uint8_t cmd ,uint8_t h,uint8_t m,uint8_t s)
@@ -302,13 +296,6 @@ void sendCmdNote_to_threeData(uint8_t cmd ,uint8_t h,uint8_t m,uint8_t s)
 		
 	transferSize=10 ;
 	usart1_dma_send(outputBuf,transferSize);
-		// if(transferSize)
-		// {
-		// 	while(transOngoingFlag);
-		// 	transOngoingFlag=1;
-		// 	//HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
-		// }
-
 }
 
 /********************************************************************************

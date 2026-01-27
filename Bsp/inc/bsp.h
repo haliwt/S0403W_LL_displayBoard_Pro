@@ -107,7 +107,7 @@ typedef struct _process_state{
 
    //
    uint8_t gTimer_soft_version_counter;
-   uint8_t gTimer_mode_key_long;
+ //  uint8_t gTimer_mode_key_long;
    uint8_t gTimer_set_temp_times;
    uint8_t gTimer_temp_compare_value;
    uint8_t gTimer_fan_to_ptc_warning;

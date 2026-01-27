@@ -478,9 +478,9 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 			   run_t.gTimer_timing =0;
 			  
 			   lcd_t.number5_low =	run_t.timer_time_hours / 10;
-			   lcd_t.number5_high = run_t.timer_time_hours / 10;
+			   lcd_t.number5_high = lcd_t.number5_high;//run_t.timer_time_hours / 10;
 			   lcd_t.number6_low =	run_t.timer_time_hours % 10;
-			   lcd_t.number6_high = run_t.timer_time_hours % 10;
+			   lcd_t.number6_high = lcd_t.number6_low;//run_t.timer_time_hours % 10;
 			   
 			   lcd_t.number7_low = 0 ;
 			   lcd_t.number7_high =0;
@@ -489,7 +489,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		
 			 
 			   display_digits(0x0F, 1);
-			   //vTaskDelay(1000);
+			    vTaskDelay(300);
 		       //display_digits(0xFF, 0);
 		 
 			   run_t.timer_timing_define_flag = timing_success;
@@ -503,10 +503,10 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 			   run_t.timer_time_minutes=0;
 			    run_t.gTimer_timing =0;
 
-		       lcd_t.number5_low =	run_t.timer_time_hours / 10;
-			   lcd_t.number5_high = run_t.timer_time_hours / 10;
-			   lcd_t.number6_low =	run_t.timer_time_hours % 10;
-			   lcd_t.number6_high = run_t.timer_time_hours % 10;
+		       lcd_t.number5_low =	0;//run_t.timer_time_hours / 10;
+			   lcd_t.number5_high =0;//lcd_t.number5_high; //run_t.timer_time_hours / 10;
+			   lcd_t.number6_low =	0;//run_t.timer_time_hours % 10;
+			   lcd_t.number6_high = 0;//lcd_t.number6_low ;//run_t.timer_time_hours % 10;
 			   
 			   lcd_t.number7_low = 0 ;
 			   lcd_t.number7_high =0;
@@ -514,6 +514,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 			   lcd_t.number8_high= 0;
 
                display_digits(0x0F, 1);
+			    vTaskDelay(300);
                run_t.timer_timing_define_flag = timing_not_definition;
 			   run_t.display_set_timer_or_works_time_mode=works_time;
 			   run_t.gTimer_again_switch_works = 0;
