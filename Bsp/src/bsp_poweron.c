@@ -376,8 +376,14 @@ void power_off_handler(void)
     
 	
    
-    
+    #if 0
 	power_off_breath_Led();
+
+	#else 
+
+	 POWER_OFF_LED();
+
+	#endif 
 
 	
 	if(run_t.gFan_RunContinue == 1 && gpro_t.gTimer_temp_compare_value < 61){
