@@ -264,7 +264,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 	break;
 
-    case 0x20: //compatablie older version .
+  
 	case 0x15: //传递三个参数 ---通知
       
 	   if(pddata[4]==0x03){ //power on by smart phone APP
@@ -382,6 +382,19 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 
 	break;
+
+	case 0x20: //smart phone normal power on or off 
+	    if(pddata[3] == 0x01){//power on
+	        run_t.wifi_link_net_success=1;
+			run_t.power_on = power_on;
+		}
+		else{//power off 
+		    run_t.wifi_link_net_success=1;
+			run_t.power_on = power_off;
+
+		}
+
+    break;
 
 	
    case 0x21: //APP smart phone Timer power on or off that App timer ---new .

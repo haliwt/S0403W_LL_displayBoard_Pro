@@ -451,9 +451,7 @@ static void key_handler(void)
                
                    SendData_Buzzer_Has_Ack();//SendData_Buzzer();
                    vTaskDelay(100);
-   
-                
-                   dec_key_fun();
+   				    dec_key_fun();
 				  
 				   
                 }
@@ -534,9 +532,6 @@ static void power_run_handler(void)
 
      }
 }
-
-
-
 
 
 void semaphore_isr(void)

@@ -357,7 +357,7 @@ void set_temperature_compare_value_fun(void)
       }
       else{
 
-	       if((gpro_t.first_set_ptc_on==1 || gpro_t.first_set_ptc_on==0) && run_t.ptc_on_off_flag ==0 && gpro_t.){//the first open ptc heating //WT.DEDIT 2028.08.27 modify this flow codes
+	       if((gpro_t.first_set_ptc_on==1 || gpro_t.first_set_ptc_on==0) && run_t.ptc_on_off_flag ==0 ){//the first open ptc heating //WT.DEDIT 2028.08.27 modify this flow codes
 	          
                 if(gpro_t.first_set_ptc_on==1)gpro_t.first_set_ptc_on=2;
 				else if(gpro_t.first_set_ptc_on==0)gpro_t.first_set_ptc_on=4;
