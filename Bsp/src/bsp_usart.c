@@ -459,7 +459,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 	
 
-	case 0x2A: // set up temperature data value
+	case 0x2A: // set up temperature data value at once open or close .
 
         run_t.ptc_on_off_flag = 0; //WT.EDIT 2025.10.31
 	   
@@ -477,8 +477,14 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		gpro_t.temp_key_set_value =1;
         run_t.smart_phone_set_temp_value_flag =1;
 
-        }
-       
+		if(run_t.wifi_set_temperature <= gpro_t.temp_real_value){// && gpro_t.smart_phone_turn_off_ptc_flag ==0){
+             run_t.dry = 0;
+		}
+		else{
+		   run_t.dry = 1;
+
+		}
+       }
 
 	break;
 

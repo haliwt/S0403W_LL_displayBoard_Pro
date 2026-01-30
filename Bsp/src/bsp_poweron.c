@@ -21,7 +21,7 @@ static void display_lcd_Icon_init(void);
 */
 void power_on_handler(void)
 {
- 
+   static uint8_t send_two_disp;
    switch(gpro_t.power_on_step){
 
       case 0:
@@ -68,7 +68,8 @@ void power_on_handler(void)
          }
 	     gpro_t.gTimer_disp_temp_humi_value=20;
 	     run_t.wifi_set_temperature=40;
-        // display_lcd_Icon_init();
+         SendData_Set_Command(0x11,0x01);
+		 vTaskDelay(100);
 		 gpro_t.power_on_step =2;
 	  break;
 
@@ -86,14 +87,23 @@ void power_on_handler(void)
 
 	
      case 4:
-     if(gpro_t.temp_key_set_value==0 && gpro_t.gTimer_temp_compare_value > 5 ){
+     if(gpro_t.temp_key_set_value==0 && gpro_t.gTimer_temp_compare_value > 2 ){
 	 	gpro_t.gTimer_temp_compare_value =0;
-
-       
+		
+         send_two_disp++;
 	   set_temperature_compare_value_fun();
-	  
+		 if(send_two_disp > 5){
+			 send_two_disp=0;
+		 SendData_Set_Command(0x11,0x01);
+		 vTaskDelay(100);
+		 }
 
      }
+		  gpro_t.power_on_step =5;
+
+	break;
+		 
+	case 5:
 
 	  two_hours_recoder_fun();
 
@@ -477,7 +487,7 @@ void two_hours_recoder_fun(void)
       gpro_t.gTimer_two_hours_conter=0;
 	  gpro_t.gTimer_two_hours_second_counter=0;
       gpro_t.stopTwoHours_flag=0;
-       SendData_Set_Command(0x19,0x01);
+       SendData_Set_Command(0x19,0x0);
 	   vTaskDelay(100);
 	    
 
