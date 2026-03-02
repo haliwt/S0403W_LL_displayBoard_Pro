@@ -61,15 +61,18 @@ void power_on_handler(void)
          if(gpro_t.smart_phone_app_timer_power_on_flag == 0){
 
     	
-    	run_t.plasma=1;
-    	run_t.dry =1;
-    	run_t.ultrasonic =1;
+	    	run_t.plasma=1;
+	    	run_t.dry =1;
+	    	run_t.ultrasonic =1;
+			SendData_Set_Command(0x22,0x01); //open ptc 
+		    vTaskDelay(pdMS_TO_TICKS(100));
     
          }
 	     gpro_t.gTimer_disp_temp_humi_value=20;
 	     run_t.wifi_set_temperature=40;
-         SendData_Set_Command(0x11,0x01);
-		 vTaskDelay(100);
+         //SendData_Set_Command(0x11,0x01);
+		 //vTaskDelay(100);
+		
 		 gpro_t.power_on_step =2;
 	  break;
 
