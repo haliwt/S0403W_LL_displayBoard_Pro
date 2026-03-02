@@ -9,6 +9,8 @@
   * version : 2.4 . be used to LL lib . 
   *           data:2025.09.22
   *
+  * data:2026.02.27          
+  * modify 0x6C order send to mainboard sync times is local don't beijing time.
   * 
   * 
   *

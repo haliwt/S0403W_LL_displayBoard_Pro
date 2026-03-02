@@ -21,7 +21,7 @@ static void display_lcd_Icon_init(void);
 */
 void power_on_handler(void)
 {
-   static uint8_t send_two_disp;
+   static uint8_t send_two_disp,version;
    switch(gpro_t.power_on_step){
 
       case 0:
@@ -92,18 +92,54 @@ void power_on_handler(void)
 		
          send_two_disp++;
 	   set_temperature_compare_value_fun();
-		 if(send_two_disp > 5){
-			 send_two_disp=0;
-		 SendData_Set_Command(0x11,0x01);
-		 vTaskDelay(100);
-		 }
 
-     }
-		  gpro_t.power_on_step =5;
+     	}
+	   gpro_t.power_on_step =5;
+
+	 break;
+
+	 case 5:
+		 if(send_two_disp > 2 && version < 5){
+			 send_two_disp=0;
+
+		    
+		     if(version %2 ==0){
+			  SendData_Set_Command(0xF0,0x02);//software version is "2"
+			  vTaskDelay(100);
+
+			 }
+			 else{
+			 SendData_Set_Command(0x11,0x01);
+			 vTaskDelay(100);
+			 }
+
+			  version  ++;
+		 }
+		 #if 0
+		 else if(send_two_disp > 10){
+
+		     send_two_disp =0;
+
+		     if(version > 5) version =0;
+			 version =version ^ 0x01;
+		     if(version ==1){
+			 SendData_Set_Command(0xF0,0x02);//software version is "2"
+			  vTaskDelay(100);
+
+			 }
+			 else{
+			 SendData_Set_Command(0x11,0x01);
+			 vTaskDelay(100);
+			 }
+
+		 }
+		 #endif 
+
+    gpro_t.power_on_step =6;
 
 	break;
 		 
-	case 5:
+	case 6:
 
 	  two_hours_recoder_fun();
 
@@ -473,9 +509,11 @@ static void power_off_breath_Led(void)
 
 void two_hours_recoder_fun(void)
 {
-  
-  if(gpro_t.gTimer_two_hours_conter > 119 && gpro_t.stopTwoHours_flag==0){
-     
+  #if 0
+    if(gpro_t.gTimer_two_hours_conter > 19 && gpro_t.stopTwoHours_flag==0){
+  #else
+    if(gpro_t.gTimer_two_hours_conter > 119 && gpro_t.stopTwoHours_flag==0){
+  #endif  
       gpro_t.gTimer_two_hours_conter=0;
 	  gpro_t.gTimer_two_hours_second_counter=0;
       gpro_t.stopTwoHours_flag=1;
