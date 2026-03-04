@@ -519,7 +519,7 @@ static void power_off_breath_Led(void)
 void two_hours_recoder_fun(void)
 {
   static uint8_t counter_send;
-  #if 1
+  #if 0
     if(gpro_t.gTimer_two_hours_conter > 9 && gpro_t.stopTwoHours_flag==0){
   #else
     if(gpro_t.gTimer_two_hours_conter > 119 && gpro_t.stopTwoHours_flag==0){
@@ -535,7 +535,7 @@ void two_hours_recoder_fun(void)
 	  
 
   }
-  else if(gpro_t.stopTwoHours_flag==1 && gpro_t.gTimer_two_hours_conter > 4){//10
+  else if(gpro_t.stopTwoHours_flag==1 && gpro_t.gTimer_two_hours_conter > 10){//10
       gpro_t.gTimer_two_hours_conter=0;
 	  gpro_t.gTimer_two_hours_second_counter=0;
       gpro_t.stopTwoHours_flag=0;
