@@ -93,6 +93,7 @@ typedef struct _process_state{
    
    uint8_t disp_fan_switch_flag ;
    uint8_t key_set_timer_flag;
+   uint8_t fan_run_one_minute;
    
    uint8_t temp_key_set_value ;
    uint8_t set_temp_value_success;
@@ -118,6 +119,7 @@ typedef struct _process_state{
    uint8_t gTimer_two_hours_conter;
 
    uint8_t gTimer_disp_dry_counter;
+   uint8_t gTimer_counter_one_minute;
  
    
 

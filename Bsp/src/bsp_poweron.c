@@ -35,7 +35,8 @@ void power_on_handler(void)
 
 		   // gpro_t.long_key_power_counter =0; 
         run_t.power_on_disp_smg_number = 1;
-	   //copy 
+	   //copy
+	      gpro_t.fan_run_one_minute=0;
   
 
 
@@ -90,7 +91,8 @@ void power_on_handler(void)
 
 	
      case 4:
-     if(gpro_t.temp_key_set_value==0 && gpro_t.gTimer_temp_compare_value > 2 ){
+	 	
+     if(gpro_t.temp_key_set_value==0 && gpro_t.gTimer_temp_compare_value > 2 && gpro_t.stopTwoHours_flag==0){
 	 	gpro_t.gTimer_temp_compare_value =0;
 		
          send_two_disp++;
@@ -509,29 +511,70 @@ static void power_off_breath_Led(void)
 	}
 	      
 }
-
+/**
+*@brief: works two hours after have a rest ten minutes
+*@notice :
+*@param:
+**/
 void two_hours_recoder_fun(void)
 {
-  #if 0
-    if(gpro_t.gTimer_two_hours_conter > 19 && gpro_t.stopTwoHours_flag==0){
+  static uint8_t counter_send;
+  #if 1
+    if(gpro_t.gTimer_two_hours_conter > 9 && gpro_t.stopTwoHours_flag==0){
   #else
     if(gpro_t.gTimer_two_hours_conter > 119 && gpro_t.stopTwoHours_flag==0){
   #endif  
       gpro_t.gTimer_two_hours_conter=0;
 	  gpro_t.gTimer_two_hours_second_counter=0;
       gpro_t.stopTwoHours_flag=1;
+	  gpro_t.gTimer_counter_one_minute =0;
+	  gpro_t.fan_run_one_minute=1;
+	  counter_send =0;
 	  SendData_Set_Command(0x19,0x01);
 	  vTaskDelay(100);
+	  
 
   }
-  else if(gpro_t.stopTwoHours_flag==1 && gpro_t.gTimer_two_hours_conter > 10){
+  else if(gpro_t.stopTwoHours_flag==1 && gpro_t.gTimer_two_hours_conter > 4){//10
       gpro_t.gTimer_two_hours_conter=0;
 	  gpro_t.gTimer_two_hours_second_counter=0;
       gpro_t.stopTwoHours_flag=0;
-       SendData_Set_Command(0x19,0x0);
-	   vTaskDelay(100);
+	  gpro_t.fan_run_one_minute=3;
+      SendData_Set_Command(0x19,0x0);
+	  vTaskDelay(100);
 	    
 
   }
+  
+  //others separately 
+  if(gpro_t.stopTwoHours_flag==1) counter_send++;
+  
+  if(gpro_t.fan_run_one_minute==1 && gpro_t.gTimer_counter_one_minute >59){
+       gpro_t.fan_run_one_minute++;
+       SendData_Set_Command(0x18,0x01);//fan stop run .
+	   vTaskDelay(100);
+
+
+  }
+  else if(gpro_t.fan_run_one_minute==3){
+
+         gpro_t.fan_run_one_minute++;
+		SendData_Set_Command(0x18,0x0);//fan run .
+		vTaskDelay(100);
+
+  }
+  else if(gpro_t.stopTwoHours_flag==1 && counter_send >60 &&  gpro_t.fan_run_one_minute !=4){
+	  counter_send=0;
+
+      SendData_Set_Command(0x19,0x01);
+	  vTaskDelay(100);
+	  if(gpro_t.fan_run_one_minute==2){
+         SendData_Set_Command(0x18,0x01);//fan stop run .
+	     vTaskDelay(100);
+	  }
+
+  }
+
+  
 }
 

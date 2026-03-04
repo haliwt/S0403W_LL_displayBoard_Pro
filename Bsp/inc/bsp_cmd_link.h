@@ -45,7 +45,7 @@ typedef enum PROTOCOL{
 
 
 //extern uint8_t inputBuf[MAX_BUFFER_SIZE];
-extern uint8_t outputBuf[8];
+extern uint8_t outputBuf[10];
 
 
 void SendData_PowerOnOff(uint8_t index);

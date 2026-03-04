@@ -517,7 +517,7 @@ static void power_run_handler(void)
 		   gpro_t.gTimer_two_hours_conter=0; //WT.EDIT 2025.10.30
 		   gpro_t.stopTwoHours_flag=0;
            power_off_handler();
-	     
+	       gpro_t.fan_run_one_minute=0;
 		   
 		    if(gpro_t.again_confirm_power_off_flag == 1){
 				

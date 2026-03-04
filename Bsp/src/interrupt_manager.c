@@ -49,6 +49,7 @@ void tim16_int_callback_handler(void)
 		 gpro_t.gTimer_disp_temp_humi_value++;
          gpro_t.gTimer_soft_version_counter++;
 		 gpro_t.gTimer_disp_dry_counter++;
+		 gpro_t.gTimer_counter_one_minute++;
      
          //
 
