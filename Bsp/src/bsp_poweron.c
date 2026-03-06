@@ -39,7 +39,6 @@ void power_on_handler(void)
 	      gpro_t.fan_run_one_minute=0;
   
 
-
         
 		//end
         run_t.wifi_set_temperature=40; //WT.EDIT 2025.01.15
@@ -51,7 +50,7 @@ void power_on_handler(void)
 		gpro_t.first_rcoder_ptc_on_flag=0;
         
        
-       // gpro_t.gTimer_mode_key_long=0;
+     
 	     gpro_t.power_on_step =1;
 
    
@@ -59,22 +58,26 @@ void power_on_handler(void)
       break;
 
 	  case 1:
-         if(gpro_t.smart_phone_app_timer_power_on_flag == 0){
+//         if(gpro_t.smart_phone_app_timer_power_on_flag == 0){
 
     	
-	    	run_t.plasma=1;
-	    	run_t.dry =1;
-	    	run_t.ultrasonic =1;
-			SendData_Set_Command(0x22,0x01); //open ptc 
-		    vTaskDelay(pdMS_TO_TICKS(100));
+//	    	run_t.plasma=1;
+//	    	run_t.dry =1;
+//	    	run_t.ultrasonic =1;
+//			SendData_Set_Command(0x22,0x01); //open ptc 
+//		    vTaskDelay(pdMS_TO_TICKS(100));
     
-         }
+//         }
 	     gpro_t.gTimer_disp_temp_humi_value=20;
 	     run_t.wifi_set_temperature=40;
          //SendData_Set_Command(0x11,0x01);
 		 //vTaskDelay(100);
-		
 		 gpro_t.power_on_step =2;
+
+		 SendData_Set_Command(0x10,1); //mainboard.WT.EDIT 2026.01.04
+         vTaskDelay(pdMS_TO_TICKS(100)); //WT.EDIT 2026.01.04
+		
+		
 	  break;
 
 	  case 2:

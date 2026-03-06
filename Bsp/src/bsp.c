@@ -457,13 +457,13 @@ void direct_comparison_temp(void)
 
                run_t.dry = 0;
 			 
-			   SendData_Set_Command(0x12,0x00); //close ptc 
+			   SendData_Set_Command(0x22,0x00); //close ptc 
 	           vTaskDelay(pdMS_TO_TICKS(100));
     }
     else{
 
 	   run_t.dry = 1;
-		SendData_Set_Command(0x12,0x01); //open ptc 
+		SendData_Set_Command(0x22,0x01); //open ptc 
 	    vTaskDelay(pdMS_TO_TICKS(100));
 			    
 	  }

@@ -110,6 +110,8 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		run_t.power_on = power_on;
 	}
 	else{//power off 
+	    gpro_t.again_confirm_power_off_flag =1;
+		gpro_t.gTimer_power_off_on_minute_fan=0;
 		run_t.power_on = power_off;
 
 	}
@@ -386,9 +388,12 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 	case 0x20: //smart phone normal power on or off 
 	    if(pddata[3] == 0x01){//power on
 	        run_t.wifi_link_net_success=1;
+			
 			run_t.power_on = power_on;
 		}
 		else{//power off 
+		    gpro_t.again_confirm_power_off_flag =1;
+			gpro_t.gTimer_power_off_on_minute_fan=0;
 		    run_t.wifi_link_net_success=1;
 			run_t.power_on = power_off;
 
@@ -415,6 +420,8 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 	}
 	else if(pddata[3]==0x0){  //power off by smart phone APP
 		run_t.wifi_link_net_success=1;
+		gpro_t.again_confirm_power_off_flag =1; //WT.EDIT 2026.03.06
+		gpro_t.gTimer_power_off_on_minute_fan=0;//WT.EDIT 2026.03.06
 		run_t.power_on= power_off;
 	    Lcd_PowerOff_Fun();
 		SendWifiData_Answer_Cmd(0x021,0x0);

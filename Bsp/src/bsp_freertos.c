@@ -35,12 +35,12 @@ static void vTaskStart(void *pvParameters);
 
 /* CommTask */ 
 static StaticTask_t xTaskCommProTCB; 
-static StackType_t xTaskCommProStack[128];
+static StackType_t xTaskCommProStack[256];
 
 
 /* vTaskMsgPro 任务 */
 static StaticTask_t xTaskUiProTCB;
-static StackType_t xTaskUiProStack[128];
+static StackType_t xTaskUiProStack[512];
 
 /* vTaskStart 任务 */
 static StaticTask_t xTaskKeyProTCB;
@@ -156,7 +156,7 @@ void freeRTOS_Handler(void)
 static void vTaskCommPro(void *pvParameters)
 {
     BaseType_t xResult;
-	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(5000); /* 设置最大等待时间为300ms */
+	const TickType_t xMaxBlockTime = pdMS_TO_TICKS(9000); /* 设置最大等待时间为300ms */
 	uint32_t ulValue;
 	
 	 while(1)
@@ -518,20 +518,22 @@ static void power_run_handler(void)
 		   gpro_t.stopTwoHours_flag=0;
            power_off_handler();
 	       gpro_t.fan_run_one_minute=0;
+
+		  
 		   
 		    if(gpro_t.again_confirm_power_off_flag == 1){
 				
 				SendData_Set_Command(0x10,0); //mainboard.WT.EDIT 2026.01.04
-                vTaskDelay(pdMS_TO_TICKS(100)); //WT.EDIT 2026.01.04
-			    gpro_t.again_confirm_power_off_flag++;
+                vTaskDelay(pdMS_TO_TICKS(200)); //WT.EDIT 2026.01.04
+			   // gpro_t.again_confirm_power_off_flag++;
 
 		    }
 
 			if(gpro_t.gTimer_power_off_on_minute_fan > 60){
 
 			    gpro_t.again_confirm_power_off_flag++;
-			    SendData_Set_Command(0x12,1); //mainboard.WT.EDIT 2026.01.04
-				vTaskDelay(pdMS_TO_TICKS(100)); //WT.EDIT 2026.01.04
+			    SendData_Set_Command(0x12,1); //turn off fun .mainboard.WT.EDIT 2026.01.04
+				vTaskDelay(pdMS_TO_TICKS(200)); //WT.EDIT 2026.01.04
 
 
 			}
