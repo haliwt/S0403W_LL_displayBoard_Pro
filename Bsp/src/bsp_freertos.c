@@ -194,7 +194,13 @@ static void vTaskUiPro(void *pvParameters)
     {
 		key_handler();
         power_run_handler();
-	
+		
+	    if(gpro_t.power_on_off_rx_flag ==1 && gpro_t.gTimer_power_off_on_minute_fan >1){
+		     	SendData_Set_Command(0x10,1); //mainboard.WT.EDIT 2026.01.04
+                vTaskDelay(pdMS_TO_TICKS(100)); //WT.EDIT 2026.01.04
+
+        }
+		
 	
         vTaskDelay(50);//60
     }
@@ -470,7 +476,7 @@ static void key_handler(void)
 **************************************************************************/
 static void power_run_handler(void)
 {
-     static uint8_t power_counter;
+     static uint8_t power_counter,counter;
      switch(run_t.power_on){
 
 	 case power_on:
@@ -519,12 +525,12 @@ static void power_run_handler(void)
            power_off_handler();
 	       gpro_t.fan_run_one_minute=0;
 
-		  
+		   counter ++ ;
 		   
-		    if(gpro_t.again_confirm_power_off_flag == 1){
-				
+		    if(gpro_t.again_confirm_power_off_flag == 1 && counter > 40 ){
+				counter =0;
 				SendData_Set_Command(0x10,0); //mainboard.WT.EDIT 2026.01.04
-                vTaskDelay(pdMS_TO_TICKS(200)); //WT.EDIT 2026.01.04
+                vTaskDelay(pdMS_TO_TICKS(100)); //WT.EDIT 2026.01.04
 			   // gpro_t.again_confirm_power_off_flag++;
 
 		    }
@@ -533,7 +539,7 @@ static void power_run_handler(void)
 
 			    gpro_t.again_confirm_power_off_flag++;
 			    SendData_Set_Command(0x12,1); //turn off fun .mainboard.WT.EDIT 2026.01.04
-				vTaskDelay(pdMS_TO_TICKS(200)); //WT.EDIT 2026.01.04
+				vTaskDelay(pdMS_TO_TICKS(100)); //WT.EDIT 2026.01.04
 
 
 			}

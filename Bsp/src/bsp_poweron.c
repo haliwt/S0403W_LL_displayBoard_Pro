@@ -251,18 +251,22 @@ void power_key_long_fun(void)
 void power_on_off_handler(void)
 {
     if(run_t.power_on== power_off){
-        run_t.power_on= power_on;
+      //  run_t.power_on= power_on;
+        gpro_t.power_on_off_rx_flag = 1;
         SendData_PowerOnOff(1);
 		vTaskDelay(100);
 
-	
+	     gpro_t.gTimer_power_off_on_minute_fan =0;
 		gpro_t.power_on_step =0;
 
 
     }
-    else if(run_t.power_on== power_on){ //power off .
+    else{ //power off .
         run_t.power_on= power_off;
+        gpro_t.power_on_off_rx_flag = 3;
 		gpro_t.gTimer_power_off_on_minute_fan =0;
+		gpro_t.again_confirm_power_off_flag = 1;
+		gpro_t.gTimer_power_off_on_minute_fan=0;
         SendData_PowerOnOff(0);
 	    vTaskDelay(100);
       

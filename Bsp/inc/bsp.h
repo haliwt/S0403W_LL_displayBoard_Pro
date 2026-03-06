@@ -103,6 +103,7 @@ typedef struct _process_state{
 
    uint8_t stopTwoHours_flag;
    uint8_t add_dec_key_be_pressed;
+   uint8_t power_on_off_rx_flag ;
   
 
 

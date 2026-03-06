@@ -579,13 +579,35 @@ static void parse_copy_cmd_or_data_handler(uint8_t *pdata)
 				
 			if(pdata[4] == 0x01){//power on
 			
-		      
+		      run_t.power_on= power_on;
+			  gpro_t.power_on_off_rx_flag=2;
 			   
 
 			}
 			else if(pdata[4]==0){
 		
+             //run_t.power_on= power_off;
+			 //gpro_t.power_on_off_rx_flag=4;
+				
 
+			}
+
+
+	   break;
+
+	   case 0x10:
+
+	     	if(pdata[4] == 0x01){//power on
+			
+		      run_t.power_on= power_on;
+			  gpro_t.power_on_off_rx_flag=2;
+			   
+
+			}
+			else if(pdata[4]==0){
+		
+             //run_t.power_on= power_off;
+			// gpro_t.power_on_off_rx_flag=4;
 				
 
 			}
