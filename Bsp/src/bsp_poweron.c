@@ -259,6 +259,7 @@ void power_on_off_handler(void)
     }
     else if(run_t.power_on== power_on){ //power off .
         run_t.power_on= power_off;
+		gpro_t.gTimer_power_off_on_minute_fan =0;
         SendData_PowerOnOff(0);
 	    vTaskDelay(100);
       
@@ -520,7 +521,7 @@ void two_hours_recoder_fun(void)
 {
   static uint8_t counter_send;
   #if 0
-    if(gpro_t.gTimer_two_hours_conter > 9 && gpro_t.stopTwoHours_flag==0){
+    if(gpro_t.gTimer_two_hours_conter > 12 && gpro_t.stopTwoHours_flag==0){
   #else
     if(gpro_t.gTimer_two_hours_conter > 119 && gpro_t.stopTwoHours_flag==0){
   #endif  
@@ -541,6 +542,8 @@ void two_hours_recoder_fun(void)
       gpro_t.stopTwoHours_flag=0;
 	  gpro_t.fan_run_one_minute=3;
       SendData_Set_Command(0x19,0x0);
+	  vTaskDelay(100);
+	  SendData_Set_Command(0x18,0x0);//fan run .
 	  vTaskDelay(100);
 	    
 
@@ -563,7 +566,7 @@ void two_hours_recoder_fun(void)
 		vTaskDelay(100);
 
   }
-  else if(gpro_t.stopTwoHours_flag==1 && counter_send >60 &&  gpro_t.fan_run_one_minute !=4){
+  else if(gpro_t.stopTwoHours_flag==1 && counter_send >40 &&  gpro_t.fan_run_one_minute ==2){
 	  counter_send=0;
 
       SendData_Set_Command(0x19,0x01);

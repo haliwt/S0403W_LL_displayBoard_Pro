@@ -521,11 +521,20 @@ static void power_run_handler(void)
 		   
 		    if(gpro_t.again_confirm_power_off_flag == 1){
 				
-				SendData_Set_Command(0x30,0); //mainboard.WT.EDIT 2026.01.04
+				SendData_Set_Command(0x10,0); //mainboard.WT.EDIT 2026.01.04
                 vTaskDelay(pdMS_TO_TICKS(100)); //WT.EDIT 2026.01.04
 			    gpro_t.again_confirm_power_off_flag++;
 
 		    }
+
+			if(gpro_t.gTimer_power_off_on_minute_fan > 60){
+
+			    gpro_t.again_confirm_power_off_flag++;
+			    SendData_Set_Command(0x12,1); //mainboard.WT.EDIT 2026.01.04
+				vTaskDelay(pdMS_TO_TICKS(100)); //WT.EDIT 2026.01.04
+
+
+			}
 
        
 	 break;

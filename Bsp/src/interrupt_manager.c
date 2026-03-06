@@ -50,6 +50,8 @@ void tim16_int_callback_handler(void)
          gpro_t.gTimer_soft_version_counter++;
 		 gpro_t.gTimer_disp_dry_counter++;
 		 gpro_t.gTimer_counter_one_minute++;
+
+		 gpro_t.gTimer_power_off_on_minute_fan++;
      
          //
 
@@ -61,6 +63,7 @@ void tim16_int_callback_handler(void)
         run_t.gTimer_timing++;
 	    run_t.gTimer_work_break_times++;
         run_t.gTimer_again_switch_works ++ ;
+		
 		
 		 lcd_t.gTimer_colon_counter++;
 		 gpro_t.gTimer_two_hours_second_counter++;
