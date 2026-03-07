@@ -24,7 +24,7 @@ void disp_timer_run_times(void)
       if(run_t.gTimer_timing > 59){ //
         
         run_t.gTimer_timing =0;
-		#if  1   //TEST_UNIT
+		#if  0   //TEST_UNIT
 		  run_t.timer_time_minutes = run_t.timer_time_minutes -30;
         #else 
           run_t.timer_time_minutes --;
