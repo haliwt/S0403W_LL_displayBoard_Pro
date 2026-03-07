@@ -581,6 +581,8 @@ static void parse_copy_cmd_or_data_handler(uint8_t *pdata)
 			
 		      run_t.power_on= power_on;
 			  gpro_t.power_on_off_rx_flag=2;
+			  SendData_Set_Command(0x10,1); //again turn power on ,mainboard.WT.EDIT 2026.01.04
+              vTaskDelay(pdMS_TO_TICKS(100)); //WT.EDIT 2026.01.04
 			   
 
 			}

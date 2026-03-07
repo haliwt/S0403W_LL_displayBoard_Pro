@@ -256,7 +256,7 @@ void power_on_off_handler(void)
         SendData_PowerOnOff(1);
 		vTaskDelay(100);
 
-	     gpro_t.gTimer_power_off_on_minute_fan =0;
+	    gpro_t.gTimer_power_off_on_minute_fan =0;
 		gpro_t.power_on_step =0;
 
 

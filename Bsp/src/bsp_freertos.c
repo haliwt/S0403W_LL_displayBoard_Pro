@@ -193,13 +193,14 @@ static void vTaskUiPro(void *pvParameters)
     while(1)
     {
 		key_handler();
-        power_run_handler();
-		
-	    if(gpro_t.power_on_off_rx_flag ==1 && gpro_t.gTimer_power_off_on_minute_fan >1){
+       
+		if(gpro_t.power_on_off_rx_flag ==1 && gpro_t.gTimer_power_off_on_minute_fan >1){
+			    gpro_t.gTimer_power_off_on_minute_fan =0;
 		     	SendData_Set_Command(0x10,1); //mainboard.WT.EDIT 2026.01.04
                 vTaskDelay(pdMS_TO_TICKS(100)); //WT.EDIT 2026.01.04
 
         }
+		power_run_handler();
 		
 	
         vTaskDelay(50);//60
