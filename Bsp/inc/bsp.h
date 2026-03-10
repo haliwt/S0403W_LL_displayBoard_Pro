@@ -122,6 +122,7 @@ typedef struct _process_state{
    uint8_t gTimer_disp_dry_counter;
    uint8_t gTimer_counter_one_minute;
    uint8_t gTimer_power_off_on_minute_fan;
+   uint8_t gTimer_send_data_counter;
  
    
 

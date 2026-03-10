@@ -141,10 +141,10 @@ void Setup_Timer_Times_Donot_Display(void)
                 
                 }
               }
-            
-		     }
         sendCmdNote_to_threeData(0x6B,run_t.timer_time_hours,run_t.timer_time_minutes,run_t.gTimer_timing) ;
-		   vTaskDelay(100);
+		vTaskDelay(100);
+	  }
+       
     }
 
 

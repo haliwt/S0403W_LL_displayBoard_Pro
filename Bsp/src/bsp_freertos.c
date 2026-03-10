@@ -545,6 +545,13 @@ static void power_run_handler(void)
 
 			}
 
+			if(gpro_t.gTimer_send_data_counter > 1){
+			 	 gpro_t.gTimer_send_data_counter =0;
+				 SendData_Set_Command(0xF0,0x02);//software version is "2"
+				 vTaskDelay(50);
+
+             }
+
        
 	 break;
 
