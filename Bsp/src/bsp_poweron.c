@@ -428,7 +428,7 @@ void power_off_handler(void)
     
 	
    
-    #if 0
+    #if 1
 	power_off_breath_Led();
 
 	#else 
@@ -532,7 +532,7 @@ void two_hours_recoder_fun(void)
 	  gpro_t.fan_run_one_minute=1;
 	  counter_send =0;
 	  SendData_Set_Command(0x19,0x01);
-	  vTaskDelay(100);
+	  vTaskDelay(30);
 	  
 
   }
@@ -542,9 +542,9 @@ void two_hours_recoder_fun(void)
       gpro_t.stopTwoHours_flag=0;
 	  gpro_t.fan_run_one_minute=3;
       SendData_Set_Command(0x19,0x0);
-	  vTaskDelay(100);
+	  vTaskDelay(50);
 	  SendData_Set_Command(0x18,0x0);//fan run .
-	  vTaskDelay(100);
+	  vTaskDelay(50);
 	    
 
   }
@@ -561,7 +561,7 @@ void two_hours_recoder_fun(void)
   }
   else if(gpro_t.fan_run_one_minute==3){
 
-         gpro_t.fan_run_one_minute++;
+        gpro_t.fan_run_one_minute++;
 		SendData_Set_Command(0x18,0x0);//fan run .
 		vTaskDelay(50);
 
