@@ -191,11 +191,11 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		
 	    if(ultr_counter != run_t.ultrasonic ){
 			ultr_counter = run_t.ultrasonic;
-		run_t.ultrasonic = close;
-		SendWifiData_Answer_Cmd(0x04,0x0); //close ptc 
-		vTaskDelay(100);
-		 gpro_t.gTimer_copy_cmd_counter=0; 
-	     gpro_t.receive_copy_buff[4]=copy_null;
+			run_t.ultrasonic = close;
+			SendWifiData_Answer_Cmd(0x04,0x0); //close ptc 
+			vTaskDelay(100);
+			 gpro_t.gTimer_copy_cmd_counter=0; 
+		     gpro_t.receive_copy_buff[4]=copy_null;
 		
 
 	    }
