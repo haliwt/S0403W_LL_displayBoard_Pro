@@ -172,7 +172,7 @@ void power_on_display_temp_handler(void)
  void Display_Kill_Dry_Ster_Icon(void)
 {
 
-   uint8_t temp_value =0xff,power_counter ,switch_value;
+   uint8_t temp_value =0xff,power_counter ;
 
 
     if(gpro_t.temp_key_set_value==0 && (gpro_t.power_on_counter_temp==1 || gpro_t.power_on_counter_temp==2)){
@@ -263,7 +263,7 @@ static void display_numbers_one_foure_fun(void)
 		  // TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
 		  TM1723_Write_Display_Data(0xC2,((0X01+KILL_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
 		  
-		if(run_t.gModel==1){
+		   if(run_t.gModel==1){
 			   TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
 			}
 			else{

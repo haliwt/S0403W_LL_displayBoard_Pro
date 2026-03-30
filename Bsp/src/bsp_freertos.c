@@ -473,7 +473,7 @@ static void key_handler(void)
 **************************************************************************/
 static void power_run_handler(void)
 {
-     static uint8_t power_counter,counter;
+     static uint8_t counter;
      switch(run_t.power_on){
 
 	 case power_on:
@@ -513,7 +513,7 @@ static void power_run_handler(void)
 	 break;
 	 
 	 case power_off:
-           power_counter=0;
+          
            gl_ref.long_key_power_counter =0;
            gl_ref.key_long_power_flag =0;
            run_t.power_on_disp_smg_number = 0;

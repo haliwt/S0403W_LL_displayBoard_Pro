@@ -120,28 +120,24 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 	case ptc_on_off: //PTC 
 	if(pddata[3] == 0x01){//ptc on
 
-	        if(ptc_counter != run_t.dry){
-				ptc_counter = run_t.dry;
+	        
 		    run_t.dry = open;
-
-	
-			run_t.ptc_on_off_flag = 0;
+            run_t.ptc_on_off_flag = 0;
 			SendWifiData_Answer_Cmd(0x02,0x01); //close ptc 
-			vTaskDelay(100);
+			vTaskDelay(30);
 			
 			//Display_Kill_Dry_Ster_Icon();
-	        }
+	        
 	}
 	else{//power off 
-	       if(ptc_counter != run_t.dry){
-				ptc_counter = run_t.dry;
+	      
 			run_t.dry = close;
 			run_t.ptc_on_off_flag = 1;
 			SendWifiData_Answer_Cmd(0x02,0x0); //close ptc 
-		    vTaskDelay(100);
+		    vTaskDelay(30);
 		
 			//Display_Kill_Dry_Ster_Icon();
-	        }
+	        
 	 }
 
 	break;
@@ -149,27 +145,24 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 	case plasma_on_off://plasma
 	if(pddata[3] == 0x01){//ptc on
 
-	     if(plasma_counter != run_t.plasma ){
-		 	plasma_counter  = run_t.plasma;
 			 run_t.plasma = open;
 			 SendWifiData_Answer_Cmd(0x03,0x01); //close ptc 
-			 vTaskDelay(100);
+			 vTaskDelay(30);
 			 gpro_t.gTimer_copy_cmd_counter=0; 
 		     gpro_t.receive_copy_buff[3]=copy_null;
-			// Display_Kill_Dry_Ster_Icon();
-	     }
+			
+	     
 
-		}
-		else{//power off 
-		   if(plasma_counter != run_t.plasma ){
-		   	    plasma_counter  = run_t.plasma;
+	}
+	else{//power off 
+		   
 				run_t.plasma = close;
 			    SendWifiData_Answer_Cmd(0x03,0x0); //close ptc 
-				vTaskDelay(100);
+				vTaskDelay(30);
 				 gpro_t.gTimer_copy_cmd_counter=0; 
 			     gpro_t.receive_copy_buff[3]=copy_null;
 				 //Display_Kill_Dry_Ster_Icon();
-		   	}
+		   	
 	}
 
 	break;
@@ -177,28 +170,24 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 	case ultrasonic_on_off:
 	if(pddata[3] == 0x01){//ptc on
 
-	    if(ultr_counter != run_t.ultrasonic ){
-			ultr_counter = run_t.ultrasonic;
-			run_t.ultrasonic = open;
+	        run_t.ultrasonic = open;
 			SendWifiData_Answer_Cmd(0x04,0x01); //close ptc 
-			vTaskDelay(100);
+			vTaskDelay(30);
 			
-	    }
+	    
 
 		}
 		else{//power off 
 
 		
-	    if(ultr_counter != run_t.ultrasonic ){
-			ultr_counter = run_t.ultrasonic;
 			run_t.ultrasonic = close;
 			SendWifiData_Answer_Cmd(0x04,0x0); //close ptc 
-			vTaskDelay(100);
+			vTaskDelay(30);
 			 gpro_t.gTimer_copy_cmd_counter=0; 
 		     gpro_t.receive_copy_buff[4]=copy_null;
 		
 
-	    }
+	    
 	}
 
 	break;
@@ -389,6 +378,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 	    if(pddata[3] == 0x01){//power on
 	        run_t.wifi_link_net_success=1;
 			
+			gpro_t.power_on_step=0;
 			run_t.power_on = power_on;
 		}
 		else{//power off 

@@ -111,7 +111,7 @@ void mode_key_short_fun(void)
 *****************************************************************************/
 void add_key_fun(void)
 {
-     static uint8_t power_on_fisrt_flag ;
+   //  static uint8_t power_on_fisrt_flag ;
     
 	switch(run_t.display_set_timer_or_works_time_mode){
 
@@ -174,7 +174,7 @@ void add_key_fun(void)
 *****************************************************************************/
 void dec_key_fun(void)
 {
-    static uint8_t power_on_fisrt_flag;
+   // static uint8_t power_on_fisrt_flag;
   
     if(run_t.power_on==1){
 	   	if(run_t.ptc_warning ==0){
