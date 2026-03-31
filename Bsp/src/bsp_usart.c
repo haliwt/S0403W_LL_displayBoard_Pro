@@ -395,6 +395,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
    case 0x21: //APP smart phone Timer power on or off that App timer ---new .
 	if(pddata[3]==0x01){ //power on by smart phone APP
 		gpro_t.smart_phone_app_timer_power_on_flag =1;
+		run_t.gTimer_ptc_fan_warning=0;
 		run_t.wifi_link_net_success=1;
 	   
         run_t.power_on= power_on; //WT.EDIT 2025.12.18

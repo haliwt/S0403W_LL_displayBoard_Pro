@@ -85,7 +85,7 @@ void power_on_handler(void)
 	
      case 4:
 	 	
-     if(gpro_t.temp_key_set_value==0 && gpro_t.gTimer_temp_compare_value > 2 && gpro_t.stopTwoHours_flag==0){
+     if(gpro_t.temp_key_set_value==0 && gpro_t.gTimer_temp_compare_value > 2 && gpro_t.stopTwoHours_flag==0 && gpro_t.smart_phone_app_timer_power_on_flag ==0){
 	 	gpro_t.gTimer_temp_compare_value =0;
 		
          send_two_disp++;
@@ -144,9 +144,19 @@ void power_on_handler(void)
 
 	  two_hours_recoder_fun();
 
-	    gpro_t.power_on_step =2;
+	    gpro_t.power_on_step =7;
 
 	 
+
+	 break;
+
+	 case 7:
+	 if(gpro_t.smart_phone_app_timer_power_on_flag ==1 && run_t.gTimer_ptc_fan_warning >3){
+	  gpro_t.smart_phone_app_timer_power_on_flag=0;
+
+
+	  }
+	 gpro_t.power_on_step =2;
 
 	 break;
 
