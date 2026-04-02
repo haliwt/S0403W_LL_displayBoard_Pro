@@ -182,7 +182,7 @@ static void vTaskKeyPro(ULONG thread_input)
 
     }
 
-	tx_thread_sleep(20);
+	tx_thread_sleep(10);
      
 
   }
