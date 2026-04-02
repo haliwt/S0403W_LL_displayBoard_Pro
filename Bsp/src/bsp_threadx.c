@@ -89,7 +89,7 @@ static void vTaskMsgPro(ULONG thread_input)
 {
   (void)thread_input;
   while(1){
-   key_handler();
+   		key_handler();
        
 		if(gpro_t.power_on_off_rx_flag ==1 && gpro_t.gTimer_power_off_on_minute_fan >1){
 			    gpro_t.gTimer_power_off_on_minute_fan =0;
@@ -117,7 +117,9 @@ static void vTaskKeyPro(ULONG thread_input)
   (void)thread_input;
   static uint8_t power_on_key;
   while(1){
-	 if(KEY_POWER_GetValue()  ==KEY_DOWN){
+	 if(KEY_POWER_GetValue()  == KEY_DOWN){
+
+	   #if 0
 
           if(power_on_key ==0){
               power_on_key ++;
@@ -125,27 +127,24 @@ static void vTaskKeyPro(ULONG thread_input)
           }
           else{
            gl_ref.long_key_mode_counter =0;
-          
+         #endif 
 
-         if(gl_ref.long_key_power_counter < 150 && run_t.power_on== power_on ){//65
+        if(gl_ref.long_key_power_counter < 150 && run_t.power_on== power_on ){//65
             gl_ref.long_key_power_counter++;
 
 		    if(gl_ref.long_key_power_counter > 12){
 	            gl_ref.long_key_power_counter =200;
 	            gl_ref.key_long_power_flag =1;
-	           // gpro_t.gTimer_mode_key_long = 0;
 
 			    SendData_Set_Command(0x05,0x01); // link wifi of command .
 	            tx_thread_sleep(5);
-	           // gpro_t.gTimer_mode_key_long=0;
 				gl_ref.key_power_flag = 0;
 		   }
-         }
+	      }
 	        if(gl_ref.long_key_power_counter ==200)gl_ref.key_power_flag = 3;
 	        else gl_ref.key_power_flag = 1;
-        }
-    }
-    else if(KEY_MODE_GetValue() ==KEY_DOWN && run_t.power_on== power_on){
+     }
+    else if(KEY_MODE_GetValue() == KEY_DOWN && run_t.power_on== power_on){
 
            gl_ref.long_key_power_counter=0;
          
@@ -155,9 +154,9 @@ static void vTaskKeyPro(ULONG thread_input)
           if(gl_ref.long_key_mode_counter > 12 ){
              gl_ref.long_key_mode_counter=200;   
          
-                mode_key_long_fun();
                 SendData_Buzzer();
 				tx_thread_sleep(5);
+				mode_key_long_fun();
            }
           }
 
@@ -245,74 +244,60 @@ void app_threadx_handler(void)
 **************************************************************************/
 static void key_handler(void)
 {
-  if(gl_ref.key_power_flag == 3 && KEY_POWER_GetValue() ==KEY_UP){ //key power key
-     gl_ref.key_power_flag++;
-	 gl_ref.long_key_power_counter=0;
-  }
-  else if(gl_ref.key_power_flag == 1 && KEY_POWER_GetValue()  ==KEY_UP){ //key power key
+	if(gl_ref.key_power_flag == 3 && KEY_POWER_GetValue() ==KEY_UP){ //key power key
+		gl_ref.key_power_flag++;
+		gl_ref.long_key_power_counter=0;
+	}
+	else if(gl_ref.key_power_flag == 1 && KEY_POWER_GetValue()  ==KEY_UP){ //key power key
 
-               gl_ref.key_power_flag++;
-			   gl_ref.long_key_power_counter=0;
-               gl_ref.long_key_mode_counter=0;
-               power_on_off_handler();
-             
- }
- else if(gl_ref.key_mode_flag ==3 &&  KEY_MODE_GetValue() == KEY_UP){
-			gl_ref.key_mode_flag ++;
-			
-			gl_ref.long_key_mode_counter=0;
-            gl_ref.long_key_power_counter=0;
-            
+		gl_ref.key_power_flag++;
+		gl_ref.long_key_power_counter=0;
+		gl_ref.long_key_mode_counter=0;
+		power_on_off_handler();
 
- }
- else if(gl_ref.key_mode_flag == 1 && KEY_MODE_GetValue() == KEY_UP){
-                gl_ref.key_mode_flag++;
+	}
+	else if(gl_ref.key_mode_flag ==3 &&  KEY_MODE_GetValue() == KEY_UP){
+		gl_ref.key_mode_flag ++;
 
-	    gl_ref.long_key_mode_counter=0;
-        gl_ref.long_key_power_counter=0;
+		gl_ref.long_key_mode_counter=0;
+		gl_ref.long_key_power_counter=0;
+
+
+	}
+	else if(gl_ref.key_mode_flag == 1 && KEY_MODE_GetValue() == KEY_UP){
+		gl_ref.key_mode_flag++;
+
+		gl_ref.long_key_mode_counter=0;
+		gl_ref.long_key_power_counter=0;
 		gl_ref.key_mode_short_flag =1;
 		SendData_Buzzer();
 		tx_thread_sleep(5);
-		
-		
-   }
-   else if((gl_ref.key_add_flag ==1 || gl_ref.key_dec_flag ==1)&&run_t.power_on== power_on){
-                
-			  
 
-              if(gl_ref.key_add_flag == 1){
 
-                 
-               if(KEY_ADD_GetValue() == KEY_UP){
-                  gl_ref.key_add_flag ++;
-              
-                   SendData_Buzzer();//SendData_Buzzer_Has_Ack();//SendData_Buzzer();
-                   tx_thread_sleep(5);
-                  
-                   add_key_fun();
-			   
-				   
-                }
-              
+	}
+	else if((gl_ref.key_add_flag ==1 && run_t.power_on== power_on && KEY_ADD_GetValue() == KEY_UP)){
 
-              }
-              else if(gl_ref.key_dec_flag == 1){
-               
-                if(KEY_DEC_GetValue()==KEY_UP){
-                    gl_ref.key_dec_flag ++;
-               
-                   //SendData_Buzzer_Has_Ack();//SendData_Buzzer();
-				   SendData_Buzzer();
-                   tx_thread_sleep(5);
-   				    dec_key_fun();
-				  
-				   
-                }
-            } 
-    }
+		gl_ref.key_add_flag ++;
+		SendData_Buzzer();//SendData_Buzzer_Has_Ack();//SendData_Buzzer();
+		tx_thread_sleep(5);
 
+		add_key_fun();
+
+
+	}
+	else if(gl_ref.key_dec_flag ==1 && run_t.power_on== power_on && KEY_DEC_GetValue()==KEY_UP){
+
+		gl_ref.key_dec_flag ++;
+
+		//SendData_Buzzer_Has_Ack();//SendData_Buzzer();
+		SendData_Buzzer();
+		tx_thread_sleep(5);
+		dec_key_fun();
+
+	}
 
 }
+
 /*************************************************************************
 *
 *	Funtion Name: static void power_run_handler(void)
