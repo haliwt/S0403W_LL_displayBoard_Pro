@@ -38,7 +38,7 @@ void MX_TIM16_Init(void)
   LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM16);
 
   /* TIM16 interrupt Init */
-  NVIC_SetPriority(TIM16_IRQn, 3);
+  NVIC_SetPriority(TIM16_IRQn, 0);
   NVIC_EnableIRQ(TIM16_IRQn);
 
   /* USER CODE BEGIN TIM16_Init 1 */
