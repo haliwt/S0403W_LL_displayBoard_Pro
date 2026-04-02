@@ -120,14 +120,12 @@ static void vTaskKeyPro(ULONG thread_input)
 	 if(KEY_POWER_GetValue()  == KEY_DOWN){
 
 	   #if 0
-
-          if(power_on_key ==0){
+	   if(power_on_key ==0){
               power_on_key ++;
-             
+              gl_ref.long_key_mode_counter =0;
           }
-          else{
-           gl_ref.long_key_mode_counter =0;
-         #endif 
+         
+          #endif 
 
         if(gl_ref.long_key_power_counter < 150 && run_t.power_on== power_on ){//65
             gl_ref.long_key_power_counter++;
@@ -141,9 +139,11 @@ static void vTaskKeyPro(ULONG thread_input)
 				gl_ref.key_power_flag = 0;
 		   }
 	      }
-	        if(gl_ref.long_key_power_counter ==200)gl_ref.key_power_flag = 3;
-	        else gl_ref.key_power_flag = 1;
-     }
+		
+	       if(gl_ref.long_key_power_counter ==200)gl_ref.key_power_flag = 3;
+	       else gl_ref.key_power_flag = 1;
+     
+	}
     else if(KEY_MODE_GetValue() == KEY_DOWN && run_t.power_on== power_on){
 
            gl_ref.long_key_power_counter=0;
@@ -163,21 +163,15 @@ static void vTaskKeyPro(ULONG thread_input)
          if(gl_ref.long_key_mode_counter==200) gl_ref.key_mode_flag  = 3;
 		 else gl_ref.key_mode_flag  = 1;
      }
-     else if(KEY_DEC_GetValue() == KEY_DOWN){
-          gl_ref.long_key_power_counter=0;
-          gl_ref.long_key_mode_counter =0 ;
-           if(run_t.power_on== power_on){ //WT.EDIT .2025.01.15
+     else if(KEY_DEC_GetValue() == KEY_DOWN && run_t.power_on== power_on){
+      
                gl_ref.key_dec_flag = 1;
-            }
+            
      }
-     else if(KEY_ADD_GetValue() ==KEY_DOWN){
+     else if(KEY_ADD_GetValue() ==KEY_DOWN && run_t.power_on== power_on){
 
-          gl_ref.long_key_power_counter=0;
+         gl_ref.key_add_flag = 1;
          
-          gl_ref.long_key_mode_counter =0 ;
-         if(run_t.power_on== power_on){ //WT.EDIT .2025.01.15
-             gl_ref.key_add_flag = 1;
-         }
 
     }
 
