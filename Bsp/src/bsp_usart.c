@@ -793,7 +793,7 @@ static void read_usart1_data(uint8_t data)
 			   frame.bcc_code = data;
 			 
                 gpro_t.decoder_flag = 1;
-				//semaphore_isr();
+				semaphore_isr();
 
 		    break;
 

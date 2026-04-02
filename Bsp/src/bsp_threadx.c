@@ -43,7 +43,7 @@ typedef struct GL_TASK{
 }gl_task;
 
 gl_task gl_ref;
-uint8_t error_counter;
+uint8_t error_counter,counter;
 
 
 /**
@@ -65,7 +65,7 @@ static void vTaskDecoderPro(ULONG thread_input)
 						TX_WAIT_FOREVER);
 
    if(actual_flags & (1<< 9)){
-
+      counter ++ ;
       decoder_handler();
    }
 
@@ -215,8 +215,8 @@ void app_threadx_handler(void)
    					0,
    					stack_msg_pro,
    					STACK_SIZE_ONE,
-   					2,
-   					2,
+   					3,
+   					3,
    					TX_NO_TIME_SLICE,
    					TX_AUTO_START);
 
@@ -226,8 +226,8 @@ void app_threadx_handler(void)
 					0,
 					stack_key_pro,
 					STACK_SIZE_TWO,
-					3,
-					3,
+					2,
+					2,
 					TX_NO_TIME_SLICE,
 					TX_AUTO_START);
    

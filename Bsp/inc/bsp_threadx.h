@@ -5,6 +5,7 @@
 
 void app_threadx_handler(void);
 
+void semaphore_isr(void);
 
 
 #endif 
