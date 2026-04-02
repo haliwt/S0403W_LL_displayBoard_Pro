@@ -98,7 +98,7 @@ static void vTaskMsgPro(ULONG thread_input)
 		power_run_handler();
 		
 	
-        tx_thread_sleep(20);//60
+        tx_thread_sleep(5);//60
    
   }
 
@@ -203,8 +203,8 @@ void app_threadx_handler(void)
   					0,
   					stack_decoder_pro,
   					STACK_SIZE_THREE,
-  					1,
-  					1,
+  					2,
+  					2,
   					TX_NO_TIME_SLICE,
   					TX_AUTO_START);
 
@@ -226,8 +226,8 @@ void app_threadx_handler(void)
 					0,
 					stack_key_pro,
 					STACK_SIZE_TWO,
-					2,
-					2,
+					1,
+					1,
 					TX_NO_TIME_SLICE,
 					TX_AUTO_START);
    
