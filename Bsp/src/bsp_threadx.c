@@ -130,7 +130,7 @@ static void vTaskKeyPro(ULONG thread_input)
          if(gl_ref.long_key_power_counter < 150 && run_t.power_on== power_on ){//65
             gl_ref.long_key_power_counter++;
 
-		    if(gl_ref.long_key_power_counter > 85){
+		    if(gl_ref.long_key_power_counter > 12){
 	            gl_ref.long_key_power_counter =200;
 	            gl_ref.key_long_power_flag =1;
 	           // gpro_t.gTimer_mode_key_long = 0;
@@ -152,7 +152,7 @@ static void vTaskKeyPro(ULONG thread_input)
          if(run_t.ptc_warning ==0 && run_t.fan_warning ==0 && gl_ref.long_key_mode_counter < 150){
 	        gl_ref.long_key_mode_counter ++ ;
 
-          if(gl_ref.long_key_mode_counter > 65 ){
+          if(gl_ref.long_key_mode_counter > 12 ){
              gl_ref.long_key_mode_counter=200;   
          
                 mode_key_long_fun();
