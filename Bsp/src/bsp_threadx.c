@@ -16,8 +16,8 @@ static void vTaskMsgPro(ULONG thread_input);
 static void vTaskKeyPro(ULONG thread_input);
 static void vTaskDecoderPro(ULONG thread_input);
 
-TX_EVENT_FLAGS_GROUP   commEventFlags;
-
+//TX_EVENT_FLAGS_GROUP   commEventFlags;
+TX_SEMAPHORE      decoder_semaphore;
 
 static void key_handler(void);
 
@@ -57,7 +57,7 @@ static void vTaskDecoderPro(ULONG thread_input)
    (void)thread_input;
    ULONG actual_flags;
    while(1){
-
+   #if 0
     tx_event_flags_get(&commEventFlags,
 						(1<<9),
 						TX_OR_CLEAR,   /*获取后清除标志*/
@@ -68,15 +68,17 @@ static void vTaskDecoderPro(ULONG thread_input)
       counter ++ ;
       decoder_handler();
    }
+   #else 
+   tx_semaphore_get(&decoder_semaphore,TX_WAIT_FOREVER);
+   counter ++ ;
+   decoder_handler();
+
+   #endif
 
 
    }
 
 }
-
-
-
-
 /**
 *@brief 
 *@param
@@ -195,7 +197,8 @@ static void vTaskKeyPro(ULONG thread_input)
 void app_threadx_handler(void)
 {
 
-  tx_event_flags_create(&commEventFlags,"commEventFlags");
+  //tx_event_flags_create(&commEventFlags,"commEventFlags");
+  tx_semaphore_create(&decoder_semaphore,"decoderSemaphore",0);
 
   tx_thread_create(&thread_decoder,
   					"DecoderPro",
@@ -411,7 +414,8 @@ static void power_run_handler(void)
 
 void semaphore_isr(void)
 {
-   tx_event_flags_set(&commEventFlags,(1<<9),TX_OR);
+   //tx_event_flags_set(&commEventFlags,(1<<9),TX_OR);
+     tx_semaphore_put(&decoder_semaphore);
 }
 
 
