@@ -89,7 +89,7 @@ static void vTaskMsgPro(ULONG thread_input)
 {
   (void)thread_input;
   while(1){
-   		key_handler();
+   		
        
 		if(gpro_t.power_on_off_rx_flag ==1 && gpro_t.gTimer_power_off_on_minute_fan >1){
 			    gpro_t.gTimer_power_off_on_minute_fan =0;
@@ -97,10 +97,12 @@ static void vTaskMsgPro(ULONG thread_input)
                 tx_thread_sleep(5); //WT.EDIT 2026.01.04
 
         }
+
+		key_handler();
 		power_run_handler();
 		
 	
-        tx_thread_sleep(5);//60
+        tx_thread_sleep(2);//60
    
   }
 
@@ -174,11 +176,9 @@ static void vTaskKeyPro(ULONG thread_input)
          
 
     }
-
-	tx_thread_sleep(10);
-     
-
-  }
+	
+   tx_thread_sleep(10);
+   }
 }
 
 /**
