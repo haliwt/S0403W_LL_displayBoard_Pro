@@ -772,7 +772,7 @@ static void read_usart1_data(uint8_t data)
 							   
 			  frame.data[frame.count_numbers]= data;
 						   
-               if(frame.data[frame.count_numbers] == 0xFE){
+               if(frame.data[frame.count_numbers] == 0xFE && frame.count_numbers > 4){
 			     s_state= S03_STATE_BCC;
 
 

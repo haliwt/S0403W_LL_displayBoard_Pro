@@ -269,7 +269,7 @@ static void key_handler(void)
         gl_ref.long_key_power_counter=0;
 		gl_ref.key_mode_short_flag =1;
 		SendData_Buzzer();
-		tx_thread_sleep(100);
+		tx_thread_sleep(5);
 		
 		
    }
@@ -285,7 +285,7 @@ static void key_handler(void)
               
                   
                    SendData_Buzzer_Has_Ack();//SendData_Buzzer();
-                   tx_thread_sleep(100);
+                   tx_thread_sleep(5);
                    add_key_fun();
 				   
                 }

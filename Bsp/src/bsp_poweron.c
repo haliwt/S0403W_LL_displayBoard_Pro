@@ -257,7 +257,7 @@ void power_on_off_handler(void)
       //  run_t.power_on= power_on;
         gpro_t.power_on_off_rx_flag = 1;
         SendData_PowerOnOff(1);
-		tx_thread_sleep(100);
+		tx_thread_sleep(5);
 
 	    gpro_t.gTimer_power_off_on_minute_fan =0;
 		gpro_t.power_on_step =0;
@@ -271,7 +271,7 @@ void power_on_off_handler(void)
 		gpro_t.again_confirm_power_off_flag = 1;
 		gpro_t.gTimer_power_off_on_minute_fan=0;
         SendData_PowerOnOff(0);
-	    tx_thread_sleep(100);
+	    tx_thread_sleep(5);
       
  
 
