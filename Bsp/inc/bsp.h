@@ -37,7 +37,7 @@
 
 #define  USE_FreeRTOS      0
 	
-#define Enable_EventRecorder    0
+#define Enable_EventRecorder    1
 
 #define DEBUG_FLAG    Enable_EventRecorder
 

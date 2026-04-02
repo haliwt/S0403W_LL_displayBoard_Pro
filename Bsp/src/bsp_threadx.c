@@ -2,7 +2,7 @@
 
 #define STACK_SIZE_ONE    1024 
 #define STACK_SIZE_TWO    512
-#define STACK_SIZE_THREE  1024
+#define STACK_SIZE_THREE  512
 
 static TX_THREAD  thread_msg;
 static TX_THREAD  thread_key;
@@ -92,13 +92,13 @@ static void vTaskMsgPro(ULONG thread_input)
 		if(gpro_t.power_on_off_rx_flag ==1 && gpro_t.gTimer_power_off_on_minute_fan >1){
 			    gpro_t.gTimer_power_off_on_minute_fan =0;
 		     	SendData_Set_Command(0x10,1); //mainboard.WT.EDIT 2026.01.04
-                tx_thread_sleep(100); //WT.EDIT 2026.01.04
+                tx_thread_sleep(10); //WT.EDIT 2026.01.04
 
         }
 		power_run_handler();
 		
 	
-        tx_thread_sleep(50);//60
+        tx_thread_sleep(10);//60
    
   }
 
@@ -134,7 +134,7 @@ static void vTaskKeyPro(ULONG thread_input)
 	           // gpro_t.gTimer_mode_key_long = 0;
 
 			    SendData_Set_Command(0x05,0x01); // link wifi of command .
-	            tx_thread_sleep(100);
+	            tx_thread_sleep(10);
 	           // gpro_t.gTimer_mode_key_long=0;
 				gl_ref.key_power_flag = 0;
 		   }
@@ -155,7 +155,7 @@ static void vTaskKeyPro(ULONG thread_input)
          
                 mode_key_long_fun();
                 SendData_Buzzer();
-				tx_thread_sleep(100);
+				tx_thread_sleep(5);
            }
           }
 
@@ -180,7 +180,7 @@ static void vTaskKeyPro(ULONG thread_input)
 
     }
 
-	tx_thread_sleep(20);
+	tx_thread_sleep(10);
      
 
   }
@@ -373,7 +373,7 @@ static void power_run_handler(void)
 		    if(gpro_t.again_confirm_power_off_flag == 1 && counter > 40 ){
 				counter =0;
 				SendData_Set_Command(0x10,0); //mainboard.WT.EDIT 2026.01.04
-                tx_thread_sleep(100); //WT.EDIT 2026.01.04
+                tx_thread_sleep(10); //WT.EDIT 2026.01.04
 			   // gpro_t.again_confirm_power_off_flag++;
 
 		    }
@@ -382,7 +382,7 @@ static void power_run_handler(void)
 
 			    gpro_t.again_confirm_power_off_flag++;
 			    SendData_Set_Command(0x12,1); //turn off fun .mainboard.WT.EDIT 2026.01.04
-			    tx_thread_sleep(100); //WT.EDIT 2026.01.04
+			    tx_thread_sleep(10); //WT.EDIT 2026.01.04
 
 
 			}
@@ -390,7 +390,7 @@ static void power_run_handler(void)
 			if(gpro_t.gTimer_send_data_counter > 1){ //new version 
 			 	 gpro_t.gTimer_send_data_counter =0;
 				 SendData_Set_Command(0xF0,0x02);//software version is "2"
-				 tx_thread_sleep(50);
+				 tx_thread_sleep(10);
 
              }
 
@@ -400,10 +400,24 @@ static void power_run_handler(void)
      }
 }
 
+/*************************************************************************
+*
+*	Funtion Name:
+*	Function: 
+*	Input Ref: 
+*	Return Ref:
+*
+**************************************************************************/
 
 void semaphore_isr(void)
 {
    tx_event_flags_set(&commEventFlags,(1<<9),TX_OR);
+}
+
+
+void tx_application_stack_error_handler(TX_THREAD *thread_ptr)
+{
+  printf("stack overflow in thread:%s \n", thread_ptr->tx_thread_name );
 }
 
 

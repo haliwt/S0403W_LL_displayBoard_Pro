@@ -65,7 +65,7 @@ void power_on_handler(void)
 		 gpro_t.power_on_step =2;
 
 		 SendData_Set_Command(0x10,1); //mainboard.WT.EDIT 2026.01.04
-         tx_thread_sleep(100); //WT.EDIT 2026.01.04
+         tx_thread_sleep(10); //WT.EDIT 2026.01.04
 		
 		
 	  break;
@@ -542,7 +542,7 @@ void two_hours_recoder_fun(void)
 	  gpro_t.fan_run_one_minute=1;
 	  counter_send =0;
 	  SendData_Set_Command(0x19,0x01);
-	  tx_thread_sleep(30);
+	  tx_thread_sleep(10);
 	  
 
   }
@@ -552,9 +552,9 @@ void two_hours_recoder_fun(void)
       gpro_t.stopTwoHours_flag=0;
 	  gpro_t.fan_run_one_minute=3;
       SendData_Set_Command(0x19,0x0);
-	  tx_thread_sleep(50);
+	  tx_thread_sleep(10);
 	  SendData_Set_Command(0x18,0x0);//fan run .
-	  tx_thread_sleep(50);
+	  tx_thread_sleep(10);
 	    
 
   }
@@ -565,7 +565,7 @@ void two_hours_recoder_fun(void)
   if(gpro_t.fan_run_one_minute==1 && gpro_t.gTimer_counter_one_minute >59){
        gpro_t.fan_run_one_minute++;
        SendData_Set_Command(0x18,0x01);//fan stop run .
-	   tx_thread_sleep(50);
+	   tx_thread_sleep(10);
 
 
   }
@@ -573,17 +573,17 @@ void two_hours_recoder_fun(void)
 
         gpro_t.fan_run_one_minute++;
 		SendData_Set_Command(0x18,0x0);//fan run .
-		tx_thread_sleep(50);
+		tx_thread_sleep(10);
 
   }
   else if(gpro_t.stopTwoHours_flag==1 && counter_send >5 &&  gpro_t.fan_run_one_minute ==2){
 	  counter_send=0;
 
       SendData_Set_Command(0x19,0x01);
-	  tx_thread_sleep(50);
+	  tx_thread_sleep(10);
 	  if(gpro_t.fan_run_one_minute==2){
          SendData_Set_Command(0x18,0x01);//fan stop run .
-	     tx_thread_sleep(50);
+	     tx_thread_sleep(10);
 	  }
 
   }

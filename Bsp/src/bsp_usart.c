@@ -124,7 +124,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		    run_t.dry = open;
             run_t.ptc_on_off_flag = 0;
 			SendWifiData_Answer_Cmd(0x02,0x01); //close ptc 
-			tx_thread_sleep(30);
+			tx_thread_sleep(10);
 			
 			//Display_Kill_Dry_Ster_Icon();
 	        
@@ -134,7 +134,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 			run_t.dry = close;
 			run_t.ptc_on_off_flag = 1;
 			SendWifiData_Answer_Cmd(0x02,0x0); //close ptc 
-		    tx_thread_sleep(30);
+		    tx_thread_sleep(10);
 		
 			//Display_Kill_Dry_Ster_Icon();
 	        
@@ -147,7 +147,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 			 run_t.plasma = open;
 			 SendWifiData_Answer_Cmd(0x03,0x01); //close ptc 
-			 tx_thread_sleep(30);
+			 tx_thread_sleep(10);
 			 gpro_t.gTimer_copy_cmd_counter=0; 
 		     gpro_t.receive_copy_buff[3]=copy_null;
 			
@@ -158,7 +158,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		   
 				run_t.plasma = close;
 			    SendWifiData_Answer_Cmd(0x03,0x0); //close ptc 
-				tx_thread_sleep(30);
+				tx_thread_sleep(10);
 				 gpro_t.gTimer_copy_cmd_counter=0; 
 			     gpro_t.receive_copy_buff[3]=copy_null;
 				 //Display_Kill_Dry_Ster_Icon();
@@ -172,7 +172,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 	        run_t.ultrasonic = open;
 			SendWifiData_Answer_Cmd(0x04,0x01); //close ptc 
-			tx_thread_sleep(30);
+			tx_thread_sleep(10);
 			
 	    
 
@@ -182,7 +182,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		
 			run_t.ultrasonic = close;
 			SendWifiData_Answer_Cmd(0x04,0x0); //close ptc 
-			tx_thread_sleep(30);
+			tx_thread_sleep(10);
 			 gpro_t.gTimer_copy_cmd_counter=0; 
 		     gpro_t.receive_copy_buff[4]=copy_null;
 		
@@ -245,7 +245,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		run_t.dry =0;
 	
 		SendWifiData_Answer_Cmd(0x09,0x01);
-		tx_thread_sleep(100);
+		tx_thread_sleep(10);
 
 	}
 	else if(pddata[3] == 0x0){ //close 
@@ -403,7 +403,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 
 		 SendWifiData_Answer_Cmd(0x021,0x01);
-		 tx_thread_sleep(100);
+		 tx_thread_sleep(10);
 		
          
        
@@ -416,7 +416,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		run_t.power_on= power_off;
 	    Lcd_PowerOff_Fun();
 		SendWifiData_Answer_Cmd(0x021,0x0);
-		tx_thread_sleep(100);
+		tx_thread_sleep(10);
 		   
 	}
 
@@ -506,7 +506,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		
 			 
 			   display_digits(0x0F, 1);
-			    tx_thread_sleep(300);
+			    tx_thread_sleep(200);
 		       //display_digits(0xFF, 0);
 		 
 			   run_t.timer_timing_define_flag = timing_success;
@@ -531,7 +531,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 			   lcd_t.number8_high= 0;
 
                display_digits(0x0F, 1);
-			    tx_thread_sleep(300);
+			    tx_thread_sleep(200);
                run_t.timer_timing_define_flag = timing_not_definition;
 			   run_t.display_set_timer_or_works_time_mode=works_time;
 			   run_t.gTimer_again_switch_works = 0;
@@ -573,7 +573,7 @@ static void parse_copy_cmd_or_data_handler(uint8_t *pdata)
 		      run_t.power_on= power_on;
 			  gpro_t.power_on_off_rx_flag=2;
 			  SendData_Set_Command(0x10,1); //again turn power on ,mainboard.WT.EDIT 2026.01.04
-              tx_thread_sleep(100); //WT.EDIT 2026.01.04
+              tx_thread_sleep(10); //WT.EDIT 2026.01.04
 			   
 
 			}
