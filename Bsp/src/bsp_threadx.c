@@ -136,7 +136,7 @@ static void vTaskKeyPro(ULONG thread_input)
 	           // gpro_t.gTimer_mode_key_long = 0;
 
 			    SendData_Set_Command(0x05,0x01); // link wifi of command .
-	            tx_thread_sleep(10);
+	            tx_thread_sleep(5);
 	           // gpro_t.gTimer_mode_key_long=0;
 				gl_ref.key_power_flag = 0;
 		   }
@@ -286,10 +286,11 @@ static void key_handler(void)
                if(KEY_ADD_GetValue() == KEY_UP){
                   gl_ref.key_add_flag ++;
               
-                  
-                   SendData_Buzzer_Has_Ack();//SendData_Buzzer();
+                   SendData_Buzzer();//SendData_Buzzer_Has_Ack();//SendData_Buzzer();
                    tx_thread_sleep(5);
+                  
                    add_key_fun();
+			   
 				   
                 }
               
@@ -300,8 +301,8 @@ static void key_handler(void)
                 if(KEY_DEC_GetValue()==KEY_UP){
                     gl_ref.key_dec_flag ++;
                
-                   SendData_Buzzer_Has_Ack();//SendData_Buzzer();
-				   
+                   //SendData_Buzzer_Has_Ack();//SendData_Buzzer();
+				   SendData_Buzzer();
                    tx_thread_sleep(5);
    				    dec_key_fun();
 				  
