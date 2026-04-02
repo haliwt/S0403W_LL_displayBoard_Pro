@@ -69,9 +69,16 @@ static void vTaskDecoderPro(ULONG thread_input)
       decoder_handler();
    }
    #else 
-   tx_semaphore_get(&decoder_semaphore,TX_WAIT_FOREVER);
+   if(tx_semaphore_get(&decoder_semaphore,TX_WAIT_FOREVER)==TX_SUCCESS){
    counter ++ ;
-   decoder_handler();
+   if(gpro_t.decoder_flag ==1){
+   	
+      decoder_handler();
+	  gpro_t.decoder_flag =0;
+
+   	}
+
+   }
 
    #endif
 
