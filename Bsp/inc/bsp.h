@@ -16,11 +16,12 @@
 #include "bsp_lcd.h"
 #include "bsp_poweron.h"
 #include "bsp_fan.h"
-//#include "bsp_sendack.h"
+#include "bsp_threadx.h"
+
 #include "bsp_wifi.h"
 #include "bsp_lcd_app.h"
 #include "bsp_smg_blink.h"
-#include "bsp_freertos.h"
+
 #include "bsp_tm1723.h"
 #include "bsp_usart.h"
 #include "bsp_dmatx_usart.h"
@@ -30,20 +31,20 @@
 #include "gpio.h"
 #include "usart.h"
 
+#include "app_threadx.h"
 
 
 
-
-#define  USE_FreeRTOS      1
+#define  USE_FreeRTOS      0
 	
 #define Enable_EventRecorder    0
 
 #define DEBUG_FLAG    Enable_EventRecorder
 
 #if USE_FreeRTOS == 1
-	#include "FreeRTOS.h"
-    #include "task.h"
-    #include "cmsis_os.h"
+	//#include "FreeRTOS.h"
+   // #include "task.h"
+   // #include "cmsis_os.h"
 	#include "queue.h"
 	#define DISABLE_INT()    taskENTER_CRITICAL()
 	#define ENABLE_INT()     taskEXIT_CRITICAL()

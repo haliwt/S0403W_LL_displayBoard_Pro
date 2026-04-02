@@ -71,7 +71,7 @@ void mode_key_short_fun(void)
 			#if 0
 			 if(run_t.wifi_link_net_success == 1){
 				SendData_Set_Command(0x07,0x02); //AI command has buzzer sound .
-				vTaskDelay(100);
+				tx_thread_sleep(100);
 			 }
 			#endif 
 
@@ -88,7 +88,7 @@ void mode_key_short_fun(void)
 			#if 0
 			 if(run_t.wifi_link_net_success ==1){
     				SendData_Set_Command(0x07,0x01); //MODE_AI,BUR NO_BUZZER);
-					vTaskDelay(100);
+					tx_thread_sleep(100);
     		 		
     		 }
             #endif 

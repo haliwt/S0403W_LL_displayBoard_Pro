@@ -711,25 +711,25 @@ void vTaskDelete( TaskHandle_t xTaskToDelete ) PRIVILEGED_FUNCTION;
 
 /**
  * task. h
- * <pre>void vTaskDelay( const TickType_t xTicksToDelay );</pre>
+ * <pre>void tx_thread_sleep( const TickType_t xTicksToDelay );</pre>
  *
  * Delay a task for a given number of ticks.  The actual time that the
  * task remains blocked depends on the tick rate.  The constant
  * portTICK_PERIOD_MS can be used to calculate real time from the tick
  * rate - with the resolution of one tick period.
  *
- * INCLUDE_vTaskDelay must be defined as 1 for this function to be available.
+ * INCLUDE_tx_thread_sleep must be defined as 1 for this function to be available.
  * See the configuration section for more information.
  *
  *
- * vTaskDelay() specifies a time at which the task wishes to unblock relative to
- * the time at which vTaskDelay() is called.  For example, specifying a block
+ * tx_thread_sleep() specifies a time at which the task wishes to unblock relative to
+ * the time at which tx_thread_sleep() is called.  For example, specifying a block
  * period of 100 ticks will cause the task to unblock 100 ticks after
- * vTaskDelay() is called.  vTaskDelay() does not therefore provide a good method
+ * tx_thread_sleep() is called.  tx_thread_sleep() does not therefore provide a good method
  * of controlling the frequency of a periodic task as the path taken through the
  * code, as well as other task and interrupt activity, will effect the frequency
- * at which vTaskDelay() gets called and therefore the time at which the task
- * next executes.  See vTaskDelayUntil() for an alternative API function designed
+ * at which tx_thread_sleep() gets called and therefore the time at which the task
+ * next executes.  See tx_thread_sleepUntil() for an alternative API function designed
  * to facilitate fixed frequency execution.  It does this by specifying an
  * absolute time (rather than a relative time) at which the calling task should
  * unblock.
@@ -748,35 +748,35 @@ void vTaskDelete( TaskHandle_t xTaskToDelete ) PRIVILEGED_FUNCTION;
 	 {
 		 // Simply toggle the LED every 500ms, blocking between each toggle.
 		 vToggleLED();
-		 vTaskDelay( xDelay );
+		 tx_thread_sleep( xDelay );
 	 }
  }
 
- * \defgroup vTaskDelay vTaskDelay
+ * \defgroup tx_thread_sleep tx_thread_sleep
  * \ingroup TaskCtrl
  */
-void vTaskDelay( const TickType_t xTicksToDelay ) PRIVILEGED_FUNCTION;
+void tx_thread_sleep( const TickType_t xTicksToDelay ) PRIVILEGED_FUNCTION;
 
 /**
  * task. h
- * <pre>void vTaskDelayUntil( TickType_t *pxPreviousWakeTime, const TickType_t xTimeIncrement );</pre>
+ * <pre>void tx_thread_sleepUntil( TickType_t *pxPreviousWakeTime, const TickType_t xTimeIncrement );</pre>
  *
- * INCLUDE_vTaskDelayUntil must be defined as 1 for this function to be available.
+ * INCLUDE_tx_thread_sleepUntil must be defined as 1 for this function to be available.
  * See the configuration section for more information.
  *
  * Delay a task until a specified time.  This function can be used by periodic
  * tasks to ensure a constant execution frequency.
  *
- * This function differs from vTaskDelay () in one important aspect:  vTaskDelay () will
- * cause a task to block for the specified number of ticks from the time vTaskDelay () is
- * called.  It is therefore difficult to use vTaskDelay () by itself to generate a fixed
+ * This function differs from tx_thread_sleep () in one important aspect:  tx_thread_sleep () will
+ * cause a task to block for the specified number of ticks from the time tx_thread_sleep () is
+ * called.  It is therefore difficult to use tx_thread_sleep () by itself to generate a fixed
  * execution frequency as the time between a task starting to execute and that task
- * calling vTaskDelay () may not be fixed [the task may take a different path though the
+ * calling tx_thread_sleep () may not be fixed [the task may take a different path though the
  * code between calls, or may get interrupted or preempted a different number of times
  * each time it executes].
  *
- * Whereas vTaskDelay () specifies a wake time relative to the time at which the function
- * is called, vTaskDelayUntil () specifies the absolute (exact) time at which it wishes to
+ * Whereas tx_thread_sleep () specifies a wake time relative to the time at which the function
+ * is called, tx_thread_sleepUntil () specifies the absolute (exact) time at which it wishes to
  * unblock.
  *
  * The constant portTICK_PERIOD_MS can be used to calculate real time from the tick
@@ -785,10 +785,10 @@ void vTaskDelay( const TickType_t xTicksToDelay ) PRIVILEGED_FUNCTION;
  * @param pxPreviousWakeTime Pointer to a variable that holds the time at which the
  * task was last unblocked.  The variable must be initialised with the current time
  * prior to its first use (see the example below).  Following this the variable is
- * automatically updated within vTaskDelayUntil ().
+ * automatically updated within tx_thread_sleepUntil ().
  *
  * @param xTimeIncrement The cycle time period.  The task will be unblocked at
- * time *pxPreviousWakeTime + xTimeIncrement.  Calling vTaskDelayUntil with the
+ * time *pxPreviousWakeTime + xTimeIncrement.  Calling tx_thread_sleepUntil with the
  * same xTimeIncrement parameter value will cause the task to execute with
  * a fixed interface period.
  *
@@ -805,16 +805,16 @@ void vTaskDelay( const TickType_t xTicksToDelay ) PRIVILEGED_FUNCTION;
 	 for( ;; )
 	 {
 		 // Wait for the next cycle.
-		 vTaskDelayUntil( &xLastWakeTime, xFrequency );
+		 tx_thread_sleepUntil( &xLastWakeTime, xFrequency );
 
 		 // Perform action here.
 	 }
  }
    </pre>
- * \defgroup vTaskDelayUntil vTaskDelayUntil
+ * \defgroup tx_thread_sleepUntil tx_thread_sleepUntil
  * \ingroup TaskCtrl
  */
-void vTaskDelayUntil( TickType_t * const pxPreviousWakeTime, const TickType_t xTimeIncrement ) PRIVILEGED_FUNCTION;
+void tx_thread_sleepUntil( TickType_t * const pxPreviousWakeTime, const TickType_t xTimeIncrement ) PRIVILEGED_FUNCTION;
 
 /**
  * task. h
@@ -825,7 +825,7 @@ void vTaskDelayUntil( TickType_t * const pxPreviousWakeTime, const TickType_t xT
  *
  * A task will enter the Blocked state when it is waiting for an event.  The
  * event it is waiting for can be a temporal event (waiting for a time), such
- * as when vTaskDelay() is called, or an event on an object, such as when
+ * as when tx_thread_sleep() is called, or an event on an object, such as when
  * xQueueReceive() or ulTaskNotifyTake() is called.  If the handle of a task
  * that is in the Blocked state is used in a call to xTaskAbortDelay() then the
  * task will leave the Blocked state, and return from whichever function call
@@ -1247,7 +1247,7 @@ void vTaskEndScheduler( void ) PRIVILEGED_FUNCTION;
  * made.
  *
  * API functions that have the potential to cause a context switch (for example,
- * vTaskDelayUntil(), xQueueSend(), etc.) must not be called while the scheduler
+ * tx_thread_sleepUntil(), xQueueSend(), etc.) must not be called while the scheduler
  * is suspended.
  *
  * Example usage:

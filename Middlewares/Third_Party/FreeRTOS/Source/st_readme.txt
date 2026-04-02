@@ -271,7 +271,7 @@
   where XXX refers to the compiler used.
 
   + It also provides implementation of osSignal management APIs, osSignalSet() and osSignalWait(),
-  fixes osMassage queue size, osMailQDef macro and osDelayUntil parameters.
+  fixes osMassage queue size, osMailQDef macro and tx_thread_sleepUntil parameters.
 
   + In this release an alignment has been done in ARM_CM4 and ARM_CM3 port.c versus ARM_CM0 port.c
   regarding the use of macros configPRE_SLEEP_PROCESSING and configPOST_SLEEP_PROCESSING, these tow macros
@@ -280,7 +280,7 @@
   + cmsis_os.c
     - Add implementation of osSignalSet() and osSignalWait() APIs
     - Fix massage queue size in osMessageCreate API
-    - osDelayUntil: parameter PreviousWakeTime is now passed as a pointer.
+    - tx_thread_sleepUntil: parameter PreviousWakeTime is now passed as a pointer.
     - Enabling Mail queue management APIs (temporary removed in previous version).
     - Function "osThreadGetPriority" uses now uxTaskPriorityGetFromISR if called from an interrupt handler, if not use uxTaskPriorityGet.
 

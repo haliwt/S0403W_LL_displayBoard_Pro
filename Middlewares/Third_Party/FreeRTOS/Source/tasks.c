@@ -1252,9 +1252,9 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB )
 #endif /* INCLUDE_vTaskDelete */
 /*-----------------------------------------------------------*/
 
-#if ( INCLUDE_vTaskDelayUntil == 1 )
+#if ( INCLUDE_tx_thread_sleepUntil == 1 )
 
-	void vTaskDelayUntil( TickType_t * const pxPreviousWakeTime, const TickType_t xTimeIncrement )
+	void tx_thread_sleepUntil( TickType_t * const pxPreviousWakeTime, const TickType_t xTimeIncrement )
 	{
 	TickType_t xTimeToWake;
 	BaseType_t xAlreadyYielded, xShouldDelay = pdFALSE;
@@ -1333,12 +1333,12 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB )
 		}
 	}
 
-#endif /* INCLUDE_vTaskDelayUntil */
+#endif /* INCLUDE_tx_thread_sleepUntil */
 /*-----------------------------------------------------------*/
 
-#if ( INCLUDE_vTaskDelay == 1 )
+#if ( INCLUDE_tx_thread_sleep == 1 )
 
-	void vTaskDelay( const TickType_t xTicksToDelay )
+	void tx_thread_sleep( const TickType_t xTicksToDelay )
 	{
 	BaseType_t xAlreadyYielded = pdFALSE;
 
@@ -1378,7 +1378,7 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB )
 		}
 	}
 
-#endif /* INCLUDE_vTaskDelay */
+#endif /* INCLUDE_tx_thread_sleep */
 /*-----------------------------------------------------------*/
 
 #if( ( INCLUDE_eTaskGetState == 1 ) || ( configUSE_TRACE_FACILITY == 1 ) || ( INCLUDE_xTaskAbortDelay == 1 ) )

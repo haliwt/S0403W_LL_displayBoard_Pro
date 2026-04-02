@@ -41,7 +41,6 @@ extern "C" {
 #include "stm32g0xx_ll_usart.h"
 #include "stm32g0xx_ll_gpio.h"
 
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -97,6 +96,7 @@ void Error_Handler(void);
 
 #define BACK_LIGHT_Pin 								LL_GPIO_PIN_9
 #define BACK_LIGHT_GPIO_Port 						GPIOB
+
 
 /* USER CODE BEGIN Private defines */
 

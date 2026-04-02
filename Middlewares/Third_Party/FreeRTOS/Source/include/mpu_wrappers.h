@@ -51,8 +51,8 @@ only for ports that are using the MPU. */
 		#define xTaskCreateRestricted					MPU_xTaskCreateRestricted
 		#define vTaskAllocateMPURegions					MPU_vTaskAllocateMPURegions
 		#define vTaskDelete								MPU_vTaskDelete
-		#define vTaskDelay								MPU_vTaskDelay
-		#define vTaskDelayUntil							MPU_vTaskDelayUntil
+		#define tx_thread_sleep								MPU_tx_thread_sleep
+		#define tx_thread_sleepUntil							MPU_tx_thread_sleepUntil
 		#define xTaskAbortDelay							MPU_xTaskAbortDelay
 		#define uxTaskPriorityGet						MPU_uxTaskPriorityGet
 		#define eTaskGetState							MPU_eTaskGetState

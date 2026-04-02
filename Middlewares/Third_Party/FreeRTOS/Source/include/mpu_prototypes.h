@@ -44,8 +44,8 @@ BaseType_t MPU_xTaskCreateRestricted( const TaskParameters_t * const pxTaskDefin
 BaseType_t MPU_xTaskCreateRestrictedStatic( const TaskParameters_t * const pxTaskDefinition, TaskHandle_t *pxCreatedTask ) FREERTOS_SYSTEM_CALL;
 void MPU_vTaskAllocateMPURegions( TaskHandle_t xTask, const MemoryRegion_t * const pxRegions ) FREERTOS_SYSTEM_CALL;
 void MPU_vTaskDelete( TaskHandle_t xTaskToDelete ) FREERTOS_SYSTEM_CALL;
-void MPU_vTaskDelay( const TickType_t xTicksToDelay ) FREERTOS_SYSTEM_CALL;
-void MPU_vTaskDelayUntil( TickType_t * const pxPreviousWakeTime, const TickType_t xTimeIncrement ) FREERTOS_SYSTEM_CALL;
+void MPU_tx_thread_sleep( const TickType_t xTicksToDelay ) FREERTOS_SYSTEM_CALL;
+void MPU_tx_thread_sleepUntil( TickType_t * const pxPreviousWakeTime, const TickType_t xTimeIncrement ) FREERTOS_SYSTEM_CALL;
 BaseType_t MPU_xTaskAbortDelay( TaskHandle_t xTask ) FREERTOS_SYSTEM_CALL;
 UBaseType_t MPU_uxTaskPriorityGet( const TaskHandle_t xTask ) FREERTOS_SYSTEM_CALL;
 eTaskState MPU_eTaskGetState( TaskHandle_t xTask ) FREERTOS_SYSTEM_CALL;

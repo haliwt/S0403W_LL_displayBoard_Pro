@@ -124,12 +124,12 @@ extern "C" {
 	#define INCLUDE_vTaskSuspend 0
 #endif
 
-#ifndef INCLUDE_vTaskDelayUntil
-	#define INCLUDE_vTaskDelayUntil 0
+#ifndef INCLUDE_tx_thread_sleepUntil
+	#define INCLUDE_tx_thread_sleepUntil 0
 #endif
 
-#ifndef INCLUDE_vTaskDelay
-	#define INCLUDE_vTaskDelay 0
+#ifndef INCLUDE_tx_thread_sleep
+	#define INCLUDE_tx_thread_sleep 0
 #endif
 
 #ifndef INCLUDE_xTaskGetIdleTaskHandle

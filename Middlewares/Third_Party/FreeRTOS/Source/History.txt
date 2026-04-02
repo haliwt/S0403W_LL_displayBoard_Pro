@@ -2314,9 +2314,9 @@ Changes between V2.6.0 and V2.6.1 - Released Feb 22, 2005
 
 Changes between V2.5.5 and V2.6.0 - Released January 16, 2005
 
-	+ Added the API function vTaskDelayUntil().  The demo app file
+	+ Added the API function tx_thread_sleepUntil().  The demo app file
 	  Demo/Common/Minimal/flash.c has been updated to demonstrate its use.
-	+ Added INCLUDE_vTaskDelay conditional compilation.
+	+ Added INCLUDE_tx_thread_sleep conditional compilation.
 	+ Changed the name of the Demo/ARM7_AtmelSAM7S64_IAR directory to
 	  Demo/ARM7_AT91SAM7S64_IAR for consistency.
 	+ Modified the AT91SAM7S USB driver to allow descriptors that have

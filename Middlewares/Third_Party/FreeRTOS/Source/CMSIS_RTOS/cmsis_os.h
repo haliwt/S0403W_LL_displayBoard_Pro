@@ -475,7 +475,7 @@ osPriority osThreadGetPriority (osThreadId thread_id);
 /// Wait for Timeout (Time Delay).
 /// \param[in]     millisec      time delay value
 /// \return status code that indicates the execution status of the function.
-osStatus osDelay (uint32_t millisec);
+osStatus tx_thread_sleep (uint32_t millisec);
 
 #if (defined (osFeature_Wait)  &&  (osFeature_Wait != 0))     // Generic Wait available
 
@@ -943,7 +943,7 @@ osStatus osThreadResumeAll (void);
 * @param   millisec    time delay value
 * @retval  status code that indicates the execution status of the function.
 */
-osStatus osDelayUntil (uint32_t *PreviousWakeTime, uint32_t millisec);
+osStatus tx_thread_sleepUntil (uint32_t *PreviousWakeTime, uint32_t millisec);
 
 /**
 * @brief   Abort the delay for a specific thread

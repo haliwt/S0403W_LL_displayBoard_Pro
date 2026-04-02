@@ -319,12 +319,12 @@ osPriority osThreadGetPriority (osThreadId thread_id)
 * @param   millisec      time delay value
 * @retval  status code that indicates the execution status of the function.
 */
-osStatus osDelay (uint32_t millisec)
+osStatus tx_thread_sleep (uint32_t millisec)
 {
-#if INCLUDE_vTaskDelay
+#if INCLUDE_tx_thread_sleep
   TickType_t ticks = millisec / portTICK_PERIOD_MS;
   
-  vTaskDelay(ticks ? ticks : 1);          /* Minimum delay = 1 tick */
+  tx_thread_sleep(ticks ? ticks : 1);          /* Minimum delay = 1 tick */
   
   return osOK;
 #else
@@ -1497,11 +1497,11 @@ osStatus osThreadResumeAll (void)
 * @param   millisec    time delay value
 * @retval  status code that indicates the execution status of the function.
 */
-osStatus osDelayUntil (uint32_t *PreviousWakeTime, uint32_t millisec)
+osStatus tx_thread_sleepUntil (uint32_t *PreviousWakeTime, uint32_t millisec)
 {
-#if INCLUDE_vTaskDelayUntil
+#if INCLUDE_tx_thread_sleepUntil
   TickType_t ticks = (millisec / portTICK_PERIOD_MS);
-  vTaskDelayUntil((TickType_t *) PreviousWakeTime, ticks ? ticks : 1);
+  tx_thread_sleepUntil((TickType_t *) PreviousWakeTime, ticks ? ticks : 1);
   
   return osOK;
 #else

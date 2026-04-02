@@ -44,12 +44,12 @@ void disp_timer_run_times(void)
 				 gpro_t.gTimer_power_off_on_minute_fan=0;
                  run_t.power_on= power_off;
                  SendData_PowerOnOff(0); //send power off cmd to mainboard.WT.EDIT 2024.11.17
-                 vTaskDelay(pdMS_TO_TICKS(100)); //WT.EDIT 2026.01.04
+                 tx_thread_sleep(100); //WT.EDIT 2026.01.04
                 
 		         Power_Off_Fun();
 				 
 				 SendData_Set_Command(0x10,0); //mainboard.WT.EDIT 2026.01.04
-                 vTaskDelay(pdMS_TO_TICKS(100)); //WT.EDIT 2026.01.04
+                 tx_thread_sleep(100); //WT.EDIT 2026.01.04
 				 
 			
 				}
@@ -66,7 +66,7 @@ void disp_timer_run_times(void)
                 }
               }
            sendCmdNote_to_threeData(0x6B,run_t.timer_time_hours,run_t.timer_time_minutes,run_t.gTimer_timing) ;
-		   vTaskDelay(100);
+		   tx_thread_sleep(100);
      }
      }
      else if(run_t.timer_timing_define_flag == timing_not_definition){ 
@@ -118,7 +118,7 @@ void Setup_Timer_Times_Donot_Display(void)
 	
 
 				SendData_PowerOnOff(0); //send power off cmd to mainboard.WT.EDIT 2024.11.17
-				osDelay(5);
+				tx_thread_sleep(5);
 				
            
 				Power_Off_Fun();
@@ -142,7 +142,7 @@ void Setup_Timer_Times_Donot_Display(void)
                 }
               }
         sendCmdNote_to_threeData(0x6B,run_t.timer_time_hours,run_t.timer_time_minutes,run_t.gTimer_timing) ;
-		vTaskDelay(100);
+		tx_thread_sleep(100);
 	  }
        
     }

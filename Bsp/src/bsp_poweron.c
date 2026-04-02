@@ -65,7 +65,7 @@ void power_on_handler(void)
 		 gpro_t.power_on_step =2;
 
 		 SendData_Set_Command(0x10,1); //mainboard.WT.EDIT 2026.01.04
-         vTaskDelay(pdMS_TO_TICKS(100)); //WT.EDIT 2026.01.04
+         tx_thread_sleep(100); //WT.EDIT 2026.01.04
 		
 		
 	  break;
@@ -105,12 +105,12 @@ void power_on_handler(void)
 		    
 		     if(send_two_disp % 2 ==0){
 			  SendData_Set_Command(0xF0,0x02);//software version is "2"
-			  vTaskDelay(100);
+			  tx_thread_sleep(100);
 
 			 }
 			 else{
 			 	SendData_Set_Command(0x11,0x01);
-			 	vTaskDelay(100);
+			 	tx_thread_sleep(100);
 			 }
 
 			  version  ++;
@@ -125,12 +125,12 @@ void power_on_handler(void)
 			 version =version ^ 0x01;
 		     if(version ==1){
 			 SendData_Set_Command(0xF0,0x02);//software version is "2"
-			  vTaskDelay(100);
+			  tx_thread_sleep(100);
 
 			 }
 			 else{
 			 SendData_Set_Command(0x11,0x01);
-			 vTaskDelay(100);
+			 tx_thread_sleep(100);
 			 }
 
 		 }
@@ -257,7 +257,7 @@ void power_on_off_handler(void)
       //  run_t.power_on= power_on;
         gpro_t.power_on_off_rx_flag = 1;
         SendData_PowerOnOff(1);
-		vTaskDelay(100);
+		tx_thread_sleep(100);
 
 	    gpro_t.gTimer_power_off_on_minute_fan =0;
 		gpro_t.power_on_step =0;
@@ -271,7 +271,7 @@ void power_on_off_handler(void)
 		gpro_t.again_confirm_power_off_flag = 1;
 		gpro_t.gTimer_power_off_on_minute_fan=0;
         SendData_PowerOnOff(0);
-	    vTaskDelay(100);
+	    tx_thread_sleep(100);
       
  
 
@@ -542,7 +542,7 @@ void two_hours_recoder_fun(void)
 	  gpro_t.fan_run_one_minute=1;
 	  counter_send =0;
 	  SendData_Set_Command(0x19,0x01);
-	  vTaskDelay(30);
+	  tx_thread_sleep(30);
 	  
 
   }
@@ -552,9 +552,9 @@ void two_hours_recoder_fun(void)
       gpro_t.stopTwoHours_flag=0;
 	  gpro_t.fan_run_one_minute=3;
       SendData_Set_Command(0x19,0x0);
-	  vTaskDelay(50);
+	  tx_thread_sleep(50);
 	  SendData_Set_Command(0x18,0x0);//fan run .
-	  vTaskDelay(50);
+	  tx_thread_sleep(50);
 	    
 
   }
@@ -565,7 +565,7 @@ void two_hours_recoder_fun(void)
   if(gpro_t.fan_run_one_minute==1 && gpro_t.gTimer_counter_one_minute >59){
        gpro_t.fan_run_one_minute++;
        SendData_Set_Command(0x18,0x01);//fan stop run .
-	   vTaskDelay(50);
+	   tx_thread_sleep(50);
 
 
   }
@@ -573,17 +573,17 @@ void two_hours_recoder_fun(void)
 
         gpro_t.fan_run_one_minute++;
 		SendData_Set_Command(0x18,0x0);//fan run .
-		vTaskDelay(50);
+		tx_thread_sleep(50);
 
   }
   else if(gpro_t.stopTwoHours_flag==1 && counter_send >5 &&  gpro_t.fan_run_one_minute ==2){
 	  counter_send=0;
 
       SendData_Set_Command(0x19,0x01);
-	  vTaskDelay(50);
+	  tx_thread_sleep(50);
 	  if(gpro_t.fan_run_one_minute==2){
          SendData_Set_Command(0x18,0x01);//fan stop run .
-	     vTaskDelay(50);
+	     tx_thread_sleep(50);
 	  }
 
   }
