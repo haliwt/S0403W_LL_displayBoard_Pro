@@ -151,7 +151,7 @@ void power_on_handler(void)
 	 break;
 
 	 case 7:
-	 if(gpro_t.smart_phone_app_timer_power_on_flag ==1 && run_t.gTimer_ptc_fan_warning >5){
+	 if(gpro_t.smart_phone_app_timer_power_on_flag ==1 && run_t.gTimer_ptc_fan_warning >6){
 	  gpro_t.smart_phone_app_timer_power_on_flag=0;
 
 
