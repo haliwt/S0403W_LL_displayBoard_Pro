@@ -65,7 +65,7 @@ void power_on_handler(void)
 		 gpro_t.power_on_step =2;
 
 		 SendData_Set_Command(0x10,1); //mainboard.WT.EDIT 2026.01.04
-         tx_thread_sleep(10); //WT.EDIT 2026.01.04
+         tx_thread_sleep(5); //WT.EDIT 2026.01.04
 		
 		
 	  break;
@@ -105,12 +105,12 @@ void power_on_handler(void)
 		    
 		     if(send_two_disp % 2 ==0){
 			  SendData_Set_Command(0xF0,0x02);//software version is "2"
-			  tx_thread_sleep(100);
+			  tx_thread_sleep(5);
 
 			 }
 			 else{
 			 	SendData_Set_Command(0x11,0x01);
-			 	tx_thread_sleep(100);
+			 	tx_thread_sleep(5);
 			 }
 
 			  version  ++;

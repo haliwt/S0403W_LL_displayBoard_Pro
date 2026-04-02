@@ -92,13 +92,13 @@ static void vTaskMsgPro(ULONG thread_input)
 		if(gpro_t.power_on_off_rx_flag ==1 && gpro_t.gTimer_power_off_on_minute_fan >1){
 			    gpro_t.gTimer_power_off_on_minute_fan =0;
 		     	SendData_Set_Command(0x10,1); //mainboard.WT.EDIT 2026.01.04
-                tx_thread_sleep(10); //WT.EDIT 2026.01.04
+                tx_thread_sleep(5); //WT.EDIT 2026.01.04
 
         }
 		power_run_handler();
 		
 	
-        tx_thread_sleep(10);//60
+        tx_thread_sleep(20);//60
    
   }
 
@@ -180,7 +180,7 @@ static void vTaskKeyPro(ULONG thread_input)
 
     }
 
-	tx_thread_sleep(10);
+	tx_thread_sleep(20);
      
 
   }
@@ -299,7 +299,7 @@ static void key_handler(void)
                
                    SendData_Buzzer_Has_Ack();//SendData_Buzzer();
 				   
-                   tx_thread_sleep(100);
+                   tx_thread_sleep(5);
    				    dec_key_fun();
 				  
 				   

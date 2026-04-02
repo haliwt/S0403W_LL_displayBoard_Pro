@@ -148,7 +148,7 @@ void display_timer_and_beijing_time_handler(void)
 		   run_t.gTimer_timing =0;
            gpro_t.add_dec_key_be_pressed  =0;
            sendCmdNote_to_Data(0x2B,run_t.timer_time_hours);
-			tx_thread_sleep(100);
+			tx_thread_sleep(5);
 		
 
 		}
