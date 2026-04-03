@@ -534,7 +534,8 @@ void direct_comparison_temp(void)
 
 	   run_t.dry = 1;
 		SendData_Set_Command(0x22,0x01); //open ptc 
-	    tx_thread_sleep(5);
+	    tx_thread_sleep(100);
+	    // while(!gpro_t.uart1_tx_done);
 			    
 	  }
 
