@@ -18,6 +18,7 @@ static void vTaskDecoderPro(ULONG thread_input);
 
 //TX_EVENT_FLAGS_GROUP   commEventFlags;
 TX_SEMAPHORE      decoder_semaphore;
+//TX_SEMAPHORE      uart1_tx_semaphore;
 
 static void key_handler(void);
 
@@ -139,12 +140,12 @@ static void vTaskKeyPro(ULONG thread_input)
         if(gl_ref.long_key_power_counter < 150 && run_t.power_on== power_on ){//65
             gl_ref.long_key_power_counter++;
 
-		    if(gl_ref.long_key_power_counter > 12){
+		    if(gl_ref.long_key_power_counter > 85){
 	            gl_ref.long_key_power_counter =200;
 	            gl_ref.key_long_power_flag =1;
 
 			    SendData_Set_Command(0x05,0x01); // link wifi of command .
-	            tx_thread_sleep(5);
+	            tx_thread_sleep(30);
 				gl_ref.key_power_flag = 0;
 		   }
 	      }
@@ -160,11 +161,11 @@ static void vTaskKeyPro(ULONG thread_input)
          if(run_t.ptc_warning ==0 && run_t.fan_warning ==0 && gl_ref.long_key_mode_counter < 150){
 	        gl_ref.long_key_mode_counter ++ ;
 
-          if(gl_ref.long_key_mode_counter > 12 ){
+          if(gl_ref.long_key_mode_counter > 75){
              gl_ref.long_key_mode_counter=200;   
          
                 SendData_Buzzer();
-				tx_thread_sleep(5);
+				tx_thread_sleep(30);
 				mode_key_long_fun();
            }
           }
@@ -199,6 +200,7 @@ void app_threadx_handler(void)
 
   //tx_event_flags_create(&commEventFlags,"commEventFlags");
   tx_semaphore_create(&decoder_semaphore,"decoderSemaphore",0);
+  //tx_semaphore_create(&uart1_tx_semaphore,"uart1Semaphore",0);
 
   tx_thread_create(&thread_decoder,
   					"DecoderPro",
@@ -272,7 +274,7 @@ static void key_handler(void)
 		gl_ref.long_key_power_counter=0;
 		gl_ref.key_mode_short_flag =1;
 		SendData_Buzzer();
-		tx_thread_sleep(5);
+		tx_thread_sleep(30);
 
 
 	}
@@ -280,7 +282,7 @@ static void key_handler(void)
 
 		gl_ref.key_add_flag ++;
 		SendData_Buzzer();//SendData_Buzzer_Has_Ack();//SendData_Buzzer();
-		tx_thread_sleep(5);
+		tx_thread_sleep(30);
 
 		add_key_fun();
 
@@ -292,7 +294,7 @@ static void key_handler(void)
 
 		//SendData_Buzzer_Has_Ack();//SendData_Buzzer();
 		SendData_Buzzer();
-		tx_thread_sleep(5);
+		tx_thread_sleep(30);
 		dec_key_fun();
 
 	}
@@ -363,7 +365,7 @@ static void power_run_handler(void)
 		    if(gpro_t.again_confirm_power_off_flag == 1 && counter > 40 ){
 				counter =0;
 				SendData_Set_Command(0x10,0); //mainboard.WT.EDIT 2026.01.04
-                tx_thread_sleep(5); //WT.EDIT 2026.01.04
+                tx_thread_sleep(50); //WT.EDIT 2026.01.04
 			   // gpro_t.again_confirm_power_off_flag++;
 
 		    }
@@ -372,7 +374,7 @@ static void power_run_handler(void)
 
 			    gpro_t.again_confirm_power_off_flag++;
 			    SendData_Set_Command(0x12,1); //turn off fun .mainboard.WT.EDIT 2026.01.04
-			    tx_thread_sleep(5); //WT.EDIT 2026.01.04
+			    tx_thread_sleep(50); //WT.EDIT 2026.01.04
 
 
 			}
@@ -380,7 +382,7 @@ static void power_run_handler(void)
 			if(gpro_t.gTimer_send_data_counter > 1){ //new version 
 			 	 gpro_t.gTimer_send_data_counter =0;
 				 SendData_Set_Command(0xF0,0x02);//software version is "2"
-				 tx_thread_sleep(5);
+				 tx_thread_sleep(50);
 
              }
 
@@ -411,5 +413,25 @@ void tx_application_stack_error_handler(TX_THREAD *thread_ptr)
   printf("stack overflow in thread:%s \n", thread_ptr->tx_thread_name );
 }
 
+#if 0
+void uart1_tx_put(void)
+{
+	tx_semaphore_put(&uart1_tx_semaphore);
+}
 
 
+void uart1_tx_get_clear(void)
+{
+    
+	while(tx_semaphore_get(&uart1_tx_semaphore,TX_NO_WAIT)==TX_SUCCESS){
+
+	}
+}
+
+
+void uart1_tx_get(void)
+{
+
+  tx_semaphore_get(&uart1_tx_semaphore,TX_WAIT_FOREVER);
+}
+#endif 

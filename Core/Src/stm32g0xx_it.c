@@ -141,7 +141,8 @@ void DMA1_Channel2_3_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Channel2_3_IRQn 0 */
     if(LL_DMA_IsActiveFlag_TC2(DMA1)){ //transfer complete -TC
          LL_DMA_ClearFlag_TC2(DMA1);
-		// gpro_t.decoder_flag =1;
+		 gpro_t.uart1_tx_done = 1;
+		 
     }
 
     if(LL_DMA_IsActiveFlag_TE2(DMA1)){ //transfer Error Flag,TE)

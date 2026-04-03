@@ -14,6 +14,7 @@ static void ptc_high_temp_warning_fun(void);
 static void power_on_init_disp_time_numbers(void);
 
 
+static void send_ptc_command(uint8_t on_off);
 
 
 void bsp_init(void)
@@ -321,13 +322,83 @@ void display_not_ai_timer_mode(void)
 *****************************************************************************************************/
 void set_temperature_compare_value_fun(void)
 {
-    static uint8_t ptc_on_flag ,ptc_off_flag;
+    static uint8_t counter;
 
-    if(run_t.fan_warning ==1 || run_t.ptc_warning ==1)return ;
+    if(run_t.fan_warning ==1 || run_t.ptc_warning ==1 || gpro_t.stopTwoHours_flag==1)return ;
 
 	if(gpro_t.temp_real_value > 60)return ; //WT.EDIT 2026.01.19
-   
 
+	if(gpro_t.set_temp_value_success==0 && gpro_t.temp_key_set_value ==0){
+       if(gpro_t.temp_real_value >= 40){
+            run_t.dry = 0;
+		   send_ptc_command(0);
+	   }
+	   else if(gpro_t.temp_real_value <=38){
+
+	       run_t.dry = 1;
+		   counter++;
+	       if(counter > 5){
+		   	  counter =0;
+		     send_ptc_command(1);
+	       }
+
+	   }
+	   else{
+	      run_t.dry =1; //38~39 degree is turn off PTC
+	       if(counter > 5){
+		   	  counter =0;
+		     send_ptc_command(1);
+	       }
+
+	   }
+
+
+	}
+    else if(gpro_t.set_temp_value_success==1 && gpro_t.temp_key_set_value ==0){
+
+         if(gpro_t.first_set_ptc_on==0){
+           if(run_t.wifi_set_temperature > gpro_t.temp_real_value){
+                run_t.dry = 1;
+				  counter++;
+	           if(counter > 5){
+		   	      counter =0;
+		          send_ptc_command(1);
+	           	}
+		        gpro_t.first_set_ptc_on = 1;
+
+		   }
+		   else{
+		       run_t.dry = 0;
+			   send_ptc_command(0);
+
+		   }
+         }
+		 else{
+		     if((run_t.wifi_set_temperature -2 ) > gpro_t.temp_real_value){
+
+                 run_t.dry = 1;
+				counter++;
+	            if(counter > 5){
+		   	      counter =0;
+		           send_ptc_command(1);
+		         }
+		     }
+			 else{
+			     run_t.dry = 0;
+				 send_ptc_command(0);
+
+
+			 }
+
+		 }
+
+
+
+	}
+}
+	
+   
+#if 0
 	// display_dry_temp_fun();//WT.EDIT 2026.0117
 
     switch(gpro_t.set_temp_value_success){
@@ -424,6 +495,21 @@ void set_temperature_compare_value_fun(void)
        }
 	break;
 	}
+#endif 
+
+
+/**
+*@brief 
+*@notice
+*@param 
+**/
+static void send_ptc_command(uint8_t on_off)
+{
+  SendData_Set_Command(0x22,on_off); //open ptc  
+
+  while(!gpro_t.uart1_tx_done);
+  //uart1_tx_get();
+
 }
 
 /**
@@ -442,7 +528,7 @@ void direct_comparison_temp(void)
                run_t.dry = 0;
 			 
 			   SendData_Set_Command(0x22,0x00); //close ptc 
-	           tx_thread_sleep(5);
+	           while(!gpro_t.uart1_tx_done);
     }
     else{
 
