@@ -101,7 +101,7 @@ void SendData_Set_Command(uint8_t cmd,uint8_t data)
 	outputBuf[5]=0xFE; // frame of end code -> 0xFE.
     outputBuf[6] = bcc_check(outputBuf,6);
     transferSize=7;
-	gpro_t.uart1_tx_done =0;
+
 	
 	usart1_dma_send(outputBuf,transferSize);
 		// if(transferSize)
