@@ -2,7 +2,7 @@
 
 #define STACK_SIZE_ONE    1024 
 #define STACK_SIZE_TWO    512
-#define STACK_SIZE_THREE  512
+#define STACK_SIZE_THREE  640
 
 static TX_THREAD  thread_msg;
 static TX_THREAD  thread_key;
@@ -70,13 +70,13 @@ static void vTaskDecoderPro(ULONG thread_input)
    }
    #else 
    if(tx_semaphore_get(&decoder_semaphore,TX_WAIT_FOREVER)==TX_SUCCESS){
-   counter ++ ;
-   if(gpro_t.decoder_flag ==1){
-   	
-      decoder_handler();
-	  gpro_t.decoder_flag =0;
+	   counter ++ ;
+	  // if(gpro_t.decoder_flag ==1){
+	   	
+	      decoder_handler();
+		//  gpro_t.decoder_flag =0;
 
-   	}
+	   ///	}
 
    }
 
