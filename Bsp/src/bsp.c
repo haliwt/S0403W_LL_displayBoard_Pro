@@ -2,6 +2,19 @@
 
 process_state gpro_t;
 
+#define DEFAULT_TEMP    40 
+
+typedef enum{
+
+  PTC_STATE_OFF = 0,
+  PTC_STATE_ON  = 1
+}PTC_State;
+
+static PTC_State ptc_state = PTC_STATE_OFF ;
+
+
+
+
 
 //static void  disp_set_timer_timing_value_fun(void);
 
@@ -324,15 +337,86 @@ void set_temperature_compare_value_fun(void)
 {
     static uint8_t counter;
 
-    if(run_t.fan_warning ==1 || run_t.ptc_warning ==1 || gpro_t.stopTwoHours_flag==1)return ;
+    if(run_t.fan_warning ==1 || run_t.ptc_warning ==1 || gpro_t.stopTwoHours_flag==1 || run_t.ptc_on_off_flag == 1)return ;
 
 	if(gpro_t.temp_real_value > 60)return ; //WT.EDIT 2026.01.19
 
-	if(gpro_t.set_temp_value_success==0 && gpro_t.temp_key_set_value ==0){
-       if(gpro_t.temp_real_value >= 40){
+	uint8_t real_temp = gpro_t.temp_real_value;
+	uint8_t target_temp;
+
+	//target_temp = (gpro_t.set_temp_value_success==1)? gpro_t.temp_key_set_value = 
+
+	
+	if(gpro_t.set_temp_value_success==1){
+
+	
+         target_temp = gpro_t.temp_key_set_value;
+    }
+	else{
+	   target_temp = DEFAULT_TEMP;
+
+      }
+
+	if(real_temp >= DEFAULT_TEMP){
+
+          run_t.dry = 0;
+		  ptc_state = PTC_STATE_OFF ;
+	      gpro_t.first_set_ptc_on  = 1;
+		  send_ptc_command(0);
+	    
+  
+		  return ;
+	}
+
+	if(ptc_state == PTC_STATE_OFF){
+
+	    if(gpro_t.first_ptc_on==0 || gpro_t.first_ptc_on==1){
+
+			if(real_temp < target_temp){
+               run_t.dry = 1;
+			   ptc_state = PTC_STATE_ON ;
+			   if(gpro_t.first_ptc_on==1)gpro_t.first_set_ptc_on  = 2;
+			   
+			   send_ptc_command(1);
+			   
+			}
+		}
+		else{
+            if(real_temp < (target_temp -2)){
+
+                 run_t.dry = 1;
+				ptc_state = PTC_STATE_ON ;
+			   send_ptc_command(1);
+			  
+
+			}
+
+
+		}
+
+	}
+	else{
+        if(real_temp >= target_temp){
             run_t.dry = 0;
+
+		   ptc_state = PTC_STATE_OFF ;
 		   send_ptc_command(0);
-	   }
+	      
+		}
+
+	}
+
+
+	
+}
+
+
+
+
+#if 0
+
+
+	
 	   else if(gpro_t.temp_real_value <=38){
 
 	       run_t.dry = 1;
@@ -396,106 +480,9 @@ void set_temperature_compare_value_fun(void)
 
 	}
 }
-	
+#endif
    
-#if 0
-	// display_dry_temp_fun();//WT.EDIT 2026.0117
 
-    switch(gpro_t.set_temp_value_success){
-
-	 case 1:
-       if(gpro_t.temp_key_set_value ==0){
-
-       gpro_t.gTimer_temp_compare_value =0;
-
-      if(run_t.wifi_set_temperature <= gpro_t.temp_real_value){// && gpro_t.smart_phone_turn_off_ptc_flag ==0){
-
-               run_t.dry = 0;
-			   if(gpro_t.first_set_ptc_on==0)gpro_t.first_set_ptc_on=1;  //the first open ptc heating //WT.DEDIT 2028.08.27 modify this flow codes
-			   else if(gpro_t.first_set_ptc_on==2)gpro_t.first_set_ptc_on=3;
-			   else if(gpro_t.first_set_ptc_on==4)gpro_t.first_set_ptc_on=5;
-				
-		
-			    ptc_off_flag++;
-
-               
-			     SendData_Set_Command(0x22,0x00); //close ptc 
-	             tx_thread_sleep(100);
-
-               	
-			   
-      }
-      else{
-
-	       if((gpro_t.first_set_ptc_on==1 || gpro_t.first_set_ptc_on==0) && run_t.ptc_on_off_flag ==0 ){//the first open ptc heating //WT.DEDIT 2028.08.27 modify this flow codes
-	          
-                if(gpro_t.first_set_ptc_on==1)gpro_t.first_set_ptc_on=2;
-				else if(gpro_t.first_set_ptc_on==0)gpro_t.first_set_ptc_on=4;
-				run_t.dry = 1;
-			
-	       
-			     ptc_on_flag ++;
-			   
-			   
-	              SendData_Set_Command(0x22,0x01); //open ptc 
-	              tx_thread_sleep(100);
-			    
-	          
-            
-	       }
-		   else if((gpro_t.first_set_ptc_on==3 || gpro_t.first_set_ptc_on==5) && (run_t.wifi_set_temperature -3) >= gpro_t.temp_real_value && run_t.ptc_on_off_flag ==0 ){//WT.DEDIT 2028.08.27 modify this flow codes
-                 run_t.dry = 1;
-
-		           ptc_on_flag++;
-	            
-	            	SendData_Set_Command(0x22,0x01); //open ptc 
-	            	tx_thread_sleep(100);
-			     
-	          
-			}
-
-
-      }
-
-
-
-      }
-	 break;
-
-	 case 0:
-         if(gpro_t.temp_key_set_value ==0 ){ 
-        
-        if(gpro_t.temp_real_value > 39){ // must be clouse ptc.
-    
-               gpro_t.first_rcoder_ptc_on_flag  = 1;
-               run_t.dry = 0;
-		
-			    SendData_Set_Command(0x22,0x00); //close ptc 
-               		tx_thread_sleep(100);
-			     
-          }
-          else if(gpro_t.first_rcoder_ptc_on_flag  == 1 && gpro_t.temp_real_value < 38 && run_t.ptc_on_off_flag ==0 ){
-               
-                 
-                       run_t.dry = 1;
-				
-                       SendData_Set_Command(0x22,0x01); //open ptc 
-                       tx_thread_sleep(100);
-
-				     	
-            }
-            else if(gpro_t.first_rcoder_ptc_on_flag == 0 && gpro_t.temp_real_value < 40 && run_t.ptc_on_off_flag ==0){ //WT.EDIT 2025.10.31
-
-	            run_t.dry = 1;
-				SendData_Set_Command(0x22,0x01); //open ptc  
-				tx_thread_sleep(100);
-			    
-			}
-             
-       }
-	break;
-	}
-#endif 
 
 
 /**

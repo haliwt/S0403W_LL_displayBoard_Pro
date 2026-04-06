@@ -357,6 +357,7 @@ static void power_run_handler(void)
            run_t.power_on_disp_smg_number = 0;
 		   gpro_t.gTimer_two_hours_conter=0; //WT.EDIT 2025.10.30
 		   gpro_t.stopTwoHours_flag=0;
+		   gpro_t.first_ptc_on=0;
            power_off_handler();
 	       gpro_t.fan_run_one_minute=0;
 
