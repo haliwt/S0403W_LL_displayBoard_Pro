@@ -56,6 +56,7 @@
   * @param memory_ptr: memory pointer
   * @retval int
   */
+#if 0
 UINT App_ThreadX_Init(VOID *memory_ptr)
 {
   UINT ret = TX_SUCCESS;
@@ -71,7 +72,7 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
 
   return ret;
 }
-
+#endif 
 /**
   * @brief  MX_ThreadX_Init
   * @param  None

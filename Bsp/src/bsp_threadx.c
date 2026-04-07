@@ -45,6 +45,18 @@ typedef struct GL_TASK{
 
 gl_task gl_ref;
 uint8_t error_counter,counter;
+/**
+*@brief 
+*@param
+*@notice
+*@retval
+**/
+void tx_application_define(VOID * first_unused_memory)
+{
+
+  app_threadx_handler();
+
+}
 
 
 /**
