@@ -294,8 +294,8 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
    case 0x1A: //read sensor "DHT11" temperature and humidity value .
 
-     #if 1
-        if(run_t.power_on  == power_on && gpro_t.temp_key_set_value==0 && gpro_t.power_on_counter_temp==2){
+ 
+        if(gpro_t.temp_key_set_value==0){
 	   
 		if(pddata[6]  < 60){
 			 gpro_t.humidity_real_value = pddata[5];
@@ -308,7 +308,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
         }
 
-	  #endif 
+
         
 
 	

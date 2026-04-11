@@ -327,11 +327,6 @@ static void display_lcd_Icon_init(void)
     gpro_t.set_temp_value_success = 0;//WT.EDIT 2025.01.15
     gpro_t.temp_key_set_value =0;//WT.EDIT 2025.01.15
 
-//    temp1 =   gpro_t.temp_real_value/ 10;//WT.EDIT 2025.01.15
-//    temp2   = gpro_t.temp_real_value% 10;//WT.EDIT 2025.01.15
-
-//    hum1 = gpro_t.humidity_real_value /10;
-//    hum2 = gpro_t.humidity_real_value %10;
      if(gpro_t.temp_real_value <60){
 
     lcd_t.number1_low= gpro_t.temp_real_value/ 10;

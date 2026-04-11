@@ -350,10 +350,7 @@ static void power_run_handler(void)
 			   
 		 	   gpro_t.gTimer_disp_dry_counter=0;
 
-               if(gpro_t.power_on_counter_temp == 0){
-                  gpro_t.power_on_counter_temp++;
-				   gpro_t.temp_real_value= 25;
-			   }
+             
 			     counter_time_numbers();
 		        Display_Kill_Dry_Ster_Icon();
 

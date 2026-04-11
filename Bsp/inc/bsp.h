@@ -75,7 +75,7 @@ typedef struct _process_state{
    uint8_t first_set_ptc_on;
    uint8_t first_rcoder_ptc_on_flag;
 
-   uint8_t power_on_counter_temp;
+
 
   
    //send data need copy this is cmd

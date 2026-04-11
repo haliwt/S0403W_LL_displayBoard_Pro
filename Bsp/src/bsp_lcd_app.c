@@ -175,7 +175,7 @@ void power_on_display_temp_handler(void)
    uint8_t temp_value =0xff,power_counter ;
 
 
-    if(gpro_t.temp_key_set_value==0 && (gpro_t.power_on_counter_temp==1 || gpro_t.power_on_counter_temp==2)){
+    if(gpro_t.temp_key_set_value==0 ){
 	if(gpro_t.temp_real_value < 60 ){
 			
        
@@ -206,7 +206,7 @@ void power_on_display_temp_handler(void)
 	
 	  
      }
-      gpro_t.power_on_counter_temp=2;
+
 	}
 
     }
@@ -220,11 +220,7 @@ void power_on_display_temp_handler(void)
 		     lcd_t.number2_low =  run_t.wifi_set_temperature % 10;
 		     lcd_t.number2_high =  lcd_t.number2_low;
 
-//			 lcd_t.number3_low= gpro_t.humidity_real_value/ 10;
-//			lcd_t.number3_high =   lcd_t.number3_low;
 
-//			lcd_t.number4_low = gpro_t.humidity_real_value % 10;
-//			lcd_t.number4_high = lcd_t.number4_low ;
 		    display_numbers_one_foure_fun();
 			
 	 }
@@ -585,7 +581,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
 
 	case 0:
 	    
-	     display_temperture_humidity_value();
+	   //  display_temperture_humidity_value();
 
 		 
     
