@@ -205,7 +205,7 @@ void disp_set_timer_timing_value_fun(void)
 
             run_t.display_set_timer_or_works_time_mode=timer_time;
            // sendCmdNote_to_Data(0x2B,run_t.timer_time_hours);
-			//tx_thread_sleep(100);
+			//tx_thread_sleep(10);
 		
 
 		}
@@ -217,7 +217,7 @@ void disp_set_timer_timing_value_fun(void)
 			if(gpro_t.add_dec_key_be_pressed == 1){
 				
 			 sendCmdNote_to_Data(0x2B,0);
-             tx_thread_sleep(100);
+             tx_thread_sleep(10);
 
 			}
         }

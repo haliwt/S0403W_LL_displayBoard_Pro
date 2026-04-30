@@ -1,16 +1,16 @@
 #include "bsp.h"
 
-#define STACK_SIZE_ONE    1024 
-#define STACK_SIZE_TWO    512
-#define STACK_SIZE_THREE  640
+#define STACK_SIZE_MSG    1024 
+#define STACK_SIZE_KEY    512
+#define STACK_SIZE_DEC  640
 
 static TX_THREAD  thread_msg;
 static TX_THREAD  thread_key;
 static TX_THREAD  thread_decoder;
 
-static UCHAR stack_msg_pro[STACK_SIZE_ONE];
-static UCHAR stack_key_pro[STACK_SIZE_TWO];
-static UCHAR stack_decoder_pro[STACK_SIZE_THREE];
+static UCHAR stack_msg_pro[STACK_SIZE_MSG];
+static UCHAR stack_key_pro[STACK_SIZE_KEY];
+static UCHAR stack_decoder_pro[STACK_SIZE_DEC];
 
 static void vTaskMsgPro(ULONG thread_input);
 static void vTaskKeyPro(ULONG thread_input);
@@ -114,7 +114,7 @@ static void vTaskMsgPro(ULONG thread_input)
 		if(gpro_t.power_on_off_rx_flag ==1 && gpro_t.gTimer_power_off_on_minute_fan >1){
 			    gpro_t.gTimer_power_off_on_minute_fan =0;
 		     	SendData_Set_Command(0x10,1); //mainboard.WT.EDIT 2026.01.04
-                tx_thread_sleep(100); //WT.EDIT 2026.01.04
+                tx_thread_sleep(10); //WT.EDIT 2026.01.04
 
         }
 
@@ -122,7 +122,7 @@ static void vTaskMsgPro(ULONG thread_input)
 		power_run_handler();
 		
 	
-        tx_thread_sleep(10);//60
+        tx_thread_sleep(1);//60
    
   }
 
@@ -157,7 +157,7 @@ static void vTaskKeyPro(ULONG thread_input)
 	            gl_ref.key_long_power_flag =1;
 
 			    SendData_Set_Command(0x05,0x01); // link wifi of command .
-	            tx_thread_sleep(100);
+	            tx_thread_sleep(10);
 				gl_ref.key_power_flag = 0;
 		   }
 	      }
@@ -177,7 +177,7 @@ static void vTaskKeyPro(ULONG thread_input)
              gl_ref.long_key_mode_counter=200;   
          
                 SendData_Buzzer();
-				tx_thread_sleep(50);
+				tx_thread_sleep(10);
 				mode_key_long_fun();
            }
           }
@@ -197,7 +197,7 @@ static void vTaskKeyPro(ULONG thread_input)
 
     }
 	
-   tx_thread_sleep(30);
+   tx_thread_sleep(3);
    }
 }
 
@@ -219,7 +219,7 @@ void app_threadx_handler(void)
   					vTaskDecoderPro,
   					0,
   					stack_decoder_pro,
-  					STACK_SIZE_THREE,
+  					STACK_SIZE_DEC,
   					2,
   					2,
   					TX_NO_TIME_SLICE,
@@ -231,7 +231,7 @@ void app_threadx_handler(void)
    					vTaskMsgPro,
    					0,
    					stack_msg_pro,
-   					STACK_SIZE_ONE,
+   					STACK_SIZE_MSG,
    					3,
    					3,
    					TX_NO_TIME_SLICE,
@@ -242,7 +242,7 @@ void app_threadx_handler(void)
 					vTaskKeyPro,
 					0,
 					stack_key_pro,
-					STACK_SIZE_TWO,
+					STACK_SIZE_KEY,
 					1,
 					1,
 					TX_NO_TIME_SLICE,
@@ -286,7 +286,7 @@ static void key_handler(void)
 		gl_ref.long_key_power_counter=0;
 		gl_ref.key_mode_short_flag =1;
 		SendData_Buzzer();
-		tx_thread_sleep(50);
+		tx_thread_sleep(5);
 
 
 	}
@@ -294,7 +294,7 @@ static void key_handler(void)
 
 		gl_ref.key_add_flag ++;
 		SendData_Buzzer();//SendData_Buzzer_Has_Ack();//SendData_Buzzer();
-		tx_thread_sleep(50);
+		tx_thread_sleep(5);
 
 		add_key_fun();
 
@@ -306,7 +306,7 @@ static void key_handler(void)
 
 		//SendData_Buzzer_Has_Ack();//SendData_Buzzer();
 		SendData_Buzzer();
-		tx_thread_sleep(50);
+		tx_thread_sleep(5);
 		dec_key_fun();
 
 	}
@@ -375,7 +375,7 @@ static void power_run_handler(void)
 		    if(gpro_t.again_confirm_power_off_flag == 1 && counter > 40 ){
 				counter =0;
 				SendData_Set_Command(0x10,0); //mainboard.WT.EDIT 2026.01.04
-                tx_thread_sleep(100); //WT.EDIT 2026.01.04
+                tx_thread_sleep(10); //WT.EDIT 2026.01.04
 			   // gpro_t.again_confirm_power_off_flag++;
 
 		    }
@@ -384,7 +384,7 @@ static void power_run_handler(void)
 
 			    gpro_t.again_confirm_power_off_flag++;
 			    SendData_Set_Command(0x12,1); //turn off fun .mainboard.WT.EDIT 2026.01.04
-			    tx_thread_sleep(100); //WT.EDIT 2026.01.04
+			    tx_thread_sleep(10); //WT.EDIT 2026.01.04
 
 
 			}
@@ -392,9 +392,18 @@ static void power_run_handler(void)
 			if(gpro_t.gTimer_send_data_counter > 1){ //new version 
 			 	 gpro_t.gTimer_send_data_counter =0;
 				 SendData_Set_Command(0xF0,0x02);//software version is "2"
-				 tx_thread_sleep(100);
+				 tx_thread_sleep(10);
 
              }
+
+			
+	         if(lcd_t.gTimer_colon_counter > 1 ){
+					lcd_t.gTimer_colon_counter  =0;
+					SendData_Set_Command(0x11,1); //mainboard.WT.EDIT 2026.04.23
+					tx_thread_sleep(10); //WT.EDIT 2026.01.04
+				   // gpro_t.again_confirm_power_off_flag++;
+	 
+			  }
 
        
 	 break;
