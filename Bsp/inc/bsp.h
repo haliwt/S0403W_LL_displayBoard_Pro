@@ -75,6 +75,11 @@ typedef struct _process_state{
    uint8_t first_set_ptc_on;
    uint8_t first_rcoder_ptc_on_flag;
 
+   uint8_t fan_interval_stop_f ;
+
+	 
+   uint8_t two_hours_interval_f;  
+
 
 
   

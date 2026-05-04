@@ -122,7 +122,7 @@ static void vTaskMsgPro(ULONG thread_input)
 		power_run_handler();
 		
 	
-        tx_thread_sleep(1);//60
+        tx_thread_sleep(1);//10ms
    
   }
 
@@ -197,7 +197,7 @@ static void vTaskKeyPro(ULONG thread_input)
 
     }
 	
-   tx_thread_sleep(3);
+   tx_thread_sleep(3);//30ms
    }
 }
 

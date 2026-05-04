@@ -289,6 +289,8 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 	  }
 	
    break;
+
+   
 		
 
 
@@ -682,6 +684,23 @@ static void parse_copy_cmd_or_data_handler(uint8_t *pdata)
 			}
 
 		}
+
+	   break;
+
+	   case 0x18:
+   
+	        gpro_t.fan_interval_stop_f = pdata[4];
+
+	   break;
+
+	   case 0x19:
+	   	    if(pdata[4]== 0x01){
+	   	
+                gpro_t.two_hours_interval_f =  1;  
+	       	 }
+			 else{
+	             gpro_t.two_hours_interval_f =  0;  
+			}
 
 	   break;
 
