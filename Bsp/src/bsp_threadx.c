@@ -184,35 +184,34 @@ static void vTaskKeyEvent(ULONG thread_input)
            power_on_off_handler();
 
 		}
-	    if(flags & KEY_POWER_LONG){
+	    else if(flags & KEY_POWER_LONG){
 
            SendData_Set_Command(0x05,0x01); // link wifi of command .
 	       tx_thread_sleep(10);
 
 		}
 	  /* MODE 键 */
-        if(flags & KEY_MODE_SHORT){
+        else if(flags & KEY_MODE_SHORT){
 			SendData_Buzzer();
 		    tx_thread_sleep(5);
+		    mode_key_short_fun();
+            display_ai_icon(run_t.gModel) ;
 
 		}
-	    if(flags & KEY_MODE_LONG){
+	    else if(flags & KEY_MODE_LONG){
             SendData_Buzzer();
 			tx_thread_sleep(10);
 			mode_key_long_fun();
 
 		}
-
-	    if(flags & KEY_UP_SHORT){
+        else if(flags & KEY_UP_SHORT){
            
 		        SendData_Buzzer();//SendData_Buzzer_Has_Ack();//SendData_Buzzer();
 				tx_thread_sleep(5);
 		
 				add_key_fun();
 		}  
-	   
-
-	    if(flags & KEY_DOWN_SHORT){
+	    else if(flags & KEY_DOWN_SHORT){
           SendData_Buzzer();
 		  tx_thread_sleep(5);
 		  dec_key_fun();
@@ -451,14 +450,6 @@ static void power_run_handler(void)
 
 	 case power_on:
          
-
-          if(gl_ref.key_mode_short_flag ==1){
-            gl_ref.key_mode_short_flag ++ ;
-            mode_key_short_fun();
-            display_ai_icon(run_t.gModel) ;
-		  }
-
-
            power_on_handler();
 		   
 	       disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
