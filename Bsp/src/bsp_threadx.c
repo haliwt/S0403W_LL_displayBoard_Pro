@@ -253,7 +253,7 @@ static void vTaskKeyPro(ULONG thread_input)
         }
         else
         {
-            if(power_cnt > 1 && power_cnt < LONG_PRESS_TIME)
+            if(power_cnt > 0 && power_cnt < LONG_PRESS_TIME)
                 tx_event_flags_set(&key_event, KEY_POWER_SHORT, TX_OR);
 
             power_cnt = 0;
@@ -265,14 +265,14 @@ static void vTaskKeyPro(ULONG thread_input)
         {
             mode_cnt++;
             if(mode_cnt == LONG_PRESS_TIME){
-				//buzzer_sound();
+				
                 tx_event_flags_set(&key_event, KEY_MODE_LONG, TX_OR);
-                //key_mode_long_fun();
+               
             }
         }
         else
         {
-            if(mode_cnt > 1 && mode_cnt < LONG_PRESS_TIME)
+            if(mode_cnt > 0 && mode_cnt < LONG_PRESS_TIME)
                 tx_event_flags_set(&key_event, KEY_MODE_SHORT, TX_OR);
             mode_cnt = 0;
         }
@@ -281,12 +281,11 @@ static void vTaskKeyPro(ULONG thread_input)
         if(KEY_ADD_GetValue() == KEY_DOWN && run_t.power_on== power_on)
         {
             up_cnt++;
-            if(up_cnt == LONG_PRESS_TIME)
-                tx_event_flags_set(&key_event, KEY_UP_LONG, TX_OR);
+            
         }
         else
         {
-            if(up_cnt > 1 && up_cnt < LONG_PRESS_TIME)
+            if(up_cnt > 0 && up_cnt < LONG_PRESS_TIME)
                 tx_event_flags_set(&key_event, KEY_UP_SHORT, TX_OR);
 
             up_cnt = 0;
@@ -296,12 +295,11 @@ static void vTaskKeyPro(ULONG thread_input)
         if(KEY_DEC_GetValue() == KEY_DOWN && run_t.power_on== power_on)
         {
             down_cnt++;
-            if(down_cnt == LONG_PRESS_TIME)
-                tx_event_flags_set(&key_event, KEY_DOWN_LONG, TX_OR);
+           
         }
         else
         {
-            if(down_cnt > 1 && down_cnt < LONG_PRESS_TIME)
+            if(down_cnt > 0 && down_cnt < LONG_PRESS_TIME)
                 tx_event_flags_set(&key_event, KEY_DOWN_SHORT, TX_OR);
 
             down_cnt = 0;
