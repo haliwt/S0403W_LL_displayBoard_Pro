@@ -1,22 +1,51 @@
 #include "bsp.h"
 
-#define STACK_SIZE_MSG    1024 
-#define STACK_SIZE_KEY    512
-#define STACK_SIZE_DEC  640
+#define KEY_MODE_SHORT   (1 << 0)
+#define KEY_MODE_LONG    (1 << 1)
 
-static TX_THREAD  thread_msg;
+#define KEY_UP_SHORT     (1 << 2)
+#define KEY_UP_LONG      (1 << 3)
+
+#define KEY_DOWN_SHORT   (1 << 4)
+#define KEY_DOWN_LONG    (1 << 5)
+
+#define KEY_POWER_SHORT  (1 << 6)
+#define KEY_POWER_LONG   (1 << 7)
+
+
+
+
+#define STACK_SIZE_UI    1024 
+#define STACK_SIZE_KEY    256//512
+#define STACK_SIZE_DEC    640
+#define STACK_SIZE_EVENT   256
+
+
+
+
+static TX_THREAD  thread_ui;
 static TX_THREAD  thread_key;
 static TX_THREAD  thread_decoder;
+static TX_THREAD  thread_key_event;
 
-static UCHAR stack_msg_pro[STACK_SIZE_MSG];
+
+static UCHAR stack_ui_pro[STACK_SIZE_UI];
 static UCHAR stack_key_pro[STACK_SIZE_KEY];
 static UCHAR stack_decoder_pro[STACK_SIZE_DEC];
+static UCHAR stack_key_event[STACK_SIZE_EVENT];
 
-static void vTaskMsgPro(ULONG thread_input);
+
+
+
+
+static void vTaskUiPro(ULONG thread_input);
 static void vTaskKeyPro(ULONG thread_input);
 static void vTaskDecoderPro(ULONG thread_input);
+static void vTaskKeyEvent(ULONG thread_input);
 
-//TX_EVENT_FLAGS_GROUP   commEventFlags;
+
+TX_EVENT_FLAGS_GROUP key_event;
+
 TX_SEMAPHORE      decoder_semaphore;
 //TX_SEMAPHORE      uart1_tx_semaphore;
 
@@ -105,7 +134,7 @@ static void vTaskDecoderPro(ULONG thread_input)
 *@notice
 *@retval
 **/
-static void vTaskMsgPro(ULONG thread_input)
+static void vTaskUiPro(ULONG thread_input)
 {
   (void)thread_input;
   while(1){
@@ -118,7 +147,7 @@ static void vTaskMsgPro(ULONG thread_input)
 
         }
 
-		key_handler();
+	//	key_handler();
 		power_run_handler();
 		
 	
@@ -134,70 +163,153 @@ static void vTaskMsgPro(ULONG thread_input)
 *@notice
 *@retval
 **/
+static void vTaskKeyEvent(ULONG thread_input)
+{
+  (void)thread_input;
+  ULONG flags;
+  UINT status;
+  while(1){
+
+
+     status = tx_event_flags_get(&key_event,
+                           0xFFFFFFFF,
+                           TX_OR_CLEAR,
+                           &flags,
+                           TX_WAIT_FOREVER);//TX_NO_WAIT);//TX_WAIT_FOREVER);//
+                           
+     if(status == TX_SUCCESS){
+
+	    if(flags & KEY_POWER_SHORT){
+
+           power_on_off_handler();
+
+		}
+	    if(flags & KEY_POWER_LONG){
+
+           SendData_Set_Command(0x05,0x01); // link wifi of command .
+	       tx_thread_sleep(10);
+
+		}
+	  /* MODE 键 */
+        if(flags & KEY_MODE_SHORT){
+			SendData_Buzzer();
+		    tx_thread_sleep(5);
+
+		}
+	    if(flags & KEY_MODE_LONG){
+            SendData_Buzzer();
+			tx_thread_sleep(10);
+			mode_key_long_fun();
+
+		}
+
+	    if(flags & KEY_UP_SHORT){
+           
+		        SendData_Buzzer();//SendData_Buzzer_Has_Ack();//SendData_Buzzer();
+				tx_thread_sleep(5);
+		
+				add_key_fun();
+		}  
+	   
+
+	    if(flags & KEY_DOWN_SHORT){
+          SendData_Buzzer();
+		  tx_thread_sleep(5);
+		  dec_key_fun();
+
+		}
+	   
+     }
+
+       
+   }
+}
+
+/**
+*@brief 
+*@param
+*@notice
+*@retval
+**/
 static void vTaskKeyPro(ULONG thread_input)
 {
   (void)thread_input;
   static uint8_t power_on_key;
+
+     static uint16_t mode_cnt = 0;
+    static uint16_t up_cnt = 0;
+    static uint16_t down_cnt = 0;
+    static uint16_t power_cnt = 0;
+
+    const uint16_t LONG_PRESS_TIME = 90;   // 300 * 10ms = 3000ms
+    
   while(1){
-	 if(KEY_POWER_GetValue()  == KEY_DOWN){
 
-	   #if 0
-	   if(power_on_key ==0){
-              power_on_key ++;
-              gl_ref.long_key_mode_counter =0;
-          }
-         
-          #endif 
+	   /* ================= POWER 键 ================= */
+      if(KEY_POWER_GetValue() == KEY_DOWN)
+        {
+            power_cnt++;
+            if(power_cnt == LONG_PRESS_TIME)
+                tx_event_flags_set(&key_event, KEY_POWER_LONG, TX_OR);
+        }
+        else
+        {
+            if(power_cnt > 1 && power_cnt < LONG_PRESS_TIME)
+                tx_event_flags_set(&key_event, KEY_POWER_SHORT, TX_OR);
 
-        if(gl_ref.long_key_power_counter < 150 && run_t.power_on== power_on ){//65
-            gl_ref.long_key_power_counter++;
+            power_cnt = 0;
+        }
 
-		    if(gl_ref.long_key_power_counter > 85){
-	            gl_ref.long_key_power_counter =200;
-	            gl_ref.key_long_power_flag =1;
 
-			    SendData_Set_Command(0x05,0x01); // link wifi of command .
-	            tx_thread_sleep(10);
-				gl_ref.key_power_flag = 0;
-		   }
-	      }
-		
-	       if(gl_ref.long_key_power_counter ==200)gl_ref.key_power_flag = 3;
-	       else gl_ref.key_power_flag = 1;
-     
-	}
-    else if(KEY_MODE_GetValue() == KEY_DOWN && run_t.power_on== power_on){
+		 /* ================= MODE 键 ================= */
+        if(KEY_MODE_GetValue() == KEY_DOWN && run_t.power_on== power_on)
+        {
+            mode_cnt++;
+            if(mode_cnt == LONG_PRESS_TIME){
+				//buzzer_sound();
+                tx_event_flags_set(&key_event, KEY_MODE_LONG, TX_OR);
+                //key_mode_long_fun();
+            }
+        }
+        else
+        {
+            if(mode_cnt > 1 && mode_cnt < LONG_PRESS_TIME)
+                tx_event_flags_set(&key_event, KEY_MODE_SHORT, TX_OR);
+            mode_cnt = 0;
+        }
 
-           gl_ref.long_key_power_counter=0;
-         
-         if(run_t.ptc_warning ==0 && run_t.fan_warning ==0 && gl_ref.long_key_mode_counter < 150){
-	        gl_ref.long_key_mode_counter ++ ;
+      /* ================= UP 键 ================= */
+        if(KEY_ADD_GetValue() == KEY_DOWN && run_t.power_on== power_on)
+        {
+            up_cnt++;
+            if(up_cnt == LONG_PRESS_TIME)
+                tx_event_flags_set(&key_event, KEY_UP_LONG, TX_OR);
+        }
+        else
+        {
+            if(up_cnt > 1 && up_cnt < LONG_PRESS_TIME)
+                tx_event_flags_set(&key_event, KEY_UP_SHORT, TX_OR);
 
-          if(gl_ref.long_key_mode_counter > 75){
-             gl_ref.long_key_mode_counter=200;   
-         
-                SendData_Buzzer();
-				tx_thread_sleep(10);
-				mode_key_long_fun();
-           }
-          }
+            up_cnt = 0;
+        }
 
-         if(gl_ref.long_key_mode_counter==200) gl_ref.key_mode_flag  = 3;
-		 else gl_ref.key_mode_flag  = 1;
-     }
-     else if(KEY_DEC_GetValue() == KEY_DOWN && run_t.power_on== power_on){
-      
-               gl_ref.key_dec_flag = 1;
-            
-     }
-     else if(KEY_ADD_GetValue() ==KEY_DOWN && run_t.power_on== power_on){
+        /* ================= DOWN 键 ================= */
+        if(KEY_DEC_GetValue() == KEY_DOWN && run_t.power_on== power_on)
+        {
+            down_cnt++;
+            if(down_cnt == LONG_PRESS_TIME)
+                tx_event_flags_set(&key_event, KEY_DOWN_LONG, TX_OR);
+        }
+        else
+        {
+            if(down_cnt > 1 && down_cnt < LONG_PRESS_TIME)
+                tx_event_flags_set(&key_event, KEY_DOWN_SHORT, TX_OR);
 
-         gl_ref.key_add_flag = 1;
-         
+            down_cnt = 0;
+        }
 
-    }
-	
-   tx_thread_sleep(3);//30ms
+
+   tx_thread_sleep(2);//2*10ms =20ms
    }
 }
 
@@ -212,7 +324,7 @@ void app_threadx_handler(void)
 
   //tx_event_flags_create(&commEventFlags,"commEventFlags");
   tx_semaphore_create(&decoder_semaphore,"decoderSemaphore",0);
-  //tx_semaphore_create(&uart1_tx_semaphore,"uart1Semaphore",0);
+  tx_event_flags_create(&key_event, "key_event");
 
   tx_thread_create(&thread_decoder,
   					"DecoderPro",
@@ -220,20 +332,20 @@ void app_threadx_handler(void)
   					0,
   					stack_decoder_pro,
   					STACK_SIZE_DEC,
-  					2,
-  					2,
+  					0,
+  					0,
   					TX_NO_TIME_SLICE,
   					TX_AUTO_START);
 
 
-   tx_thread_create(&thread_msg,
+   tx_thread_create(&thread_ui,
    					"MsgPro",
-   					vTaskMsgPro,
+   					vTaskUiPro,
    					0,
-   					stack_msg_pro,
-   					STACK_SIZE_MSG,
-   					3,
-   					3,
+   					stack_ui_pro,
+   					STACK_SIZE_UI,
+   					2,
+   					2,
    					TX_NO_TIME_SLICE,
    					TX_AUTO_START);
 
@@ -247,6 +359,17 @@ void app_threadx_handler(void)
 					1,
 					TX_NO_TIME_SLICE,
 					TX_AUTO_START);
+	
+	 tx_thread_create(&thread_key_event, 		   /* 任务控制块地址 */	  
+					 "KeyEvent",				    /* 任务名 */
+					  vTaskKeyEvent,				/* 启动任务函数地址 */
+					  0,							/* 传递给任务的参数 */
+					  stack_key_event,				/* 堆栈基地址 */
+					  STACK_SIZE_EVENT,				/* 堆栈空间大小 */  
+					  2,							/* 任务优先级*/
+					  2,							/* 任务抢占阀值 */
+					  TX_NO_TIME_SLICE, 			/* 不开启时间片 */
+					  TX_AUTO_START);				/* 创建后立即启动 */
    
 }
 /*************************************************************************
