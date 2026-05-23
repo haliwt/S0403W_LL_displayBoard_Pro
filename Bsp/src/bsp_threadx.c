@@ -15,10 +15,10 @@
 
 
 
-#define STACK_SIZE_UI    1024 
+#define STACK_SIZE_UI     1024 
 #define STACK_SIZE_KEY    256//512
-#define STACK_SIZE_DEC    640
-#define STACK_SIZE_EVENT   256
+#define STACK_SIZE_DEC    512//
+#define STACK_SIZE_EVENT  256
 
 
 
@@ -97,7 +97,7 @@ void tx_application_define(VOID * first_unused_memory)
 static void vTaskDecoderPro(ULONG thread_input)
 {
    (void)thread_input;
-   ULONG actual_flags;
+
    while(1){
    #if 0
     tx_event_flags_get(&commEventFlags,
@@ -193,7 +193,7 @@ static void vTaskKeyEvent(ULONG thread_input)
 	  /* MODE 键 */
         else if(flags & KEY_MODE_SHORT){
 			SendData_Buzzer();
-		    tx_thread_sleep(5);
+		    tx_thread_sleep(10);
 		    mode_key_short_fun();
             display_ai_icon(run_t.gModel) ;
 
@@ -207,13 +207,13 @@ static void vTaskKeyEvent(ULONG thread_input)
         else if(flags & KEY_UP_SHORT){
            
 		        SendData_Buzzer();//SendData_Buzzer_Has_Ack();//SendData_Buzzer();
-				tx_thread_sleep(5);
+				tx_thread_sleep(10);
 		
 				add_key_fun();
 		}  
 	    else if(flags & KEY_DOWN_SHORT){
           SendData_Buzzer();
-		  tx_thread_sleep(5);
+		  tx_thread_sleep(10);
 		  dec_key_fun();
 
 		}
@@ -253,7 +253,7 @@ static void vTaskKeyPro(ULONG thread_input)
         }
         else
         {
-            if(power_cnt > 0 && power_cnt < LONG_PRESS_TIME)
+            if(power_cnt > 1 && power_cnt < LONG_PRESS_TIME)
                 tx_event_flags_set(&key_event, KEY_POWER_SHORT, TX_OR);
 
             power_cnt = 0;
@@ -272,7 +272,7 @@ static void vTaskKeyPro(ULONG thread_input)
         }
         else
         {
-            if(mode_cnt > 0 && mode_cnt < LONG_PRESS_TIME)
+            if(mode_cnt > 1 && mode_cnt < LONG_PRESS_TIME)
                 tx_event_flags_set(&key_event, KEY_MODE_SHORT, TX_OR);
             mode_cnt = 0;
         }
@@ -285,7 +285,7 @@ static void vTaskKeyPro(ULONG thread_input)
         }
         else
         {
-            if(up_cnt > 0 && up_cnt < LONG_PRESS_TIME)
+            if(up_cnt > 1 && up_cnt < LONG_PRESS_TIME)
                 tx_event_flags_set(&key_event, KEY_UP_SHORT, TX_OR);
 
             up_cnt = 0;
@@ -299,7 +299,7 @@ static void vTaskKeyPro(ULONG thread_input)
         }
         else
         {
-            if(down_cnt > 0 && down_cnt < LONG_PRESS_TIME)
+            if(down_cnt > 1 && down_cnt < LONG_PRESS_TIME)
                 tx_event_flags_set(&key_event, KEY_DOWN_SHORT, TX_OR);
 
             down_cnt = 0;
@@ -531,7 +531,6 @@ static void power_run_handler(void)
 *	Return Ref:
 *
 **************************************************************************/
-
 void semaphore_isr(void)
 {
    //tx_event_flags_set(&commEventFlags,(1<<9),TX_OR);
