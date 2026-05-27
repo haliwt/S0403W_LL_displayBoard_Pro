@@ -77,7 +77,7 @@ typedef struct __RUN{
  
  //  uint8_t gTimer_set_timer_time_seconds;
    
-  uint8_t gTimer_setup_zero;
+
 
   uint8_t gFan_RunContinue;
 
@@ -113,7 +113,7 @@ typedef struct __RUN{
    uint8_t fan_warning;
   
    uint8_t  disp_wind_speed_grade;
-   uint8_t  gTimer_fan_counter;
+ 
  
 
    uint8_t single_data;
@@ -152,7 +152,7 @@ typedef struct __RUN{
 
    //works two houre after stop 10 minute
 
-   uint8_t gTimer_work_break_times;
+
    //beijing times
    uint8_t gmt_time_hours;
    uint8_t  gmt_time_minutes;
@@ -160,7 +160,7 @@ typedef struct __RUN{
    uint8_t display_set_timer_or_works_time_mode;
 
    
- 
+   uint32_t wifi_key_counter;
 
    uint8_t gReal_humtemp[2];
    uint8_t gInputCmd[2];
@@ -168,21 +168,9 @@ typedef struct __RUN{
    uint8_t wifiCmd[2];
 
    //gTimer
- 
-   uint8_t gTimer_wifi_connect_counter;
- 
-
-   uint8_t gTimer_digital5678_ms;
-   uint8_t gTimer_key_timing;
-   uint8_t gTimer_timing;
- 
-
-
-   
-
     int8_t dispTime_hours;
 	int8_t dispTime_minutes;
-	int8_t gTimer_disp_time_seconds;
+	
 
 	int8_t  timer_time_hours;
    int8_t 	timer_time_minutes ;
@@ -190,15 +178,25 @@ typedef struct __RUN{
 
 
 	
-    int8_t 	gTime_hours;
+    volatile int8_t 	gTime_hours;
+	volatile  int8_t gTimer_disp_time_seconds;
 
 
-     uint8_t gTimer_ptc_fan_warning;
-     uint8_t gTimer_again_switch_works ;
+    volatile uint8_t gTimer_ptc_fan_warning;
+    volatile uint8_t gTimer_again_switch_works ;
 	
-	 uint16_t gTimer_ptc_fan_blink_warning;
+	volatile  uint16_t gTimer_ptc_fan_blink_warning;
 
-     uint32_t wifi_key_counter;
+	 volatile   uint8_t gTimer_work_break_times;
+
+     volatile uint8_t  gTimer_fan_counter;
+	   volatile uint8_t gTimer_wifi_connect_counter;
+ 
+
+ volatile  uint8_t gTimer_digital5678_ms;
+  volatile uint8_t gTimer_key_timing;
+  volatile uint8_t gTimer_timing;
+  volatile   uint8_t gTimer_setup_zero;
 
    
  }RUN_T;

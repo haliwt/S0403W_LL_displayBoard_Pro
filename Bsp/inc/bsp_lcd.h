@@ -171,8 +171,8 @@ typedef struct _LCD_Ref{
 
      uint8_t wifi_glint_flag;
 
-	 uint8_t gTimer_wifi_500ms;
-	 uint8_t gTimer_fan_10ms;
+	 volatile uint8_t gTimer_wifi_500ms;
+	 volatile uint8_t gTimer_fan_10ms;
      uint8_t display_beijing_time_flag ;
 
 	 
@@ -197,10 +197,10 @@ typedef struct _LCD_Ref{
 	 uint8_t number8_low;
 	 uint8_t number8_high;
 
-	 uint8_t  gTimer_colon_ms;
-	 uint8_t  gTimer_leaf_counter;
-	 uint8_t gTimer_colon_counter;
-	 uint8_t gTimer_leaf_fast_counter;
+	volatile uint8_t  gTimer_colon_ms;
+	volatile uint8_t  gTimer_leaf_counter;
+	volatile uint8_t gTimer_colon_counter;
+	volatile uint8_t gTimer_leaf_fast_counter;
 	
 
 
