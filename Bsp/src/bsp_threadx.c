@@ -20,6 +20,12 @@
 #define STACK_SIZE_DEC    512//
 #define STACK_SIZE_EVENT  256
 
+__attribute__((aligned(8)))  static UCHAR stack_ui_pro[STACK_SIZE_UI];
+__attribute__((aligned(8)))  static UCHAR stack_key_pro[STACK_SIZE_KEY];
+__attribute__((aligned(8)))  static UCHAR stack_decoder_pro[STACK_SIZE_DEC];
+__attribute__((aligned(8)))  static UCHAR stack_key_event[STACK_SIZE_EVENT];
+
+
 
 
 
@@ -27,16 +33,6 @@ static TX_THREAD  thread_ui;
 static TX_THREAD  thread_key;
 static TX_THREAD  thread_decoder;
 static TX_THREAD  thread_key_event;
-
-
-static UCHAR stack_ui_pro[STACK_SIZE_UI];
-static UCHAR stack_key_pro[STACK_SIZE_KEY];
-static UCHAR stack_decoder_pro[STACK_SIZE_DEC];
-static UCHAR stack_key_event[STACK_SIZE_EVENT];
-
-
-
-
 
 static void vTaskUiPro(ULONG thread_input);
 static void vTaskKeyPro(ULONG thread_input);
@@ -147,7 +143,7 @@ static void vTaskUiPro(ULONG thread_input)
 
         }
 
-	//	key_handler();
+	
 		power_run_handler();
 		
 	
@@ -240,7 +236,7 @@ static void vTaskKeyPro(ULONG thread_input)
     static uint16_t down_cnt = 0;
     static uint16_t power_cnt = 0;
 
-    const uint16_t LONG_PRESS_TIME = 90;   // 300 * 10ms = 3000ms
+    const uint16_t LONG_PRESS_TIME = 120;   //20ms * 100= 2000ms
     
   while(1){
 
@@ -329,8 +325,8 @@ void app_threadx_handler(void)
   					0,
   					stack_decoder_pro,
   					STACK_SIZE_DEC,
-  					0,
-  					0,
+  					2,
+  					2,
   					TX_NO_TIME_SLICE,
   					TX_AUTO_START);
 
@@ -341,8 +337,8 @@ void app_threadx_handler(void)
    					0,
    					stack_ui_pro,
    					STACK_SIZE_UI,
-   					2,
-   					2,
+   					4,
+   					4,
    					TX_NO_TIME_SLICE,
    					TX_AUTO_START);
 
@@ -363,8 +359,8 @@ void app_threadx_handler(void)
 					  0,							/* 传递给任务的参数 */
 					  stack_key_event,				/* 堆栈基地址 */
 					  STACK_SIZE_EVENT,				/* 堆栈空间大小 */  
-					  2,							/* 任务优先级*/
-					  2,							/* 任务抢占阀值 */
+					  3,							/* 任务优先级*/
+					  3,							/* 任务抢占阀值 */
 					  TX_NO_TIME_SLICE, 			/* 不开启时间片 */
 					  TX_AUTO_START);				/* 创建后立即启动 */
    
@@ -452,11 +448,11 @@ static void power_run_handler(void)
 		   
 	       disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
 	       disp_time_colon_fun();
-	       while(run_t.power_off_id_flag == 1){
-		   	 run_t.power_off_id_flag++;
-			 Display_Kill_Dry_Ster_Icon();
-	          power_on_first_again_fun();
-           }
+	       if(run_t.power_off_id_flag == 1){
+		    run_t.power_off_id_flag++;
+		    Display_Kill_Dry_Ster_Icon();
+		    power_on_first_again_fun();
+            }
             //data:2026.01.19 wt.edit 
 		   	if(gpro_t.gTimer_disp_dry_counter> 0 && gpro_t.temp_key_set_value==0 && gpro_t.set_up_temp_value_done != 1){
 			   
