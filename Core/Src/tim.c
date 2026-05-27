@@ -54,7 +54,7 @@ void MX_TIM16_Init(void)
   /* USER CODE BEGIN TIM16_Init 2 */
    LL_TIM_EnableIT_UPDATE(TIM16);
    LL_TIM_EnableCounter(TIM16);
-  // LL_TIM_EnableAllOutputs(TIM16);
+   LL_TIM_EnableAllOutputs(TIM16);
   /* USER CODE END TIM16_Init 2 */
 
 }

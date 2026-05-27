@@ -145,7 +145,7 @@ void display_timer_and_beijing_time_handler(void)
              ai_mode_flag++;
    
 			 //SendData_Set_Command(0x27,0x02); //NOT_MODE_AI,BUR NO_BUZZER);
-			 //tx_thread_sleep(10);
+			 //tx_thread_sleep(1);
 
         }
 
@@ -162,7 +162,7 @@ void display_timer_and_beijing_time_handler(void)
 		   run_t.gTimer_timing =0;
            gpro_t.add_dec_key_be_pressed  =0;
            sendCmdNote_to_Data(0x2B,run_t.timer_time_hours);
-			tx_thread_sleep(10);
+			tx_thread_sleep(1);
 		
 
 		}
@@ -242,7 +242,7 @@ static void counter_time_timing_fun(void)
 		}
       if(lcd_t.display_beijing_time_flag == 0){
 	      sendCmdNote_to_threeData(0x6C,run_t.dispTime_hours, run_t.dispTime_minutes,run_t.gTimer_disp_time_seconds);
-	      tx_thread_sleep(10);
+	      tx_thread_sleep(1);
 	  }
    	}
    
@@ -417,7 +417,7 @@ void set_temperature_compare_value_fun(void)
 static void send_ptc_command(uint8_t on_off)
 {
   SendData_Set_Command(0x22,on_off); //open ptc  
-  tx_thread_sleep(10);
+  tx_thread_sleep(1);
   //while(!gpro_t.uart1_tx_done);
   //uart1_tx_get();
 
@@ -440,13 +440,13 @@ void direct_comparison_temp(void)
 			 
 			   SendData_Set_Command(0x22,0x00); //close ptc 
 	           //while(!gpro_t.uart1_tx_done);
-	           tx_thread_sleep(10);
+	           tx_thread_sleep(1);
     }
     else{
 
 	   run_t.dry = 1;
 		SendData_Set_Command(0x22,0x01); //open ptc 
-	    tx_thread_sleep(10);
+	    tx_thread_sleep(1);
 	    // while(!gpro_t.uart1_tx_done);
 			    
 	  }

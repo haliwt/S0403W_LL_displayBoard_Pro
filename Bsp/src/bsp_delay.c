@@ -4,36 +4,11 @@
 uint32_t fac_us;	
 
 /* USER CODE BEGIN 2 */
-//³õÊ¼»¯ÑÓ³Ùº¯Êý
-//µ±Ê¹ÓÃucosµÄÊ±ºò,
-//´Ëº¯Êý»á³õÊ¼»¯ucosµÄÊ±ÖÓ½ÚÅÄ
-//SYSTICKµÄÊ±ÖÓ¹Ì¶¨ÎªAHBÊ±ÖÓ
-//SYSCLK:ÏµÍ³Ê±ÖÓÆµÂÊ, SYSCLK = 24MHz
-void delay_init(uint8_t SYSCLK)
-{
-
-    HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);//SysTickÆµÂÊÎªHCLK
-	fac_us=SYSCLK;						//²»ÂÛÊÇ·ñÊ¹ÓÃOS,fac_us¶¼ÐèÒªÊ¹ÓÃ
-#if SYSTEM_SUPPORT_OS 						//Èç¹ûÐèÒªÖ§³ÖOS.
-	reload=SYSCLK;					    //Ã¿ÃëÖÓµÄ¼ÆÊý´ÎÊý µ¥Î»ÎªK	   
-	reload*=1000000/delay_ostickspersec;	//
-¸ù¾Ýdelay_ostickspersecÉè¶¨Òç³öÊ±¼ä
-											//reloadÎª24Î»¼Ä´æÆ÷,×î´óÖµ:16777216,ÔÚ72MÏÂ,Ô¼ºÏ0.233s×óÓÒ	
-	fac_ms=1000/delay_ostickspersec;		//´ú±íOS¿ÉÒÔÑÓÊ±µÄ×îÉÙµ¥Î»	   
-	SysTick->CTRL|=SysTick_CTRL_TICKINT_Msk;//¿ªÆôSYSTICKÖÐ¶Ï
-	SysTick->LOAD=reload; 					//Ã¿1/OS_TICKS_PER_SECÃëÖÐ¶ÏÒ»´Î	
-	SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk; //¿ªÆôSYSTICK
-#else
-#endif
-}								    
-
-
-//ÑÓÊ±nus
-//nus:ÒªÑÓÊ±µÄusÊý.	
-//nus:0~190887435(×î´óÖµ¼´2^32/fac_us@fac_us=22.5)	    								   
+    								   
 void delay_us(uint32_t nus)
 {
-    uint32_t ticks = nus * fac_us;          // 需要的节拍数
+   #if 0
+	uint32_t ticks = nus * fac_us;          // 需要的节拍数
     uint32_t reload = SysTick->LOAD;        // SysTick 重装载值
     uint32_t last = SysTick->VAL;           // 进入时的计数器值
     uint32_t count = 0;
@@ -48,6 +23,20 @@ void delay_us(uint32_t nus)
             last = now;
         }
     }
+
+	#else
+	
+
+    // 这里的 12 需要根据 64MHz 主频在编译优化级别（如 -O2）下实际测量调整
+    // 这是一个粗略的估算值
+    volatile uint32_t count = nus * 12; 
+    while (count--);
+
+
+
+
+	#endif
+	
 }
   
 //ÑÓÊ±nms

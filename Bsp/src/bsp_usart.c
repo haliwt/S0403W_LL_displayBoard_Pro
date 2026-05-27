@@ -367,12 +367,16 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 	if(frame.data[3] == 0x01){  // link wifi 
 
-		run_t.wifi_link_net_success =1 ;      
+		run_t.wifi_link_net_success =1 ; 
+		SendWifiData_Answer_Cmd(0x1F,0x01);
+		tx_thread_sleep(1);
 
 	}
 	else{ //don't link wifi 
 
 		run_t.wifi_link_net_success =0 ;     
+	    SendWifiData_Answer_Cmd(0x1F,0);
+		tx_thread_sleep(1);
 
 	}
 
@@ -537,7 +541,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 			   lcd_t.number8_high= 0;
 
                display_digits(0x0F, 1);
-			    tx_thread_sleep(200);
+			   tx_thread_sleep(200);
                run_t.timer_timing_define_flag = timing_not_definition;
 			   run_t.display_set_timer_or_works_time_mode=works_time;
 			   run_t.gTimer_again_switch_works = 0;
