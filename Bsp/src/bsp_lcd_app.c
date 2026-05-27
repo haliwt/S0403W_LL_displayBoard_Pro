@@ -19,7 +19,7 @@ static void display_lowbit_lunmber4_reg0xc9_handler(void);
 
 uint8_t display_wifi_icon_flag ;
 
-static void display_numbers_one_foure_fun(void);
+//static void display_numbers_one_foure_fun(void);
 
 
 /*************************************************************************
@@ -228,9 +228,14 @@ void power_on_display_temp_handler(void)
          	
 }
 
+/**
+*	@brief  display numbers 1,2,3,4 for timerparture and humidity value .
+*   @note
+*   @param
+*   @return 
+*/
 
-
-static void display_numbers_one_foure_fun(void)
+void display_numbers_one_foure_fun(void)
 {
     static uint8_t  T4,T5,T6,T3=1;
    T4= 0x02; //

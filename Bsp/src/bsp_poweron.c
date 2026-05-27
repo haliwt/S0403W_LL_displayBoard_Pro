@@ -84,7 +84,9 @@ static void power_on_initial(void)
 	     run_t.wifi_set_temperature=40;
 
 		 send_two_disp=0;
-     
+	
+         display_numbers_one_foure_fun();
+		 
 		 gpro_t.power_on_step =0xfe;
 
 		 //SendData_Set_Command(0x10,1); //mainboard.WT.EDIT 2026.01.04
