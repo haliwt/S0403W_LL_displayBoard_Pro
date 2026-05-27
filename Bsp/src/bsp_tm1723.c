@@ -19,11 +19,19 @@ static void TM1723_WriteByte(uint8_t data);
 
 static void Delay_us(uint32_t us)
 {
-    SysTick->LOAD = us * (SYSTEM_CORE_CLOCK / 1000000) - 1;
+    #if 0
+	SysTick->LOAD = us * (SYSTEM_CORE_CLOCK / 1000000) - 1;
     SysTick->VAL = 0;
     SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk;
     while (!(SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk));
     SysTick->CTRL = 0;
+	#else 
+	volatile uint32_t count = us * 12; 
+	  while (count--);
+
+
+	#endif 
+	
 }
 
 void TM1723_Init(void)

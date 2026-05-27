@@ -24,11 +24,11 @@
 #define  COM2_H        0X40
 #define  COM3_H        0X80
 
-
+#if 0
 const uint8_t seg_code[10] =
 {
-    0x3F, // 0
-    0x06, // 1
+    0xF3,//0x3F, // 0
+    0x60,//0x06, // 1
     0x5B, // 2
     0x4F, // 3
     0x66, // 4
@@ -40,7 +40,7 @@ const uint8_t seg_code[10] =
 };
 
 
-
+#endif
 
 
 const uint8_t lcdNumber1_Low[]  ={0x0A,0x0A,0x06,0x0E,0x0E,0x0C,0x0C,0x0A,0x0E,0x0E,0x0};
