@@ -76,6 +76,7 @@ void display_timer_and_beijing_time_handler(void)
    
   static uint8_t not_ai_mode_flag,not_ai_default=0xff;
   static uint8_t ai_mode_flag,ai_default = 0xff;
+  static uint8_t  timer_time_switch_f ,disp_f;
    switch(run_t.display_set_timer_or_works_time_mode){
 
     case works_time:
@@ -119,13 +120,25 @@ void display_timer_and_beijing_time_handler(void)
        
 
       }
+ 
+	  timer_time_switch_f++;
+	  disp_f ++;
+	  if(disp_f > 10){ //10ms * 11 = 110ms
+	  	 disp_f=0;
+	    power_on_init_disp_time_numbers();
+
+	  }
+	  if(timer_time_switch_f > 3 && timer_time_switch_f  < 6){
+	  	
+        counter_time_timing_fun(); 
+        gpro_t.switch_not_ai_mode=0;
+	  }
+	  else if(timer_time_switch_f > 8){
+         timer_time_switch_f  =0;
+         Setup_Timer_Times_Donot_Display();
+	  }
+
 	
-	  power_on_init_disp_time_numbers();
-	 
-      counter_time_timing_fun(); 
-      gpro_t.switch_not_ai_mode=0;
-    
-     Setup_Timer_Times_Donot_Display();
      
 
     break;
@@ -345,7 +358,6 @@ void set_temperature_compare_value_fun(void)
 	uint8_t real_temp = gpro_t.temp_real_value;
 	uint8_t target_temp;
 
-	//target_temp = (gpro_t.set_temp_value_success==1)? gpro_t.temp_key_set_value = 
 
 	
 	if(gpro_t.set_temp_value_success==1){

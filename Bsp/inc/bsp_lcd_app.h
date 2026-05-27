@@ -21,6 +21,8 @@ void power_off_disp_fan_run_handler(void);
 
 void display_ai_icon(uint8_t datat) ;
 
+void wifi_icon_blink_faster_handler(void);
+
 
 
 #endif 

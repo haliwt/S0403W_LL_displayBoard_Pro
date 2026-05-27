@@ -580,15 +580,42 @@ void disp_temp_humidity_wifi_icon_handler(void)
 	break;
 
 	case 0:
-	    
-	   //  display_temperture_humidity_value();
 
-		 
-    
-     break;
+	break;
+	default:
+	  gpro_t.temp_key_set_value =0;
+	break;
     }
 
     wifi_icon_blink_reg0xc5_handler();
-    TIM1723_Write_Cmd(LUM_VALUE);
+   
+}
+
+
+void wifi_icon_blink_faster_handler(void)
+{
+
+     static uint8_t wifi_flag =0,wifi_base;
+	 uint8_t wifi_num_val = lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high];
+
+     // 未连接状态
+    if (run_t.wifi_led_fast_blink_flag == 1 && run_t.wifi_link_net_success == 0) {
+      
+        // 快闪逻辑
+        if(lcd_t.gTimer_wifi_500ms > 9){//10*14=140ms
+            lcd_t.gTimer_wifi_500ms=0;
+			wifi_flag = !wifi_flag ;
+		}
+        wifi_base = wifi_flag ? WIFI_Symbol : WIFI_NO_Symbol;
+        TM1723_Write_Display_Data(0xC5, (wifi_base + wifi_num_val) & 0xff);
+
+        // 超时退出快闪
+        if (run_t.gTimer_wifi_connect_counter > 120) {
+            run_t.gTimer_wifi_connect_counter = 0;
+            run_t.wifi_led_fast_blink_flag = 0;
+        }
+    }
+
+
 }
 

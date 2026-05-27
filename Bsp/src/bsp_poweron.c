@@ -13,6 +13,11 @@ static void power_on_ref_init(void);
 
 
 static void display_lcd_Icon_init(void);
+static void power_on_initial(void);
+static void power_on_cycle(void);
+
+
+static uint8_t send_two_disp =0;
 
 /*
 	*@brief :
@@ -21,7 +26,23 @@ static void display_lcd_Icon_init(void);
 */
 void power_on_handler(void)
 {
-   static uint8_t send_two_disp,version;
+    if(gpro_t.power_on_step < 10){
+	 power_on_initial();
+    }
+	else 
+		power_on_cycle();
+
+
+}
+
+/*
+	*@brief :
+	*@param:
+	*@retval:
+*/
+static void power_on_initial(void)
+{
+   static uint8_t send_two_disp;
    switch(gpro_t.power_on_step){
 
       case 0:
@@ -34,7 +55,7 @@ void power_on_handler(void)
 		  gpro_t.stopTwoHours_flag=0;
 
 		   // gpro_t.long_key_power_counter =0; 
-        run_t.power_on_disp_smg_number = 1;
+          run_t.power_on_disp_smg_number = 1;
 	   //copy
 	      gpro_t.fan_run_one_minute=0;
   
@@ -61,45 +82,60 @@ void power_on_handler(void)
 
 	     gpro_t.gTimer_disp_temp_humi_value=20;
 	     run_t.wifi_set_temperature=40;
-     
-		 gpro_t.power_on_step =2;
 
-		 SendData_Set_Command(0x10,1); //mainboard.WT.EDIT 2026.01.04
-         tx_thread_sleep(1); //WT.EDIT 2026.01.04
+		 send_two_disp=0;
+     
+		 gpro_t.power_on_step =0xfe;
+
+		 //SendData_Set_Command(0x10,1); //mainboard.WT.EDIT 2026.01.04
+         //tx_thread_sleep(1); //WT.EDIT 2026.01.04
 		
 		
 	  break;
+  }
+ }
 
-	  case 2:
+/*
+	*@brief :
+	*@param:
+	*@retval:
+*/
+static void power_on_cycle(void)
+{
+    static uint8_t version;
+    static uint8_t time_slot=0;
+	
+	switch(time_slot){
+		
+	  case 0:
   
 	    disp_temp_humidity_wifi_icon_handler();
-	    gpro_t.power_on_step =3;
+	   
 
 	  break;
 
-	  case 3:
+	  case 1:
 	  	display_timer_and_beijing_time_handler();
-        gpro_t.power_on_step =4;
+       
 	  break;
 
 	
-     case 4:
+     case 2:
 	 	
      if(gpro_t.temp_key_set_value==0 && gpro_t.gTimer_temp_compare_value > 2 && gpro_t.stopTwoHours_flag==0 && gpro_t.smart_phone_app_timer_power_on_flag ==0){
 	 	gpro_t.gTimer_temp_compare_value =0;
 		
-         send_two_disp++;
-	   set_temperature_compare_value_fun();
+          set_temperature_compare_value_fun();
 
      	}
-	   gpro_t.power_on_step =5;
+	  
 
 	 break;
 
-	 case 5:
+	 case 3:
 	 	
-		 if(send_two_disp > 2 ){
-			 send_two_disp=0;
+		 if(send_two_disp < 5 ){
+			 send_two_disp++;
 
 		    version = version ^ 0x01;
 		     if(version ==1){
@@ -114,56 +150,39 @@ void power_on_handler(void)
 
 			 
 		 }
-		 #if 0
-		 else if(send_two_disp > 10){
-
-		     send_two_disp =0;
-
-		     if(version > 5) version =0;
-			 version =version ^ 0x01;
-		     if(version ==1){
-			 SendData_Set_Command(0xF0,0x02);//software version is "2"
-			  tx_thread_sleep(1);
-
-			 }
-			 else{
-			 SendData_Set_Command(0x11,0x01);
-			 tx_thread_sleep(1);
-			 }
-
-		 }
-		 #endif 
-
-    gpro_t.power_on_step =6;
+		 wifi_icon_blink_faster_handler();
 
 	break;
 		 
 	case 6:
 
-	  two_hours_recoder_fun();
+	    two_hours_recoder_fun();
 
-	    gpro_t.power_on_step =7;
-
+	   
 	 
 
 	 break;
 
 	 case 7:
 	 if(gpro_t.smart_phone_app_timer_power_on_flag ==1 && run_t.gTimer_ptc_fan_warning >6){
-	  gpro_t.smart_phone_app_timer_power_on_flag=0;
+	      gpro_t.smart_phone_app_timer_power_on_flag=0;
 
 
 	  }
-	 gpro_t.power_on_step =2;
+	 
 
 	 break;
 	 
+	 default:
+	 	break;
+	 }
+	
+   time_slot ++;
+   if(time_slot > 7) time_slot = 0;
+ }
 
+   
 
-   }
-
-
-}
 /*
 	*@brief :
 	*@param:

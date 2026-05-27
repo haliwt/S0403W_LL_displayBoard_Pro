@@ -24,8 +24,8 @@
 #define  COM2_H        0X40
 #define  COM3_H        0X80
 
-#if 0
-const uint8_t seg_code[10] =
+#if 1
+static const uint8_t seg_code[10] =
 {
     0xF3,//0x3F, // 0
     0x60,//0x06, // 1

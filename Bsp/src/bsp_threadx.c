@@ -442,11 +442,11 @@ static void power_run_handler(void)
 		   
 	       disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
 	       disp_time_colon_fun();
-	       if(run_t.power_off_id_flag == 1){
-		    run_t.power_off_id_flag++;
-		    Display_Kill_Dry_Ster_Icon();
-		    power_on_first_again_fun();
-            }
+//	       if(run_t.power_off_id_flag == 1){
+//		    run_t.power_off_id_flag++;
+//		    Display_Kill_Dry_Ster_Icon();
+//		    power_on_first_again_fun();
+//            }
             //data:2026.01.19 wt.edit 
 		   	if(gpro_t.gTimer_disp_dry_counter> 0 && gpro_t.temp_key_set_value==0 && gpro_t.set_up_temp_value_done != 1){
 			   
@@ -503,7 +503,7 @@ static void power_run_handler(void)
 					lcd_t.gTimer_colon_counter  =0;
 					SendData_Set_Command(0x11,1); //mainboard.WT.EDIT 2026.04.23
 					tx_thread_sleep(1); //WT.EDIT 2026.01.04
-				   // gpro_t.again_confirm_power_off_flag++;
+				   
 	 
 			  }
 
@@ -533,25 +533,4 @@ void tx_application_stack_error_handler(TX_THREAD *thread_ptr)
   printf("stack overflow in thread:%s \n", thread_ptr->tx_thread_name );
 }
 
-#if 0
-void uart1_tx_put(void)
-{
-	tx_semaphore_put(&uart1_tx_semaphore);
-}
 
-
-void uart1_tx_get_clear(void)
-{
-    
-	while(tx_semaphore_get(&uart1_tx_semaphore,TX_NO_WAIT)==TX_SUCCESS){
-
-	}
-}
-
-
-void uart1_tx_get(void)
-{
-
-  tx_semaphore_get(&uart1_tx_semaphore,TX_WAIT_FOREVER);
-}
-#endif 
