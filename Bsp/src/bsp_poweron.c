@@ -254,9 +254,9 @@ void power_on_off_handler(void)
 {
     if(run_t.power_on== power_off){
       //  run_t.power_on= power_on;
-        gpro_t.power_on_off_rx_flag = 1;
+    
         SendData_PowerOnOff(1);
-		tx_thread_sleep(10);
+		tx_thread_sleep(1);
 
 	    gpro_t.gTimer_power_off_on_minute_fan =0;
 		gpro_t.power_on_step =0;
@@ -264,13 +264,13 @@ void power_on_off_handler(void)
 
     }
     else{ //power off .
-        run_t.power_on= power_off;
-        gpro_t.power_on_off_rx_flag = 3;
+       // run_t.power_on= power_off;
+     
 		gpro_t.gTimer_power_off_on_minute_fan =0;
 		gpro_t.again_confirm_power_off_flag = 1;
 		gpro_t.gTimer_power_off_on_minute_fan=0;
         SendData_PowerOnOff(0);
-	    tx_thread_sleep(10);
+	    tx_thread_sleep(1);
       
  
 
