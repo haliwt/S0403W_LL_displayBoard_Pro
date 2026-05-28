@@ -142,15 +142,24 @@ void DMA1_Channel2_3_IRQHandler(void)
     if(LL_DMA_IsActiveFlag_TC2(DMA1)){ //transfer complete -TC
          LL_DMA_ClearFlag_TC2(DMA1);
 		 
-		 
-    }
+	}
 
-    if(LL_DMA_IsActiveFlag_TE2(DMA1)){ //transfer Error Flag,TE)
-        LL_DMA_ClearFlag_TE2(DMA1);
-    }
+	 if(LL_DMA_IsActiveFlag_TC3(DMA1)){ //transfer complete -TC
+         LL_DMA_ClearFlag_TC3(DMA1);
+		 
+	}
+
+   
 
   /* USER CODE END DMA1_Channel2_3_IRQn 0 */
   /* USER CODE BEGIN DMA1_Channel2_3_IRQn 1 */
+   if(LL_DMA_IsActiveFlag_TE2(DMA1)){ //transfer Error Flag,TE)
+		 LL_DMA_ClearFlag_TE2(DMA1);
+	 }
+
+  if(LL_DMA_IsActiveFlag_TE3(DMA1)){ //transfer Error Flag,TE)
+		   LL_DMA_ClearFlag_TE3(DMA1);
+	   }
 
   /* USER CODE END DMA1_Channel2_3_IRQn 1 */
 }

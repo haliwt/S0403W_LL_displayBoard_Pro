@@ -130,7 +130,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 			SendWifiData_Answer_Cmd(0x02,0x01); //close ptc 
 			tx_thread_sleep(2);
 			
-			//Display_Kill_Dry_Ster_Icon();
+			//disp_kill_dry_ster_temperature_humidity_hanlder();
 	        
 	}
 	else{//power off 
@@ -140,7 +140,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 			SendWifiData_Answer_Cmd(0x02,0x0); //close ptc 
 		    tx_thread_sleep(2);
 		
-			//Display_Kill_Dry_Ster_Icon();
+			//disp_kill_dry_ster_temperature_humidity_hanlder();
 	        
 	 }
 
@@ -165,7 +165,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 				tx_thread_sleep(2);
 				 gpro_t.gTimer_copy_cmd_counter=0; 
 			     gpro_t.receive_copy_buff[3]=copy_null;
-				 //Display_Kill_Dry_Ster_Icon();
+				 //disp_kill_dry_ster_temperature_humidity_hanlder();
 		   	
 	}
 
@@ -769,9 +769,10 @@ void USART1_IRQHandler(void)
     }
 
     // 清除错误标志
-    if (LL_USART_IsActiveFlag_ORE(USART1)) LL_USART_ClearFlag_ORE(USART1);
-    if (LL_USART_IsActiveFlag_FE(USART1))  LL_USART_ClearFlag_FE(USART1);
-    if (LL_USART_IsActiveFlag_NE(USART1))  LL_USART_ClearFlag_NE(USART1);
+   // if (LL_USART_IsActiveFlag_ORE(USART1)) 
+	LL_USART_ClearFlag_ORE(USART1);
+   // if (LL_USART_IsActiveFlag_FE(USART1))  LL_USART_ClearFlag_FE(USART1);
+   /// if (LL_USART_IsActiveFlag_NE(USART1))  LL_USART_ClearFlag_NE(USART1);
 }
 
 /**

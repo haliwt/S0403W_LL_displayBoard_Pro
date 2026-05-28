@@ -120,9 +120,8 @@ void add_key_fun(void)
         gpro_t.gTimer_set_temp_times = 0;
  
 		run_t.ptc_on_off_flag = 0; //WT.EDIT 2025.10.31
-		gpro_t.set_up_temp_value_done = 1;
-
-		gpro_t.first_set_ptc_on=0;
+	    gpro_t.first_set_ptc_on=0;
+		gpro_t.key_set_temperature_f = 1;
 	
 	   break;
 
@@ -175,8 +174,9 @@ void dec_key_fun(void)
              gpro_t.gTimer_set_temp_times = 0;
  
 			 run_t.ptc_on_off_flag = 0; //WT.EDIT 2025.10.31
-		     gpro_t.set_up_temp_value_done = 1;
+		
 			 gpro_t.first_set_ptc_on=0;
+			 gpro_t.key_set_temperature_f = 1;
 	
 		    break;
 

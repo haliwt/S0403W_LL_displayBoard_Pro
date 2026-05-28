@@ -166,33 +166,33 @@ static void vTaskKeyEvent(ULONG thread_input)
 	    else if(flags & KEY_POWER_LONG){
 
            SendData_Set_Command(0x05,0x01); // link wifi of command .
-	       tx_thread_sleep(2); //receive tx oxff command of run 
+	       tx_thread_sleep(4); //receive tx oxff command of run 
 
 		}
 	  /* MODE 键 */
         else if(flags & KEY_MODE_SHORT){
 			SendData_Buzzer();
-		    tx_thread_sleep(2);
+		    tx_thread_sleep(4);
 		    mode_key_short_fun();
            
 
 		}
 	    else if(flags & KEY_MODE_LONG){
             SendData_Buzzer();
-			tx_thread_sleep(2);
+			tx_thread_sleep(4);
 			mode_key_long_fun();
 
 		}
         else if(flags & KEY_UP_SHORT){
            
 		        SendData_Buzzer();//SendData_Buzzer_Has_Ack();//SendData_Buzzer();
-				tx_thread_sleep(2);
+				tx_thread_sleep(4);
 		
 				add_key_fun();
 		}  
 	    else if(flags & KEY_DOWN_SHORT){
           SendData_Buzzer();
-		  tx_thread_sleep(2);
+		  tx_thread_sleep(4);
 		  dec_key_fun();
 
 		}
@@ -253,7 +253,7 @@ static void vTaskKeyPro(ULONG thread_input)
         else if(mode_cnt > 1){
 			 if(mode_cnt < LONG_PRESS_TIME){
                 tx_event_flags_set(&key_event, KEY_MODE_SHORT, TX_OR);
-			 	}
+			 }
             mode_cnt = 0;
 			 
         }
@@ -321,8 +321,8 @@ void app_threadx_handler(void)
    					0,
    					stack_ui_pro,
    					STACK_SIZE_UI,
-   					4,
-   					4,
+   					3,
+   					3,
    					TX_NO_TIME_SLICE,
    					TX_AUTO_START);
 
@@ -332,8 +332,8 @@ void app_threadx_handler(void)
 					0,
 					stack_key_pro,
 					STACK_SIZE_KEY,
-					1,
-					1,
+					0,
+					0,
 					TX_NO_TIME_SLICE,
 					TX_AUTO_START);
 	
@@ -343,8 +343,8 @@ void app_threadx_handler(void)
 					  0,							/* 传递给任务的参数 */
 					  stack_key_event,				/* 堆栈基地址 */
 					  STACK_SIZE_EVENT,				/* 堆栈空间大小 */  
-					  3,							/* 任务优先级*/
-					  3,							/* 任务抢占阀值 */
+					  1,							/* 任务优先级*/
+					  1,							/* 任务抢占阀值 */
 					  TX_NO_TIME_SLICE, 			/* 不开启时间片 */
 					  TX_AUTO_START);				/* 创建后立即启动 */
    

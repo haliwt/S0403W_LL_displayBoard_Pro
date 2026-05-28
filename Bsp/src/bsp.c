@@ -137,7 +137,7 @@ static void handle_works_time_mode(void)
 	     
      }
  
-	 
+	  disp_f ++ ;
 	  if(disp_f > 20){ //10ms * 11 = 110ms
 	  	 disp_f=0;
 		display_not_ai_timer_mode();
@@ -258,7 +258,11 @@ static void handle_timer_time_mode(void)
 
             run_t.time_setting_mode = works_time ;
 			run_t.gAI =1;
+		    display_ai_icon(run_t.gAI) ;
+			display_not_ai_timer_mode();
+	        power_on_init_disp_time_numbers();
 		}
+	
 	 
        disp_timer_run_times();
        counter_time_timing_fun();//Works_Counter_Time();
@@ -407,7 +411,7 @@ void display_not_ai_timer_mode(void)
     switch(run_t.time_setting_mode){//switch(run_t.setup_timer_timing_item){
 
       case works_time:
-
+        
 	    display_ai_icon(1) ;
 	
         

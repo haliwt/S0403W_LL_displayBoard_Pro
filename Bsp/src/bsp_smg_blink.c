@@ -154,7 +154,7 @@ void disp_fan_leaf_run_icon(void)
        
         if (run_t.time_setting_mode == setup_timer){
 
-		     if(lcd_t.gTimer_leaf_counter > 2){ //10*20
+		     if(lcd_t.gTimer_leaf_slow_counter > 80){ //10*20
 						 
 					lcd_t.gTimer_leaf_counter = 0;
 					gpro_t.disp_fan_switch_flag	^= 1;
@@ -164,7 +164,7 @@ void disp_fan_leaf_run_icon(void)
 		    }
 
 		}
-		else if(lcd_t.gTimer_leaf_counter > LEAF_TOGGLE_THRESHOLD){ //3*100ms
+		else if(lcd_t.gTimer_leaf_counter > LEAF_TOGGLE_THRESHOLD){ //100ms *3 
 	              
 	            lcd_t.gTimer_leaf_counter = 0;
 	            gpro_t.disp_fan_switch_flag  ^= 1;

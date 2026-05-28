@@ -8,7 +8,7 @@ void disp_temp_humidity_wifi_icon_handler(void);
 
 
 
-void Display_Kill_Dry_Ster_Icon(void);
+void disp_kill_dry_ster_temperature_humidity_hanlder(void);
 
 
 void disp_time_colon_ion_handler(void);

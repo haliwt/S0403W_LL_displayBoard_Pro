@@ -35,21 +35,12 @@ void power_run_handler(void)
      switch(run_t.power_on){
 
 	 case power_on:
-         
+	 	  
+          
            power_on_handler();
-		   
-	      // disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
-	       disp_time_colon_fun();
+		   disp_time_colon_fun();
 
-//		   	if(gpro_t.gTimer_disp_dry_counter> 0 && gpro_t.key_set_temperature==0 && gpro_t.set_up_temp_value_done != 1){
-			   
-//		 	   gpro_t.gTimer_disp_dry_counter=0;
 
-//               counter_time_numbers();
-//		       Display_Kill_Dry_Ster_Icon();
-
-//            }
-	     
        
 	 break;
 	 
@@ -112,8 +103,13 @@ void power_run_handler(void)
 */
 void power_on_handler(void)
 {
-    if(gpro_t.power_on_step < 10){
-	 power_on_initial();
+    if(gpro_t.key_set_temperature_f == 1){
+		gpro_t.key_set_temperature_f++;
+        direct_comparison_temp();
+    }
+	
+	if(gpro_t.power_on_step < 10){
+	   power_on_initial();
     }
 	else 
 		power_on_cycle();
@@ -363,7 +359,7 @@ void power_on_off_handler(void)
     
     
         SendData_PowerOnOff(1);
-		tx_thread_sleep(2);
+		tx_thread_sleep(4);
 
 	    gpro_t.gTimer_power_off_on_minute_fan =0;
 		gpro_t.power_on_step =0;
@@ -375,7 +371,7 @@ void power_on_off_handler(void)
 		gpro_t.again_confirm_power_off_flag = 1;
 		gpro_t.gTimer_power_off_on_minute_fan=0;
         SendData_PowerOnOff(0);
-	    tx_thread_sleep(2);
+	    tx_thread_sleep(5);
       }
     
 }
@@ -451,7 +447,7 @@ static void display_lcd_Icon_init(void)
      }
      else{
 	 
-         Display_Kill_Dry_Ster_Icon();
+         disp_kill_dry_ster_temperature_humidity_hanlder();
      }
      //TM1723_Write_Display_Data(0xC3,(lcdNumber1_Low[lcd_t.number1_low]+AI_Symbol+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
      //TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xF1);//display "t,c"

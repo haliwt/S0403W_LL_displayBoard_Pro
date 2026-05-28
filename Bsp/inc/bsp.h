@@ -69,9 +69,9 @@ typedef struct _process_state{
    uint8_t power_on_step;
    volatile uint8_t decoder_flag;
    uint8_t last_read_index ;
-
+   uint8_t key_set_temperature_f;
   
-   uint8_t set_up_temp_value_done;
+  
    uint8_t first_set_ptc_on;
    uint8_t first_rcoder_ptc_on_flag;
 

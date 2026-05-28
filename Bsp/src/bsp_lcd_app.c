@@ -110,7 +110,7 @@ static void display_temperture_humidity_value(void)
 //		gpro_t.gTimer_disp_temp_humi_value=0;
 
 //		//display address 0xC2 -> //WT.EDTI 2025.03.28
-//		Display_Kill_Dry_Ster_Icon();
+//		disp_kill_dry_ster_temperature_humidity_hanlder();
 
 //       // wifi_icon_blink_reg0xc5_handler();//TM1723_Write_Display_Data(0xC5,((0x01+lcdNumber2_Low[lcd_t.number2_low])+lcdNumber3_High[lcd_t.number3_high])&0xff);
 //		//display_lowbit_lunmber4_reg0xc9_handler();
@@ -128,7 +128,7 @@ static void display_temperture_humidity_value(void)
 void power_on_display_temp_handler(void)
 {
    #if 0
-	Display_Kill_Dry_Ster_Icon();
+	disp_kill_dry_ster_temperature_humidity_hanlder();
 
 	//display address 0xC3
 	if(run_t.gAI==1){
@@ -147,7 +147,7 @@ void power_on_display_temp_handler(void)
 	#endif 
 
 	// 显示干燥/杀菌/驱蚊图标 + 数字高位
-   // Display_Kill_Dry_Ster_Icon();
+   // disp_kill_dry_ster_temperature_humidity_hanlder();
 
   
     // WiFi 图标闪烁处理（0xC5）
@@ -163,23 +163,21 @@ void power_on_display_temp_handler(void)
 
 /******************************************************************************
 	*
-	*Function Name:static void Display_Kill_Dry_Ster_Icon(void)
+	*Function Name:static void disp_kill_dry_ster_temperature_humidity_hanlder(void)
 	*Function: display of icon , "1" -> ON ,"0"-> OFF
 	*Input Ref:
 	*Return Ref:
 	*
 ******************************************************************************/
- void Display_Kill_Dry_Ster_Icon(void)
+ void disp_kill_dry_ster_temperature_humidity_hanlder(void)
 {
 
-   uint8_t temp_value =0xff,power_counter ;
+    static uint8_t temp_value =0xff;
 
 
-    if(gpro_t.key_set_temperature==0 ){
-	if(gpro_t.temp_real_value < 60 ){
-			
-       
-	   if(temp_value!= gpro_t.temp_real_value){
+    if(gpro_t.key_set_temperature !=1 ){
+	
+	  if(temp_value!= gpro_t.temp_real_value){
 		 	temp_value = gpro_t.temp_real_value;
 		
 			 lcd_t.number1_low= gpro_t.temp_real_value/ 10;
@@ -202,10 +200,7 @@ void power_on_display_temp_handler(void)
 
      
         display_numbers_one_foure_fun();
-
-	
-	  
-     }
+      
 
 	}
 
@@ -553,37 +548,53 @@ void disp_temp_humidity_wifi_icon_handler(void)
 
     switch(gpro_t.key_set_temperature){
 
+	  case 0:
+	  	 number_blink_times++;
+	     if(number_blink_times > 10){ //20ms * 10 =300ms 
+		 	number_blink_times=0;
+		    disp_kill_dry_ster_temperature_humidity_hanlder();
+	     }
+
+	  break;
+
 	  case 1:
-         if (gpro_t.gTimer_set_temp_times < 2){
-            set_lcd_numbers_from_value(run_t.wifi_set_temperature);
+         if (gpro_t.gTimer_set_temp_times < 2 && gpro_t.key_set_temperature==1){
+              set_lcd_numbers_from_value(run_t.wifi_set_temperature);
           
-           
-            Display_Kill_Dry_Ster_Icon();
+             disp_kill_dry_ster_temperature_humidity_hanlder();
 		 
         } 
         else{
-          gpro_t.set_temp_value_success=1;
-         
-           gpro_t.gTimer_temp_compare_value =10; //at once run compare value fun WT.EDIT 2025.10.31
-		 
-	        direct_comparison_temp();
-			
-	        Display_Kill_Dry_Ster_Icon();
-		  
-		    gpro_t.key_set_temperature =0;
-			gpro_t.set_up_temp_value_done = 2;
-			sendCmdNote_to_Data(0x2A,run_t.wifi_set_temperature);
-            tx_thread_sleep(2);
-		 
+			 gpro_t.set_temp_value_success=1;
+			 
+
+		     gpro_t.key_set_temperature=2;
+
         }
 
- 
+     break;
 
-	break;
 
-	case 0:
+     case 2:
 
-	break;
+	        gpro_t.gTimer_temp_compare_value =10; //at once run compare value fun WT.EDIT 2025.10.31
+		 
+	       // direct_comparison_temp();
+			
+	        disp_kill_dry_ster_temperature_humidity_hanlder();
+		  
+		    gpro_t.key_set_temperature =0;
+		
+			
+	        sendCmdNote_to_Data(0x2A,run_t.wifi_set_temperature);
+	         tx_thread_sleep(2);
+			
+		 
+    break;
+
+	
+
+	
 	default:
 	  gpro_t.key_set_temperature =0;
 	break;
