@@ -48,7 +48,7 @@ static void power_on_initial(void)
       case 0:
 	  	
           power_on_ref_init();
-	      gpro_t.temp_key_set_value =0;
+	      gpro_t.key_set_temperature =0;
           gpro_t.power_on_step =1;
           gpro_t.gTimer_two_hours_second_counter=0;
 		  gpro_t.gTimer_two_hours_conter=0;
@@ -63,7 +63,7 @@ static void power_on_initial(void)
         
 		//end
         run_t.wifi_set_temperature=40; //WT.EDIT 2025.01.15
-        run_t.display_set_timer_or_works_time_mode = works_time;//WT.EDIT 2025.01.15
+        run_t.time_setting_mode = works_time;//WT.EDIT 2025.01.15
         run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
         gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
         
@@ -124,7 +124,7 @@ static void power_on_cycle(void)
 	
      case 2:
 	 	
-     if(gpro_t.temp_key_set_value==0 && gpro_t.gTimer_temp_compare_value > 2 && gpro_t.stopTwoHours_flag==0 && gpro_t.smart_phone_app_timer_power_on_flag ==0){
+     if(gpro_t.key_set_temperature==0 && gpro_t.gTimer_temp_compare_value > 2 && gpro_t.stopTwoHours_flag==0 && gpro_t.smart_phone_app_timer_power_on_flag ==0){
 	 	gpro_t.gTimer_temp_compare_value =0;
 		
           set_temperature_compare_value_fun();
@@ -203,12 +203,12 @@ static void power_on_ref_init(void)
     
     }
 	 run_t.gModel =1; //WT.EDIT 2022.09.01
-     run_t.gTimer_timing=0;
+     run_t.gTimer_seconds_counter=0;
 
 	 run_t.timer_time_hours =0;
 	 run_t.timer_time_minutes =0;
 	 run_t.power_off_id_flag=1;
-      gpro_t.temp_key_set_value =0;
+      gpro_t.key_set_temperature =0;
 	  gpro_t.power_on_every_times=1 ;
       run_t.disp_wind_speed_grade =100;//WT.EDIT 2025.04.16
       run_t.wifi_set_temperature=40; //WT.EDIT 2025.04.16
@@ -290,11 +290,7 @@ void power_on_off_handler(void)
 		gpro_t.gTimer_power_off_on_minute_fan=0;
         SendData_PowerOnOff(0);
 	    tx_thread_sleep(1);
-      
- 
-
-
-    }
+      }
     
 }
 /**************************************************************************
@@ -309,7 +305,7 @@ void smartPhone_appTimer_powerOn(void)
 {
 
       run_t.wifi_set_temperature=40; //WT.EDIT 2025.01.15
-      run_t.display_set_timer_or_works_time_mode = works_time;//WT.EDIT 2025.01.15
+      run_t.time_setting_mode = works_time;//WT.EDIT 2025.01.15
       run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
       gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
 
@@ -343,7 +339,7 @@ static void display_lcd_Icon_init(void)
          
     run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
     gpro_t.set_temp_value_success = 0;//WT.EDIT 2025.01.15
-    gpro_t.temp_key_set_value =0;//WT.EDIT 2025.01.15
+    gpro_t.key_set_temperature =0;//WT.EDIT 2025.01.15
 
      if(gpro_t.temp_real_value <60){
 
@@ -431,7 +427,7 @@ void power_off_handler(void)
         run_t.ultrasonic =0;
 
 
-        run_t.timer_timing_define_flag = timing_not_definition;
+        run_t.timer_set_success_flag = timing_not_definition;
 
         run_t.disp_wind_speed_grade =100;	
 
@@ -501,7 +497,7 @@ void power_off_handler(void)
 		//run_t.gPower_On=power_off;
 		
 		run_t.wifi_led_fast_blink_flag=0;
-		run_t.timer_timing_define_flag = timing_not_definition;
+		run_t.timer_set_success_flag = timing_not_definition;
 		
 		run_t.disp_wind_speed_grade =100;	
 		

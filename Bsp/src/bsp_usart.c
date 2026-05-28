@@ -221,7 +221,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 
 		//run_t.setup_timer_timing_item =  PTC_WARNING; //ptc warning 
-		run_t.display_set_timer_or_works_time_mode = PTC_WARNING;
+		run_t.time_setting_mode = PTC_WARNING;
 
 		run_t.dry=0;
 	
@@ -244,7 +244,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 		run_t.fan_warning = 1;
 
-		run_t.display_set_timer_or_works_time_mode =FAN_WARNING;  //run_t.display_set_timer_or_works_time_mode
+		run_t.time_setting_mode =FAN_WARNING;  //run_t.time_setting_mode
 
 		run_t.dry =0;
 	
@@ -301,7 +301,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
    case 0x1A: //read sensor "DHT11" temperature and humidity value .
 
  
-        if(gpro_t.temp_key_set_value==0){
+        if(gpro_t.key_set_temperature==0){
 	   
 		if(pddata[6]  < 60){
 			 gpro_t.humidity_real_value = pddata[5];
@@ -442,7 +442,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 	if(frame.func_code==2){
 		//timer time + don't has ai item
 	
-			run_t.display_set_timer_or_works_time_mode = timer_time;
+			run_t.time_setting_mode = timer_time;
 			run_t.gTimer_again_switch_works = 0; //WT.EDIT ,if don't define timer_time,wait 3s switch to works_time.
 			run_t.gModel=0;
 		    gpro_t.switch_not_ai_mode=1;
@@ -452,7 +452,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 	else{ //AI mode 
 		//beijing time + ai item
 	
-			run_t.display_set_timer_or_works_time_mode = works_time;
+			run_t.time_setting_mode = works_time;
 		
 			run_t.gTimer_again_switch_works = 0;
 			gpro_t.switch_not_ai_mode=0;
@@ -481,8 +481,8 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		lcd_t.number2_high = run_t.wifi_set_temperature % 10; //
 
 		gpro_t.gTimer_set_temp_times=0;//WT.EDIT 2025.10.31
-		run_t.gTimer_timing =0;
-		gpro_t.temp_key_set_value =1;
+		run_t.gTimer_seconds_counter =0;
+		gpro_t.key_set_temperature =1;
         run_t.smart_phone_set_temp_value_flag =1;
 
 		if(run_t.wifi_set_temperature <= gpro_t.temp_real_value){// && gpro_t.smart_phone_turn_off_ptc_flag ==0){
@@ -502,7 +502,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		   	if(pddata[5] >0){
 			   run_t.timer_time_hours = pddata[5];
 			   run_t.timer_time_minutes=0;
-			   run_t.gTimer_timing =0;
+			   run_t.gTimer_seconds_counter =0;
 			  
 			   lcd_t.number5_low =	run_t.timer_time_hours / 10;
 			   lcd_t.number5_high = lcd_t.number5_high;//run_t.timer_time_hours / 10;
@@ -519,8 +519,8 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 			    tx_thread_sleep(200);
 		       //display_digits(0xFF, 0);
 		 
-			   run_t.timer_timing_define_flag = timing_success;
-			   run_t.display_set_timer_or_works_time_mode=timer_time;
+			   run_t.timer_set_success_flag = timing_success;
+			   run_t.time_setting_mode=timer_time;
 			   run_t.gTimer_again_switch_works = 0;
 			   gpro_t.switch_not_ai_mode=1;
 			   run_t.gModel = 0;
@@ -528,7 +528,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		   else if(pddata[5] ==0){
 			   run_t.timer_time_hours=0;
 			   run_t.timer_time_minutes=0;
-			    run_t.gTimer_timing =0;
+			    run_t.gTimer_seconds_counter =0;
 
 		       lcd_t.number5_low =	0;//run_t.timer_time_hours / 10;
 			   lcd_t.number5_high =0;//lcd_t.number5_high; //run_t.timer_time_hours / 10;
@@ -542,8 +542,8 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
                display_digits(0x0F, 1);
 			   tx_thread_sleep(200);
-               run_t.timer_timing_define_flag = timing_not_definition;
-			   run_t.display_set_timer_or_works_time_mode=works_time;
+               run_t.timer_set_success_flag = timing_not_definition;
+			   run_t.time_setting_mode=works_time;
 			   run_t.gTimer_again_switch_works = 0;
 			   gpro_t.switch_not_ai_mode=0;
 			   run_t.gModel = 1;

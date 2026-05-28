@@ -6,7 +6,7 @@
 static void works_timer_disp_numaber(void)
 {
 
-     switch(run_t.display_set_timer_or_works_time_mode){//switch(run_t.setup_timer_timing_item){
+     switch(run_t.time_setting_mode){//switch(run_t.setup_timer_timing_item){
 
       case works_time:
         
@@ -89,7 +89,7 @@ void display_lcd_Icon_init(void)
          
     run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
     gpro_t.set_temp_value_success = 0;//WT.EDIT 2025.01.15
-    gpro_t.temp_key_set_value =0;//WT.EDIT 2025.01.15
+    gpro_t.key_set_temperature =0;//WT.EDIT 2025.01.15
 
     if(gpro_t.temp_real_value < 60){
 

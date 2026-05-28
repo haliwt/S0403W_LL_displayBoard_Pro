@@ -57,9 +57,9 @@ void tim16_int_callback_handler(void)
         run_t.gTimer_wifi_connect_counter++;
 		run_t.gTimer_disp_time_seconds++;
 		run_t.gTimer_key_timing++;
-	//	run_t.gTimer_set_timer_time_seconds ++;
+
 		run_t.gTimer_ptc_fan_warning++;
-        run_t.gTimer_timing++;
+        run_t.gTimer_seconds_counter++;
 	    run_t.gTimer_work_break_times++;
         run_t.gTimer_again_switch_works ++ ;
 		

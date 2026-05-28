@@ -15,10 +15,10 @@
 
 
 
-#define STACK_SIZE_UI     1024 
+#define STACK_SIZE_UI     1536//1024 
 #define STACK_SIZE_KEY    256//512
 #define STACK_SIZE_DEC    512//
-#define STACK_SIZE_EVENT  256
+#define STACK_SIZE_EVENT  512
 
 __attribute__((aligned(8)))  static UCHAR stack_ui_pro[STACK_SIZE_UI];
 __attribute__((aligned(8)))  static UCHAR stack_key_pro[STACK_SIZE_KEY];
@@ -135,13 +135,8 @@ static void vTaskUiPro(ULONG thread_input)
   (void)thread_input;
   while(1){
    		
-       
-	
-	
-		power_run_handler();
-		
-	
-        tx_thread_sleep(1);//10ms
+        power_run_handler();
+		tx_thread_sleep(1);//10ms
    
   }
 
@@ -443,13 +438,12 @@ static void power_run_handler(void)
 	       disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
 	       disp_time_colon_fun();
 
-		   	if(gpro_t.gTimer_disp_dry_counter> 0 && gpro_t.temp_key_set_value==0 && gpro_t.set_up_temp_value_done != 1){
+		   	if(gpro_t.gTimer_disp_dry_counter> 0 && gpro_t.key_set_temperature==0 && gpro_t.set_up_temp_value_done != 1){
 			   
 		 	   gpro_t.gTimer_disp_dry_counter=0;
 
-             
-			   counter_time_numbers();
-		        Display_Kill_Dry_Ster_Icon();
+               counter_time_numbers();
+		       Display_Kill_Dry_Ster_Icon();
 
             }
 	     

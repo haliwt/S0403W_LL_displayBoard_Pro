@@ -87,7 +87,7 @@ static void wifi_icon_blink_reg0xc5_handler(void)
 */
 static void display_lowbit_lunmber4_reg0xc9_handler(void)
 {
-    if(run_t.display_set_timer_or_works_time_mode != setup_timer){
+    if(run_t.time_setting_mode != setup_timer){
 
        TM1723_Write_Display_Data(0xC9,((T8_HUM +lcdNumber4_Low[lcd_t.number4_low])+lcdNumber5_High[lcd_t.number5_high])&0xff);
 
@@ -105,7 +105,7 @@ static void display_temperture_humidity_value(void)
 {
   // static uint8_t ai_mode_base;
    
-//   if(gpro_t.temp_key_set_value !=1 && gpro_t.gTimer_disp_temp_humi_value>4){
+//   if(gpro_t.key_set_temperature !=1 && gpro_t.gTimer_disp_temp_humi_value>4){
 
 //		gpro_t.gTimer_disp_temp_humi_value=0;
 
@@ -175,7 +175,7 @@ void power_on_display_temp_handler(void)
    uint8_t temp_value =0xff,power_counter ;
 
 
-    if(gpro_t.temp_key_set_value==0 ){
+    if(gpro_t.key_set_temperature==0 ){
 	if(gpro_t.temp_real_value < 60 ){
 			
        
@@ -196,7 +196,7 @@ void power_on_display_temp_handler(void)
 
 			
 		
-      TIM1723_Write_Cmd(0x00);
+       TIM1723_Write_Cmd(0x00);
 	   TIM1723_Write_Cmd(0x40);
 	   TIM1723_Write_Cmd(0x44);
 
@@ -212,16 +212,14 @@ void power_on_display_temp_handler(void)
     }
 	else{
 
-        
-		
-			 lcd_t.number1_low= run_t.wifi_set_temperature / 10;
-		     lcd_t.number1_high =  lcd_t.number1_high;
+		lcd_t.number1_low= run_t.wifi_set_temperature / 10;
+		lcd_t.number1_high =  lcd_t.number1_high;
 
-		     lcd_t.number2_low =  run_t.wifi_set_temperature % 10;
-		     lcd_t.number2_high =  lcd_t.number2_low;
+		lcd_t.number2_low =  run_t.wifi_set_temperature % 10;
+		lcd_t.number2_high =  lcd_t.number2_low;
 
 
-		    display_numbers_one_foure_fun();
+		display_numbers_one_foure_fun();
 			
 	 }
 		 
@@ -392,7 +390,7 @@ void display_numbers_one_foure_fun(void)
 static void works_timer_disp_numaber(void)
 {     
     
-    switch(run_t.display_set_timer_or_works_time_mode){//switch(run_t.setup_timer_timing_item){
+    switch(run_t.time_setting_mode){//switch(run_t.setup_timer_timing_item){
 
       case works_time:
         
@@ -554,7 +552,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
     static uint8_t number_blink_times;
 
 
-    switch(gpro_t.temp_key_set_value){
+    switch(gpro_t.key_set_temperature){
 
 	  case 1:
          if (gpro_t.gTimer_set_temp_times < 2){
@@ -573,7 +571,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
 			
 	        Display_Kill_Dry_Ster_Icon();
 		  
-		    gpro_t.temp_key_set_value =0;
+		    gpro_t.key_set_temperature =0;
 			gpro_t.set_up_temp_value_done = 2;
 			sendCmdNote_to_Data(0x2A,run_t.wifi_set_temperature);
             tx_thread_sleep(1);
@@ -588,7 +586,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
 
 	break;
 	default:
-	  gpro_t.temp_key_set_value =0;
+	  gpro_t.key_set_temperature =0;
 	break;
     }
 

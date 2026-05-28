@@ -12,6 +12,11 @@ typedef enum{
 
 static PTC_State ptc_state = PTC_STATE_OFF ;
 
+static void handle_works_time_mode(void); 
+static void handle_setup_timer_mode(void); 
+static void handle_timer_time_mode(void); 
+static void handle_fan_warning_mode(void); 
+static void handle_ptc_warning_mode(void); 
 
 
 
@@ -26,8 +31,10 @@ static void ptc_high_temp_warning_fun(void);
 
 static void power_on_init_disp_time_numbers(void);
 
-
 static void send_ptc_command(uint8_t on_off);
+
+static void disp_timer_set_numbers(void);
+
 
 
 void bsp_init(void)
@@ -54,7 +61,7 @@ void mode_key_long_fun(void)
 
        run_t.gModel=0;
        gpro_t.gTimer_disp_temp_humi_value=0;
-       run_t.display_set_timer_or_works_time_mode = setup_timer;
+       run_t.time_setting_mode = setup_timer;
       
        run_t.gTimer_key_timing=0;
        gpro_t.gTimer_disp_temp_humi_value=0;
@@ -73,29 +80,38 @@ void mode_key_long_fun(void)
 **************************************************************************************/
 void display_timer_and_beijing_time_handler(void)
 {
-   
-  static uint8_t not_ai_mode_flag,not_ai_default=0xff;
-  static uint8_t ai_mode_flag,ai_default = 0xff;
-  static uint8_t  timer_time_switch_f ,disp_f;
-   switch(run_t.display_set_timer_or_works_time_mode){
 
-    case works_time:
+	switch(run_t.time_setting_mode) {
+		case works_time:		handle_works_time_mode(); break;
+		case setup_timer:		handle_setup_timer_mode(); break;
+		case timer_time:		handle_timer_time_mode(); break;
+		case FAN_WARNING:		handle_fan_warning_mode(); break;
+		case PTC_WARNING:		handle_ptc_warning_mode(); break;
+	}
+
+}
+/******************************************************************************
+	*
+	*Function Name:static void handle_works_time_mode(void)
+	*Function: display of icon , "1" -> ON ,"0"-> OFF
+	*Input Ref:NO
+	*Return Ref:NO
+	*
+******************************************************************************/   
+static void handle_works_time_mode(void)
+{
+    static uint8_t disp_f ;
+    
 
      if(lcd_t.display_beijing_time_flag == 0 && gpro_t.power_on_every_times == 1 ){
 
               gpro_t.power_on_every_times++;
               run_t.gTimer_disp_time_seconds=0; //WT.EDIT 2025.01.08
-             
-
      }
      else if(lcd_t.display_beijing_time_flag == 1 && gpro_t.power_on_every_times == 1 ){
-
-                gpro_t.power_on_every_times++;
-
-
+        gpro_t.power_on_every_times++;
      }
     
-        
      if(run_t.power_on_disp_smg_number ==1){
        run_t.power_on_disp_smg_number++; 
        if(run_t.dispTime_hours> 24){
@@ -115,52 +131,46 @@ void display_timer_and_beijing_time_handler(void)
     	 lcd_t.number8_high = lcd_t.number8_low ;//(run_t.dispTime_minutes )%10;
 
      
-      power_on_init_disp_time_numbers();
+          power_on_init_disp_time_numbers();
 	     
-       
-
-      }
+     }
  
-	  timer_time_switch_f++;
-	  disp_f ++;
-	  if(disp_f > 10){ //10ms * 11 = 110ms
+	 
+	  if(disp_f > 20){ //10ms * 11 = 110ms
 	  	 disp_f=0;
 	    power_on_init_disp_time_numbers();
 
 	  }
-	  if(timer_time_switch_f > 3 && timer_time_switch_f  < 6){
+	  
 	  	
-        counter_time_timing_fun(); 
-        gpro_t.switch_not_ai_mode=0;
-	  }
-	  else if(timer_time_switch_f > 8){
-         timer_time_switch_f  =0;
-         Setup_Timer_Times_Donot_Display();
-	  }
+      counter_time_timing_fun(); 
+      gpro_t.switch_not_ai_mode=0;
+	  
+	 
+      Setup_Timer_Times_Donot_Display();
+	  
 
-	
-     
+}
 
-    break;
+static void handle_setup_timer_mode(void)
+{
 
+   disp_set_timer_timing_value_fun();
 
-    case setup_timer:
-		
-      disp_set_timer_timing_value_fun();
+}
 
+static void handle_timer_time_mode(void)
+{
+      static uint8_t not_ai_mode_flag,not_ai_default=0xff;
 
-    break;
-
-    case timer_time:
-
-       if(wifi_link_net_state()==1 && (not_ai_default != not_ai_mode_flag)){ //WT.EDIT 2025.01.03
-             not_ai_default = not_ai_mode_flag;
-             ai_mode_flag++;
+//       if(wifi_link_net_state()==1 && (not_ai_default != not_ai_mode_flag)){ //WT.EDIT 2025.01.03
+//             not_ai_default = not_ai_mode_flag;
+          
    
-			 //SendData_Set_Command(0x27,0x02); //NOT_MODE_AI,BUR NO_BUZZER);
-			 //tx_thread_sleep(1);
+//			 //SendData_Set_Command(0x27,0x02); //NOT_MODE_AI,BUR NO_BUZZER);
+//			 //tx_thread_sleep(1);
 
-        }
+//        }
 
        if(run_t.gTimer_again_switch_works < 5 && gpro_t.switch_not_ai_mode==1){ //WT.EDIT ,if don't define timer_time,wait 3s switch to works_time.
 			
@@ -170,9 +180,9 @@ void display_timer_and_beijing_time_handler(void)
            gpro_t.switch_not_ai_mode=0;
 		}
 
-		if(run_t.timer_timing_define_flag==timing_success && gpro_t.key_set_timer_flag==0 && gpro_t.add_dec_key_be_pressed==1){
+		if(run_t.timer_set_success_flag==timing_success && gpro_t.key_timer_setting_flag==0 && gpro_t.add_dec_key_be_pressed==1){
            run_t.timer_time_minutes=0;
-		   run_t.gTimer_timing =0;
+		   run_t.gTimer_seconds_counter =0;
            gpro_t.add_dec_key_be_pressed  =0;
            sendCmdNote_to_Data(0x2B,run_t.timer_time_hours);
 			tx_thread_sleep(1);
@@ -183,12 +193,12 @@ void display_timer_and_beijing_time_handler(void)
        disp_timer_run_times();
        counter_time_timing_fun();//Works_Counter_Time();
 
-    break;
+    
+}
 
-    case FAN_WARNING: //fan warning 
-
-      
-         fan_default_warning_fun();
+static void handle_fan_warning_mode(void)
+{
+    fan_default_warning_fun();
          if(run_t.ptc_warning == 1){
 
              if(gpro_t.gTimer_fan_to_ptc_warning > 2){
@@ -196,17 +206,17 @@ void display_timer_and_beijing_time_handler(void)
                    gpro_t.gTimer_fan_to_ptc_warning = 0;
                
 
-                 run_t.display_set_timer_or_works_time_mode = PTC_WARNING;
+                 run_t.time_setting_mode = PTC_WARNING;
 
             }
 
          }
+}
 
-    break;
+static void handle_ptc_warning_mode(void)
+{
 
-    case PTC_WARNING: //ptc warning
-
-         ptc_high_temp_warning_fun();
+     ptc_high_temp_warning_fun();
          if(run_t.fan_warning == 1){
 
              if(gpro_t.gTimer_fan_to_ptc_warning > 2){
@@ -214,17 +224,16 @@ void display_timer_and_beijing_time_handler(void)
                    gpro_t.gTimer_fan_to_ptc_warning = 0;
                
 
-               run_t.display_set_timer_or_works_time_mode =FAN_WARNING;
+               run_t.time_setting_mode =FAN_WARNING;
 
             }
 
          }
 
-    break;
-
-    }
-
+   
 }
+
+
 
 /******************************************************************************
 	*
@@ -282,10 +291,37 @@ static void power_on_init_disp_time_numbers(void)
     fan_disp_speed_leaf(1);
 
 }
+/**
+*
+*@brief 
+*@notice don't time colon ":"
+*@param
+*@return 
+*
+**/
+static void disp_timer_set_numbers(void)
+{
+     
+    TM1723_Write_Display_Data(0xC9,(T8_HUM+lcdNumber4_Low[lcd_t.number4_low]+lcdNumber5_High[lcd_t.number5_high]) & 0xff);
 
+    TM1723_Write_Display_Data(0xCA,lcdNumber5_Low[lcd_t.number5_low]+lcdNumber6_High[lcd_t.number6_high]);//display digit
+ 
+    TM1723_Write_Display_Data(0xCB,TIME_NO_COLON+lcdNumber6_Low[lcd_t.number6_low]+lcdNumber7_High[lcd_t.number7_high]);//d
+    fan_disp_speed_leaf(1);
+
+}
+
+/**
+*
+*@brief 
+*@notice
+*@param
+*@return 
+*
+**/
 void display_not_ai_timer_mode(void)
 {
-    switch(run_t.display_set_timer_or_works_time_mode){//switch(run_t.setup_timer_timing_item){
+    switch(run_t.time_setting_mode){//switch(run_t.setup_timer_timing_item){
 
       case works_time:
 
@@ -351,7 +387,7 @@ void set_temperature_compare_value_fun(void)
     static uint8_t counter;
 
     if(run_t.fan_warning ==1 || run_t.ptc_warning ==1 || gpro_t.stopTwoHours_flag==1 || run_t.ptc_on_off_flag == 1\
-		|| gpro_t.temp_key_set_value==1)return ;
+		|| gpro_t.key_set_temperature==1)return ;
 
 	if(gpro_t.temp_real_value > 60)return ; //WT.EDIT 2026.01.19
 
@@ -361,7 +397,7 @@ void set_temperature_compare_value_fun(void)
 
 	
 	if(gpro_t.set_temp_value_success==1){
-          target_temp = run_t.wifi_set_temperature ;//gpro_t.temp_key_set_value;
+          target_temp = run_t.wifi_set_temperature ;//gpro_t.key_set_temperature;
     }
 	else{
 	   target_temp = DEFAULT_TEMP;

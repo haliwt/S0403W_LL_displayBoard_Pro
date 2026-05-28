@@ -57,10 +57,10 @@ void mode_key_short_fun(void)
 {
    
    if(run_t.ptc_warning ==0 && run_t.fan_warning ==0){
-		if(run_t.display_set_timer_or_works_time_mode == works_time){
+		if(run_t.time_setting_mode == works_time){
 	
 			//timer time + don't has ai item
-			run_t.display_set_timer_or_works_time_mode = timer_time;
+			run_t.time_setting_mode = timer_time;
 			run_t.gModel=0; //don't display this AI icon.
             run_t.gTimer_again_switch_works = 0;
 			display_time_hours_minutes_fun();
@@ -76,9 +76,9 @@ void mode_key_short_fun(void)
 			#endif 
 
 		}
-		else if(run_t.display_set_timer_or_works_time_mode == timer_time){
+		else if(run_t.time_setting_mode == timer_time){
 			//beijing time + ai item
-			run_t.display_set_timer_or_works_time_mode = works_time;
+			run_t.time_setting_mode = works_time;
 			run_t.gTimer_again_switch_works = 0;
 			run_t.gModel=1; //AI MODE
 			display_time_hours_minutes_fun();
@@ -113,7 +113,7 @@ void add_key_fun(void)
 {
    //  static uint8_t power_on_fisrt_flag ;
     
-	switch(run_t.display_set_timer_or_works_time_mode){
+	switch(run_t.time_setting_mode){
 
     case works_time: //set temperature value add number
     
@@ -124,17 +124,7 @@ void add_key_fun(void)
 
 		if(run_t.wifi_set_temperature > 40)run_t.wifi_set_temperature= 40;
 
-		
-	   // decade_temp =  run_t.wifi_set_temperature / 10 ;
-		//unit_temp =  run_t.wifi_set_temperature % 10; //
-        
-		//lcd_t.number1_low=decade_temp;
-		//lcd_t.number1_high =decade_temp;
-
-		///lcd_t.number2_low = unit_temp;
-		//lcd_t.number2_high = unit_temp;
-
-        gpro_t.temp_key_set_value = 1;
+        gpro_t.key_set_temperature = 1;
         gpro_t.gTimer_set_temp_times = 0;
  
 		run_t.ptc_on_off_flag = 0; //WT.EDIT 2025.10.31
@@ -156,7 +146,7 @@ void add_key_fun(void)
 
 			}
 			gpro_t.add_dec_key_be_pressed =1;
-		    gpro_t.key_set_timer_flag=1;
+		    gpro_t.key_timer_setting_flag=1;
       
 		break;
 		}	
@@ -179,7 +169,7 @@ void dec_key_fun(void)
     if(run_t.power_on==1){
 	   	if(run_t.ptc_warning ==0){
 	
-	     switch(run_t.display_set_timer_or_works_time_mode){//switch(run_t.setup_timer_timing_item){
+	     switch(run_t.time_setting_mode){//switch(run_t.setup_timer_timing_item){
 
 
           case works_time:
@@ -189,19 +179,7 @@ void dec_key_fun(void)
 	   
 			run_t.wifi_set_temperature--;
 			if(run_t.wifi_set_temperature<20) run_t.wifi_set_temperature=20;
-	      
-
-
-	       // decade_temp =  run_t.wifi_set_temperature / 10;
-			//unit_temp =  run_t.wifi_set_temperature % 10; //
-       
-			//lcd_t.number1_low=decade_temp;
-			///lcd_t.number1_high =decade_temp;
-
-			///lcd_t.number2_low = unit_temp;
-			//lcd_t.number2_high = unit_temp;
-			
-             gpro_t.temp_key_set_value = 1;
+	         gpro_t.key_set_temperature = 1;
              gpro_t.gTimer_set_temp_times = 0;
  
 			 run_t.ptc_on_off_flag = 0; //WT.EDIT 2025.10.31
@@ -224,7 +202,7 @@ void dec_key_fun(void)
 					
 				}
 				gpro_t.add_dec_key_be_pressed =1;
-                gpro_t.key_set_timer_flag=1;
+                gpro_t.key_timer_setting_flag=1;
         
              break;
 

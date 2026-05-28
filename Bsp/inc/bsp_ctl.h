@@ -84,7 +84,7 @@ typedef struct __RUN{
   uint8_t temperature_flag;
    uint8_t power_off_buzzer_flag ;
   
-  uint8_t timer_timing_define_flag;
+  uint8_t timer_set_success_flag;
 
   uint8_t wifi_link_flag;
   uint8_t first_power_on_flag;
@@ -157,7 +157,7 @@ typedef struct __RUN{
    uint8_t gmt_time_hours;
    uint8_t  gmt_time_minutes;
    uint8_t  gmt_time_seconds;
-   uint8_t display_set_timer_or_works_time_mode;
+   uint8_t time_setting_mode;
 
    
    uint32_t wifi_key_counter;
@@ -195,7 +195,7 @@ typedef struct __RUN{
 
  volatile  uint8_t gTimer_digital5678_ms;
   volatile uint8_t gTimer_key_timing;
-  volatile uint8_t gTimer_timing;
+  volatile uint8_t gTimer_seconds_counter;
   volatile   uint8_t gTimer_setup_zero;
 
    
