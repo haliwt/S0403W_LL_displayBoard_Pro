@@ -201,6 +201,7 @@ typedef struct _LCD_Ref{
 	volatile uint8_t  gTimer_leaf_counter;
 	volatile uint8_t gTimer_colon_counter;
 	volatile uint8_t gTimer_leaf_fast_counter;
+	volatile uint8_t  gTimer_leaf_slow_counter;
 	
 
 

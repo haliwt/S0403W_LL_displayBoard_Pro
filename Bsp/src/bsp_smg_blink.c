@@ -13,7 +13,7 @@
 
 #define  LEAF_TOGGLE_THRESHOLD   0//1//3
 
-
+#define LEAT_TOGGLE_SLOW         200
 
 volatile bool blink_on = true;       // 闪烁状态
 volatile uint16_t blink_counter = 0; // 闪烁计数
@@ -137,80 +137,7 @@ void display_digits(uint8_t mask, bool blink)
    
 
 
-/**
-* @brief 
-* @note
-* @param
-* @return
-*/
 
-// ====== 主函数 ======
-void disp_set_timer_timing_value_fun(void) 
-{
-    static uint8_t tim_bit_1_hours, tim_bit_2_hours,tim_bit_1_minutes,tim_bit_2_minutes;
-
-    uint8_t mask;
-
-
-    if(run_t.gTimer_key_timing < 4) {
-        tim_bit_2_hours = run_t.timer_time_hours / 10;
-        tim_bit_1_hours = run_t.timer_time_hours % 10;
-
-		tim_bit_2_minutes = run_t.timer_time_minutes /10;
-        tim_bit_1_minutes = run_t.timer_time_minutes % 10;
-
-        lcd_t.number5_low =  tim_bit_2_hours;
-		lcd_t.number5_high = tim_bit_2_hours;
-        lcd_t.number6_low =  tim_bit_1_hours;
-		lcd_t.number6_high = tim_bit_1_hours;
-		
-        lcd_t.number7_low = tim_bit_2_minutes ;
-		lcd_t.number7_high = tim_bit_2_minutes;
-        lcd_t.number8_low = tim_bit_1_minutes ;
-		lcd_t.number8_high= tim_bit_1_minutes;
-
-        //mask = blink_on ? 0xFF : 0x0F; // 闪烁掩码
-        display_digits(mask, blink_on);
-	
-
-    } 
-	else{
-        
-        run_t.gTimer_seconds_counter = 0;
-
-        if (run_t.timer_time_hours != 0 && gpro_t.add_dec_key_be_pressed == 1){
-            run_t.timer_set_success_flag = timing_success;
-            run_t.time_setting_mode = timer_time;
-            run_t.gAI = 0;
-			gpro_t.add_dec_key_be_pressed++;
-            
-
-        }
-		else  if (run_t.timer_time_hours == 0 && gpro_t.add_dec_key_be_pressed == 1){
-            run_t.timer_set_success_flag = timing_not_definition;
-            run_t.time_setting_mode = works_time;
-	        run_t.timer_time_minutes =0;
-            run_t.gAI = 1;
-		    gpro_t.add_dec_key_be_pressed++;
-
-		}
-        else if( run_t.timer_set_success_flag == timing_not_definition){
-            run_t.gAI = 1;
-            run_t.time_setting_mode = works_time;
-		     sendCmdNote_to_Data(0x2B,0);
-             tx_thread_sleep(2);
-
-			
-        }
-		else if( run_t.timer_set_success_flag == timing_success){
-			 run_t.gAI = 0;
-            run_t.time_setting_mode = timer_time;
-
-		}
-    }
-
-    TIM1723_Write_Cmd(LUM_VALUE);
-}
 /**
 * @brief 
 * @note
@@ -221,25 +148,34 @@ void disp_fan_leaf_run_icon(void)
 {
    
    /* 主显示更新：仅当无风扇/ptc 报警时执行 */
-    if (run_t.fan_warning == 0 && run_t.ptc_warning == 0) {
+    if (run_t.fan_warning == 1 || run_t.ptc_warning == 1) return ;
 
 	 
+       
+        if (run_t.time_setting_mode == setup_timer){
 
-        if (run_t.time_setting_mode != setup_timer){
+		     if(lcd_t.gTimer_leaf_counter > 2){ //10*20
+						 
+					lcd_t.gTimer_leaf_counter = 0;
+					gpro_t.disp_fan_switch_flag	^= 1;
+			
+		
+			   fan_runing_fun();
+		    }
 
+		}
+		else if(lcd_t.gTimer_leaf_counter > LEAF_TOGGLE_THRESHOLD){ //3*100ms
+	              
+	            lcd_t.gTimer_leaf_counter = 0;
+	            gpro_t.disp_fan_switch_flag  ^= 1;
+	         
 
-
-		 if(lcd_t.gTimer_leaf_counter > LEAF_TOGGLE_THRESHOLD){ //3*100ms
-              
-            lcd_t.gTimer_leaf_counter = 0;
-            gpro_t.disp_fan_switch_flag  ^= 1;
+			  fan_runing_fun();
+		
          }
 
-		      fan_runing_fun();
 
-        	}
-    }
-	
+
 }
 /**
 * @brief 

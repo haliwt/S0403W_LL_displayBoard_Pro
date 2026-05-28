@@ -19,6 +19,92 @@ static void power_on_cycle(void);
 
 static uint8_t send_two_disp =0;
 
+
+
+/*************************************************************************
+*
+*	Funtion Name: static void power_run_handler(void)
+*	Function: 
+*	Input Ref: 
+*	Return Ref:
+*
+**************************************************************************/
+void power_run_handler(void)
+{
+     static uint8_t counter;
+     switch(run_t.power_on){
+
+	 case power_on:
+         
+           power_on_handler();
+		   
+	      // disp_fan_leaf_run_icon(); //Display time and fan of leaf integration
+	       disp_time_colon_fun();
+
+//		   	if(gpro_t.gTimer_disp_dry_counter> 0 && gpro_t.key_set_temperature==0 && gpro_t.set_up_temp_value_done != 1){
+			   
+//		 	   gpro_t.gTimer_disp_dry_counter=0;
+
+//               counter_time_numbers();
+//		       Display_Kill_Dry_Ster_Icon();
+
+//            }
+	     
+       
+	 break;
+	 
+	 case power_off:
+          
+
+           run_t.power_on_disp_smg_number = 0;
+		   gpro_t.gTimer_two_hours_conter=0; //WT.EDIT 2025.10.30
+		   gpro_t.stopTwoHours_flag=0;
+		   gpro_t.first_ptc_on=0;
+           power_off_handler();
+	       gpro_t.fan_run_one_minute=0;
+
+		   counter ++ ;
+		   
+		    if(gpro_t.again_confirm_power_off_flag == 1 && counter > 40 ){
+				counter =0;
+				SendData_Set_Command(0x10,0); //mainboard.WT.EDIT 2026.01.04
+                tx_thread_sleep(2); //WT.EDIT 2026.01.04
+			   // gpro_t.again_confirm_power_off_flag++;
+
+		    }
+
+			if(gpro_t.gTimer_power_off_on_minute_fan > 60){
+
+			    gpro_t.again_confirm_power_off_flag++;
+			    SendData_Set_Command(0x12,1); //turn off fun .mainboard.WT.EDIT 2026.01.04
+			    tx_thread_sleep(2); //WT.EDIT 2026.01.04
+
+
+			}
+
+			if(gpro_t.gTimer_send_data_counter > 1){ //new version 
+			 	 gpro_t.gTimer_send_data_counter =0;
+				 SendData_Set_Command(0xF0,0x02);//software version is "2"
+				 tx_thread_sleep(2);
+
+             }
+
+			
+	         if(lcd_t.gTimer_colon_counter > 1 ){
+					lcd_t.gTimer_colon_counter  =0;
+					SendData_Set_Command(0x11,1); //mainboard.WT.EDIT 2026.04.23
+					tx_thread_sleep(2); //WT.EDIT 2026.01.04
+				   
+	 
+			  }
+
+       
+	 break;
+
+     }
+}
+
+
 /*
 	*@brief :
 	*@param:
@@ -172,7 +258,7 @@ static void power_on_cycle(void)
 
 	  }
 	 
-
+      disp_fan_leaf_run_icon();
 	 break;
 	 
 	 default:

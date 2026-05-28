@@ -4,7 +4,7 @@
 
 
 
-void disp_set_timer_timing_value_fun(void) ;
+
 
 
 

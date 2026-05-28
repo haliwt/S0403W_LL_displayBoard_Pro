@@ -35,6 +35,7 @@ static void send_ptc_command(uint8_t on_off);
 
 static void disp_timer_set_numbers(void);
 
+static void disp_set_timer_timing_value_fun(void) ;
 
 
 void bsp_init(void)
@@ -153,6 +154,12 @@ static void handle_works_time_mode(void)
 	  
 
 }
+/**
+* @brief 
+* @note
+* @param
+* @return
+*/
 
 static void handle_setup_timer_mode(void)
 {
@@ -161,10 +168,91 @@ static void handle_setup_timer_mode(void)
 
 }
 
+/**
+* @brief 
+* @note
+* @param
+* @return
+*/
+
+static void disp_set_timer_timing_value_fun(void) 
+{
+    static uint8_t tim_bit_1_hours, tim_bit_2_hours,tim_bit_1_minutes,tim_bit_2_minutes;
+
+    uint8_t mask;
+
+
+    if(run_t.gTimer_key_timing < 4) {
+        tim_bit_2_hours = run_t.timer_time_hours / 10;
+        tim_bit_1_hours = run_t.timer_time_hours % 10;
+
+		tim_bit_2_minutes = run_t.timer_time_minutes /10;
+        tim_bit_1_minutes = run_t.timer_time_minutes % 10;
+
+        lcd_t.number5_low =  tim_bit_2_hours;
+		lcd_t.number5_high = tim_bit_2_hours;
+        lcd_t.number6_low =  tim_bit_1_hours;
+		lcd_t.number6_high = tim_bit_1_hours;
+		
+        lcd_t.number7_low = tim_bit_2_minutes ;
+		lcd_t.number7_high = tim_bit_2_minutes;
+        lcd_t.number8_low = tim_bit_1_minutes ;
+		lcd_t.number8_high= tim_bit_1_minutes;
+
+        //mask = blink_on ? 0xFF : 0x0F; // 闪烁掩码
+        display_digits(mask, 1);
+	
+
+    } 
+	else{
+        
+        run_t.gTimer_seconds_counter = 0;
+
+        if (run_t.timer_time_hours != 0 && gpro_t.add_dec_key_be_pressed == 1){
+            run_t.timer_set_success_flag = timing_success;
+            run_t.time_setting_mode = timer_time;
+            run_t.gAI = 0;
+			gpro_t.add_dec_key_be_pressed++;
+            
+
+        }
+		else  if (run_t.timer_time_hours == 0 && gpro_t.add_dec_key_be_pressed == 1){
+            run_t.timer_set_success_flag = timing_not_definition;
+            run_t.time_setting_mode = works_time;
+	        run_t.timer_time_minutes =0;
+            run_t.gAI = 1;
+		    gpro_t.add_dec_key_be_pressed++;
+
+		}
+        else if( run_t.timer_set_success_flag == timing_not_definition){
+            run_t.gAI = 1;
+            run_t.time_setting_mode = works_time;
+		     sendCmdNote_to_Data(0x2B,0);
+             tx_thread_sleep(2);
+
+			
+        }
+		else if( run_t.timer_set_success_flag == timing_success){
+			 run_t.gAI = 0;
+            run_t.time_setting_mode = timer_time;
+
+		}
+    }
+
+    TIM1723_Write_Cmd(LUM_VALUE);
+}
+
+/**
+* @brief 
+* @note
+* @param
+* @return
+*/
+
 static void handle_timer_time_mode(void)
 {
-     
-        display_not_ai_timer_mode();
+        
+       // display_not_ai_timer_mode();
         
         if(run_t.gTimer_again_switch_works > 2 && run_t.timer_set_success_flag==0){
 
@@ -177,6 +265,12 @@ static void handle_timer_time_mode(void)
 
     
 }
+/**
+* @brief 
+* @note
+* @param
+* @return
+*/
 
 static void handle_fan_warning_mode(void)
 {
@@ -194,6 +288,12 @@ static void handle_fan_warning_mode(void)
 
          }
 }
+/**
+* @brief 
+* @note
+* @param
+* @return
+*/
 
 static void handle_ptc_warning_mode(void)
 {

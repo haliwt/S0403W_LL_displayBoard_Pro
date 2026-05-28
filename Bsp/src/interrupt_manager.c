@@ -21,7 +21,7 @@ void tim16_int_callback_handler(void)
 	lcd_t.gTimer_fan_10ms++;
 	
 	 lcd_t.gTimer_leaf_fast_counter++;
-
+     lcd_t.gTimer_leaf_slow_counter++;
      
 	
     if(tm1>9){ //100ms 
