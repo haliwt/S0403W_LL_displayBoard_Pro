@@ -245,7 +245,7 @@ void display_numbers_one_foure_fun(void)
 			 //TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
 			TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+KILL_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
 			
-			if(run_t.gAI==1){
+			if(run_t.gAI==1 ){
 			   TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
 			}
 			else{
@@ -262,7 +262,7 @@ void display_numbers_one_foure_fun(void)
 		  // TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
 		  TM1723_Write_Display_Data(0xC2,((0X01+KILL_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
 		  
-		   if(run_t.gAI==1){
+		   if(run_t.gAI==1 ){
 			   TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
 			}
 			else{
@@ -278,7 +278,7 @@ void display_numbers_one_foure_fun(void)
 		   //TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
 		   TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
 		   
-		if(run_t.gAI==1){
+		if(run_t.gAI==1 ){
 			   TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
 			}
 			else{
@@ -294,7 +294,7 @@ void display_numbers_one_foure_fun(void)
 		   //TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
 		   TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+KILL_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
 		   
-		if(run_t.gAI==1){
+		if(run_t.gAI==1 ){
 			   TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
 			}
 			else{
@@ -311,7 +311,7 @@ void display_numbers_one_foure_fun(void)
 		   //TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
 		   TM1723_Write_Display_Data(0xC2,((0X01+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
 		   
-		if(run_t.gAI==1){
+		if(run_t.gAI==1 ){
 			   TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
 			}
 			else{
@@ -329,7 +329,7 @@ void display_numbers_one_foure_fun(void)
 			   //TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
 			   TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
 			 
-		if(run_t.gAI==1){
+		if(run_t.gAI==1 ){
 			   TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
 			}
 			else{

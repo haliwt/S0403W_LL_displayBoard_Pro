@@ -62,14 +62,14 @@ void mode_key_short_fun(void)
 			//timer time + don't has ai item
 			run_t.time_setting_mode = timer_time;
 			//don't display this AI icon.
-			
+			run_t.gAI = 0;
             run_t.gTimer_again_switch_works = 0;
 			display_time_hours_minutes_fun();
 			#if DEBUG_FLAG
 			printf("key_shrot_mode-0 !!!\r\n");
 
 			#endif 
-		    display_ai_icon(0) ;
+		   
 
 		}
 		else if(run_t.time_setting_mode == timer_time){
@@ -77,17 +77,18 @@ void mode_key_short_fun(void)
 			run_t.time_setting_mode = works_time;
 			run_t.gTimer_again_switch_works = 0;
 			//AI MODE
-			
+			run_t.gAI = 1;
 			display_time_hours_minutes_fun();
 			#if DEBUG_FLAG
 			printf("key_shrot_mode-1 !!!\r\n");
 			#endif 
 		
-		    display_ai_icon(1) ;
+		    
 		}
 		
 			
-	}		
+	}	
+    display_ai_icon(run_t.gAI) ;
 }
 
 

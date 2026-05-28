@@ -58,11 +58,12 @@ void mode_key_long_fun(void)
 {
    
    if(run_t.ptc_warning ==0){
-
-       display_ai_icon(0) ;
+   	
+       run_t.gAI = 0;
+       display_ai_icon(run_t.gAI) ;
        gpro_t.gTimer_disp_temp_humi_value=0;
        run_t.time_setting_mode = setup_timer;
-      // gpro_t.set_timer_f = 1;
+        gpro_t.set_timer_f = 1;
        run_t.gTimer_key_timing=0;
        gpro_t.gTimer_disp_temp_humi_value=0;
 
@@ -167,7 +168,8 @@ static void handle_timer_time_mode(void)
         
         if(run_t.gTimer_again_switch_works > 2 && run_t.timer_set_success_flag==0){
 
-            run_t.time_setting_mode = works_time ; 
+            run_t.time_setting_mode = works_time ;
+			run_t.gAI =1;
 		}
 	 
        disp_timer_run_times();

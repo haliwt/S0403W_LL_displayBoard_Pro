@@ -111,6 +111,7 @@ typedef struct _process_state{
    uint8_t add_dec_key_be_pressed;
    
    uint8_t first_ptc_on;
+   uint8_t set_timer_f; 
 
   
 

@@ -187,22 +187,23 @@ void disp_set_timer_timing_value_fun(void)
 
         }
 		else  if (run_t.timer_time_hours == 0 && gpro_t.add_dec_key_be_pressed == 1){
-            run_t.timer_set_success_flag = timing_not_definition;;
+            run_t.timer_set_success_flag = timing_not_definition;
             run_t.time_setting_mode = works_time;
 	        run_t.timer_time_minutes =0;
             run_t.gAI = 1;
 		    gpro_t.add_dec_key_be_pressed++;
 
 		}
-        else if(run_t.gAI == 1){
-           
+        else if( run_t.timer_set_success_flag == timing_not_definition){
+            run_t.gAI = 1;
             run_t.time_setting_mode = works_time;
 		     sendCmdNote_to_Data(0x2B,0);
              tx_thread_sleep(2);
 
 			
         }
-		else if(run_t.gAI == 0){
+		else if( run_t.timer_set_success_flag == timing_success){
+			 run_t.gAI = 0;
             run_t.time_setting_mode = timer_time;
 
 		}
