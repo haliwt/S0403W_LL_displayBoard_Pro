@@ -136,7 +136,7 @@ static void vTaskUiPro(ULONG thread_input)
   while(1){
    		
         power_run_handler();
-		tx_thread_sleep(1);//10ms
+		tx_thread_sleep(2);//10ms
    
   }
 
@@ -172,33 +172,33 @@ static void vTaskKeyEvent(ULONG thread_input)
 	    else if(flags & KEY_POWER_LONG){
 
            SendData_Set_Command(0x05,0x01); // link wifi of command .
-	       tx_thread_sleep(1);
+	       tx_thread_sleep(2);
 
 		}
 	  /* MODE 键 */
         else if(flags & KEY_MODE_SHORT){
 			SendData_Buzzer();
-		    tx_thread_sleep(1);
+		    tx_thread_sleep(2);
 		    mode_key_short_fun();
             display_ai_icon(run_t.gModel) ;
 
 		}
 	    else if(flags & KEY_MODE_LONG){
             SendData_Buzzer();
-			tx_thread_sleep(1);
+			tx_thread_sleep(2);
 			mode_key_long_fun();
 
 		}
         else if(flags & KEY_UP_SHORT){
            
 		        SendData_Buzzer();//SendData_Buzzer_Has_Ack();//SendData_Buzzer();
-				tx_thread_sleep(1);
+				tx_thread_sleep(2);
 		
 				add_key_fun();
 		}  
 	    else if(flags & KEY_DOWN_SHORT){
           SendData_Buzzer();
-		  tx_thread_sleep(1);
+		  tx_thread_sleep(2);
 		  dec_key_fun();
 
 		}
@@ -466,7 +466,7 @@ static void power_run_handler(void)
 		    if(gpro_t.again_confirm_power_off_flag == 1 && counter > 40 ){
 				counter =0;
 				SendData_Set_Command(0x10,0); //mainboard.WT.EDIT 2026.01.04
-                tx_thread_sleep(1); //WT.EDIT 2026.01.04
+                tx_thread_sleep(2); //WT.EDIT 2026.01.04
 			   // gpro_t.again_confirm_power_off_flag++;
 
 		    }
@@ -475,7 +475,7 @@ static void power_run_handler(void)
 
 			    gpro_t.again_confirm_power_off_flag++;
 			    SendData_Set_Command(0x12,1); //turn off fun .mainboard.WT.EDIT 2026.01.04
-			    tx_thread_sleep(1); //WT.EDIT 2026.01.04
+			    tx_thread_sleep(2); //WT.EDIT 2026.01.04
 
 
 			}
@@ -483,7 +483,7 @@ static void power_run_handler(void)
 			if(gpro_t.gTimer_send_data_counter > 1){ //new version 
 			 	 gpro_t.gTimer_send_data_counter =0;
 				 SendData_Set_Command(0xF0,0x02);//software version is "2"
-				 tx_thread_sleep(1);
+				 tx_thread_sleep(2);
 
              }
 
@@ -491,7 +491,7 @@ static void power_run_handler(void)
 	         if(lcd_t.gTimer_colon_counter > 1 ){
 					lcd_t.gTimer_colon_counter  =0;
 					SendData_Set_Command(0x11,1); //mainboard.WT.EDIT 2026.04.23
-					tx_thread_sleep(1); //WT.EDIT 2026.01.04
+					tx_thread_sleep(2); //WT.EDIT 2026.01.04
 				   
 	 
 			  }

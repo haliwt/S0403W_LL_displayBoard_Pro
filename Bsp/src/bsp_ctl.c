@@ -66,7 +66,7 @@ void disp_timer_run_times(void)
                 }
               }
            sendCmdNote_to_threeData(0x6B,run_t.timer_time_hours,run_t.timer_time_minutes,run_t.gTimer_seconds_counter) ;
-		   tx_thread_sleep(1);
+		   tx_thread_sleep(2);
      }
      }
      else if(run_t.timer_set_success_flag == timing_not_definition){ 
@@ -139,7 +139,7 @@ void Setup_Timer_Times_Donot_Display(void)
                 }
               }
         sendCmdNote_to_threeData(0x6B,run_t.timer_time_hours,run_t.timer_time_minutes,run_t.gTimer_seconds_counter) ;
-		tx_thread_sleep(1);
+		tx_thread_sleep(2);
 	  }
        
     }
