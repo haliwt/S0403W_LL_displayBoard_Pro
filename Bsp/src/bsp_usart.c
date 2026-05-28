@@ -582,14 +582,21 @@ static void parse_copy_cmd_or_data_handler(uint8_t *pdata)
 			
 		      run_t.power_on= power_on;
 		
-			 
-
 			}
-			else if(pdata[4]==0 || pdata[4]==2){
+			else if(pdata[4]==0 ){
 		
                LCD_Display_Wind_Icon_Handler();
 			   gpro_t.gTimer_power_off_on_minute_fan=0;
 			   run_t.power_on = power_off;
+
+			}
+			else if(pdata[4]==2){
+				
+			   if(run_t.power_on != power_off){
+			      LCD_Display_Wind_Icon_Handler();
+			      gpro_t.gTimer_power_off_on_minute_fan=0;
+			      run_t.power_on = power_off;
+			   }
 
 			}
 
