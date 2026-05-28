@@ -59,10 +59,10 @@ void mode_key_long_fun(void)
    
    if(run_t.ptc_warning ==0){
 
-       run_t.gModel=0;
+       display_ai_icon(0) ;
        gpro_t.gTimer_disp_temp_humi_value=0;
        run_t.time_setting_mode = setup_timer;
-      
+      // gpro_t.set_timer_f = 1;
        run_t.gTimer_key_timing=0;
        gpro_t.gTimer_disp_temp_humi_value=0;
 
@@ -138,13 +138,14 @@ static void handle_works_time_mode(void)
 	 
 	  if(disp_f > 20){ //10ms * 11 = 110ms
 	  	 disp_f=0;
+		display_not_ai_timer_mode();
 	    power_on_init_disp_time_numbers();
 
 	  }
 	  
 	  	
       counter_time_timing_fun(); 
-      gpro_t.switch_not_ai_mode=0;
+  
 	  
 	 
       Setup_Timer_Times_Donot_Display();
@@ -161,35 +162,14 @@ static void handle_setup_timer_mode(void)
 
 static void handle_timer_time_mode(void)
 {
-      static uint8_t not_ai_mode_flag,not_ai_default=0xff;
+     
+        display_not_ai_timer_mode();
+        
+        if(run_t.gTimer_again_switch_works > 2 && run_t.timer_set_success_flag==0){
 
-//       if(wifi_link_net_state()==1 && (not_ai_default != not_ai_mode_flag)){ //WT.EDIT 2025.01.03
-//             not_ai_default = not_ai_mode_flag;
-          
-   
-//			 //SendData_Set_Command(0x27,0x02); //NOT_MODE_AI,BUR NO_BUZZER);
-//			 //tx_thread_sleep(2);
-
-//        }
-
-       if(run_t.gTimer_again_switch_works < 5 && gpro_t.switch_not_ai_mode==1){ //WT.EDIT ,if don't define timer_time,wait 3s switch to works_time.
-			
-		 display_not_ai_timer_mode();
-        }
-	    else{
-           gpro_t.switch_not_ai_mode=0;
+            run_t.time_setting_mode = works_time ; 
 		}
-
-		if(run_t.timer_set_success_flag==timing_success && gpro_t.key_timer_setting_flag==0 && gpro_t.add_dec_key_be_pressed==1){
-           run_t.timer_time_minutes=0;
-		   run_t.gTimer_seconds_counter =0;
-           gpro_t.add_dec_key_be_pressed  =0;
-           sendCmdNote_to_Data(0x2B,run_t.timer_time_hours);
-			tx_thread_sleep(2);
-		
-
-		}
-	   
+	 
        disp_timer_run_times();
        counter_time_timing_fun();//Works_Counter_Time();
 
@@ -281,7 +261,8 @@ static void counter_time_timing_fun(void)
 static void power_on_init_disp_time_numbers(void)
 {
      
-    TM1723_Write_Display_Data(0xC9,(T8_HUM+lcdNumber4_Low[lcd_t.number4_low]+lcdNumber5_High[lcd_t.number5_high]) & 0xff);
+   
+	TM1723_Write_Display_Data(0xC9,(T8_HUM+lcdNumber4_Low[lcd_t.number4_low]+lcdNumber5_High[lcd_t.number5_high]) & 0xff);
 
     TM1723_Write_Display_Data(0xCA,lcdNumber5_Low[lcd_t.number5_low]+lcdNumber6_High[lcd_t.number6_high]);//display digit
     if(gpro_t.disp_time_colon_flag==1)

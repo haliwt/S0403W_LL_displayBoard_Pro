@@ -95,10 +95,10 @@ typedef struct _process_state{
    /********end*****/
    uint8_t disp_time_colon_flag;
    
-	uint8_t switch_not_ai_mode;
+
    
    uint8_t disp_fan_switch_flag ;
-   uint8_t key_timer_setting_flag;
+
    uint8_t fan_run_one_minute;
    
    uint8_t key_set_temperature ;

@@ -444,7 +444,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 	
 			run_t.time_setting_mode = timer_time;
 			run_t.gTimer_again_switch_works = 0; //WT.EDIT ,if don't define timer_time,wait 3s switch to works_time.
-			run_t.gModel=0;
+			run_t.gAI=0;
 		    gpro_t.switch_not_ai_mode=1;
 		    display_not_ai_timer_mode();
 		
@@ -457,7 +457,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 			run_t.gTimer_again_switch_works = 0;
 			gpro_t.switch_not_ai_mode=0;
             display_ai_icon(1) ;
-			run_t.gModel=1;
+			run_t.gAI=1;
 		
 
 	    }
@@ -522,8 +522,8 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 			   run_t.timer_set_success_flag = timing_success;
 			   run_t.time_setting_mode=timer_time;
 			   run_t.gTimer_again_switch_works = 0;
-			   gpro_t.switch_not_ai_mode=1;
-			   run_t.gModel = 0;
+			   
+			   run_t.gAI = 0;
 		   }
 		   else if(pddata[5] ==0){
 			   run_t.timer_time_hours=0;
@@ -545,8 +545,8 @@ static void parse_cmd_or_data_(uint8_t *pddata)
                run_t.timer_set_success_flag = timing_not_definition;
 			   run_t.time_setting_mode=works_time;
 			   run_t.gTimer_again_switch_works = 0;
-			   gpro_t.switch_not_ai_mode=0;
-			   run_t.gModel = 1;
+			
+			   run_t.gAI = 1;
 
 		   }
 		  

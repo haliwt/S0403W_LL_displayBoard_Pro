@@ -58,7 +58,7 @@ void disp_timer_run_times(void)
                      run_t.timer_time_hours =0;
                      run_t.timer_time_minutes =0;
 				     run_t.time_setting_mode=works_time;
-                     run_t.gModel=1;
+                     //run_t.gAI=1;
                     
                  }
                             
@@ -75,7 +75,7 @@ void disp_timer_run_times(void)
              run_t.timer_time_hours =0;
              run_t.timer_time_minutes =0;
 		     run_t.time_setting_mode=works_time;
-             run_t.gModel=1;
+            // run_t.gAI=1;
 
          }
     }

@@ -175,40 +175,37 @@ void disp_set_timer_timing_value_fun(void)
 
     } 
 	else{
-        //run_t.timer_time_minutes = 0;
+        
         run_t.gTimer_seconds_counter = 0;
 
-        if (run_t.timer_time_hours != 0 && gpro_t.key_timer_setting_flag ==1){
+        if (run_t.timer_time_hours != 0 && gpro_t.add_dec_key_be_pressed == 1){
             run_t.timer_set_success_flag = timing_success;
             run_t.time_setting_mode = timer_time;
-            run_t.gModel = 0;
-			gpro_t.key_timer_setting_flag =0;
-          
-
-         
-          
+            run_t.gAI = 0;
+			gpro_t.add_dec_key_be_pressed++;
             
-        }
-		else if(run_t.timer_set_success_flag==timing_success && gpro_t.key_timer_setting_flag==0){
 
-            run_t.time_setting_mode=timer_time;
-           // sendCmdNote_to_Data(0x2B,run_t.timer_time_hours);
-			//tx_thread_sleep(2);
-		
+        }
+		else  if (run_t.timer_time_hours == 0 && gpro_t.add_dec_key_be_pressed == 1){
+            run_t.timer_set_success_flag = timing_not_definition;;
+            run_t.time_setting_mode = works_time;
+	        run_t.timer_time_minutes =0;
+            run_t.gAI = 1;
+		    gpro_t.add_dec_key_be_pressed++;
 
 		}
-		else{
-            run_t.timer_set_success_flag = timing_not_definition;
+        else if(run_t.gAI == 1){
+           
             run_t.time_setting_mode = works_time;
-		    gpro_t.key_timer_setting_flag =0;
-            run_t.gModel = 1;
-			if(gpro_t.add_dec_key_be_pressed == 1){
-				
-			 sendCmdNote_to_Data(0x2B,0);
+		     sendCmdNote_to_Data(0x2B,0);
              tx_thread_sleep(2);
 
-			}
+			
         }
+		else if(run_t.gAI == 0){
+            run_t.time_setting_mode = timer_time;
+
+		}
     }
 
     TIM1723_Write_Cmd(LUM_VALUE);
@@ -346,9 +343,9 @@ void counter_time_numbers(void)
 {
    static uint8_t colon_base;
    gpro_t.disp_time_colon_flag ^= 1;
-   if(gpro_t.switch_not_ai_mode == 0){
-		  display_works_or_timer_timing_fun();
-	}
+
+   display_works_or_timer_timing_fun();
+	
   
 	//TM1723_Write_Display_Data(0xC9,(T8_HUM + lcdNumber4_Low[lcd_t.number4_low] + lcdNumber5_High[lcd_t.number5_high]) & 0xFF);
 
@@ -446,9 +443,8 @@ void display_time_hours_minutes_fun(void)
 
 
 	}
-//  TM1723_Write_Display_Data(0xC9,(T8_HUM + lcdNumber4_Low[lcd_t.number4_low] + lcdNumber5_High[lcd_t.number5_high]) & 0xFF);
-  //TM1723_Write_Display_Data(0xCB,gpro_t.disp_time_colon_flag + lcdNumber6_Low[lcd_t.number6_low] + lcdNumber7_High[lcd_t.number7_high]);
-  fan_runing_fun();
+
+   fan_runing_fun();
 }
 /************************************************************
 *

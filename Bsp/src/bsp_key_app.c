@@ -55,44 +55,35 @@ void Beijing_Time_Init(void)
 *****************************************************************************/
 void mode_key_short_fun(void)
 {
-   
+  
    if(run_t.ptc_warning ==0 && run_t.fan_warning ==0){
 		if(run_t.time_setting_mode == works_time){
 	
 			//timer time + don't has ai item
 			run_t.time_setting_mode = timer_time;
-			run_t.gModel=0; //don't display this AI icon.
+			//don't display this AI icon.
+			
             run_t.gTimer_again_switch_works = 0;
 			display_time_hours_minutes_fun();
 			#if DEBUG_FLAG
 			printf("key_shrot_mode-0 !!!\r\n");
 
 			#endif 
-			#if 0
-			 if(run_t.wifi_link_net_success == 1){
-				SendData_Set_Command(0x07,0x02); //AI command has buzzer sound .
-				tx_thread_sleep(2);
-			 }
-			#endif 
+		    display_ai_icon(0) ;
 
 		}
 		else if(run_t.time_setting_mode == timer_time){
 			//beijing time + ai item
 			run_t.time_setting_mode = works_time;
 			run_t.gTimer_again_switch_works = 0;
-			run_t.gModel=1; //AI MODE
+			//AI MODE
+			
 			display_time_hours_minutes_fun();
 			#if DEBUG_FLAG
 			printf("key_shrot_mode-1 !!!\r\n");
 			#endif 
-			#if 0
-			 if(run_t.wifi_link_net_success ==1){
-    				SendData_Set_Command(0x07,0x01); //MODE_AI,BUR NO_BUZZER);
-					tx_thread_sleep(2);
-    		 		
-    		 }
-            #endif 
 		
+		    display_ai_icon(1) ;
 		}
 		
 			
@@ -146,7 +137,7 @@ void add_key_fun(void)
 
 			}
 			gpro_t.add_dec_key_be_pressed =1;
-		    gpro_t.key_timer_setting_flag=1;
+		 
       
 		break;
 		}	
@@ -202,7 +193,7 @@ void dec_key_fun(void)
 					
 				}
 				gpro_t.add_dec_key_be_pressed =1;
-                gpro_t.key_timer_setting_flag=1;
+             
         
              break;
 

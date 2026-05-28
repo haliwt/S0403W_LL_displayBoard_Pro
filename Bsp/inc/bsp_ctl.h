@@ -105,7 +105,7 @@ typedef struct __RUN{
    uint8_t  fan;
    uint8_t  ultrasonic;
 
-   uint8_t  gModel;
+   uint8_t  gAI;
    uint8_t  ptc_on_off_flag ;
    
 

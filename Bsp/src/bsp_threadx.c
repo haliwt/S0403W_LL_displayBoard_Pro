@@ -45,7 +45,7 @@ TX_EVENT_FLAGS_GROUP key_event;
 TX_SEMAPHORE      decoder_semaphore;
 //TX_SEMAPHORE      uart1_tx_semaphore;
 
-static void key_handler(void);
+
 
 static void power_run_handler(void);
 
@@ -69,7 +69,7 @@ typedef struct GL_TASK{
 }gl_task;
 
 gl_task gl_ref;
-uint8_t error_counter,counter;
+uint8_t error_counter;
 /**
 *@brief 
 *@param
@@ -108,14 +108,11 @@ static void vTaskDecoderPro(ULONG thread_input)
    }
    #else 
    if(tx_semaphore_get(&decoder_semaphore,TX_WAIT_FOREVER)==TX_SUCCESS){
-	   counter ++ ;
-	  // if(gpro_t.decoder_flag ==1){
+	  
+
 	   	
 	      decoder_handler();
-		//  gpro_t.decoder_flag =0;
-
-	   ///	}
-
+	
    }
 
    #endif
@@ -172,7 +169,7 @@ static void vTaskKeyEvent(ULONG thread_input)
 	    else if(flags & KEY_POWER_LONG){
 
            SendData_Set_Command(0x05,0x01); // link wifi of command .
-	       tx_thread_sleep(2);
+	       tx_thread_sleep(2); //receive tx oxff command of run 
 
 		}
 	  /* MODE 键 */
@@ -180,7 +177,7 @@ static void vTaskKeyEvent(ULONG thread_input)
 			SendData_Buzzer();
 		    tx_thread_sleep(2);
 		    mode_key_short_fun();
-            display_ai_icon(run_t.gModel) ;
+           
 
 		}
 	    else if(flags & KEY_MODE_LONG){
@@ -233,13 +230,14 @@ static void vTaskKeyPro(ULONG thread_input)
       if(KEY_POWER_GetValue() == KEY_DOWN)
         {
             power_cnt++;
-            if(power_cnt == LONG_PRESS_TIME)
+            if(power_cnt == LONG_PRESS_TIME && run_t.power_on== power_on){
                 tx_event_flags_set(&key_event, KEY_POWER_LONG, TX_OR);
+            }
         }
-        else
-        {
-            if(power_cnt > 1 && power_cnt < LONG_PRESS_TIME)
-                tx_event_flags_set(&key_event, KEY_POWER_SHORT, TX_OR);
+        else if(power_cnt > 1){
+			
+			   if(power_cnt < LONG_PRESS_TIME)
+			  	    tx_event_flags_set(&key_event, KEY_POWER_SHORT, TX_OR);
 
             power_cnt = 0;
         }
@@ -250,16 +248,17 @@ static void vTaskKeyPro(ULONG thread_input)
         {
             mode_cnt++;
             if(mode_cnt == LONG_PRESS_TIME){
-				
+			
                 tx_event_flags_set(&key_event, KEY_MODE_LONG, TX_OR);
                
             }
         }
-        else
-        {
-            if(mode_cnt > 1 && mode_cnt < LONG_PRESS_TIME)
+        else if(mode_cnt > 1){
+			 if(mode_cnt < LONG_PRESS_TIME){
                 tx_event_flags_set(&key_event, KEY_MODE_SHORT, TX_OR);
+			 	}
             mode_cnt = 0;
+			 
         }
 
       /* ================= UP 键 ================= */
@@ -268,10 +267,10 @@ static void vTaskKeyPro(ULONG thread_input)
             up_cnt++;
             
         }
-        else
-        {
-            if(up_cnt > 1 && up_cnt < LONG_PRESS_TIME)
-                tx_event_flags_set(&key_event, KEY_UP_SHORT, TX_OR);
+        else if(up_cnt > 1){
+
+			   if(up_cnt < LONG_PRESS_TIME)
+                   tx_event_flags_set(&key_event, KEY_UP_SHORT, TX_OR);
 
             up_cnt = 0;
         }
@@ -282,9 +281,8 @@ static void vTaskKeyPro(ULONG thread_input)
             down_cnt++;
            
         }
-        else
-        {
-            if(down_cnt > 1 && down_cnt < LONG_PRESS_TIME)
+        else  if(down_cnt > 1){
+			    if(down_cnt < LONG_PRESS_TIME)
                 tx_event_flags_set(&key_event, KEY_DOWN_SHORT, TX_OR);
 
             down_cnt = 0;
@@ -353,69 +351,6 @@ void app_threadx_handler(void)
 					  TX_NO_TIME_SLICE, 			/* 不开启时间片 */
 					  TX_AUTO_START);				/* 创建后立即启动 */
    
-}
-/*************************************************************************
-*
-*	Funtion Name: static void key_handler(void)
-*	Function: 
-*	Input Ref: 
-*	Return Ref:
-*
-**************************************************************************/
-static void key_handler(void)
-{
-	if(gl_ref.key_power_flag == 3 && KEY_POWER_GetValue() ==KEY_UP){ //key power key
-		gl_ref.key_power_flag++;
-		gl_ref.long_key_power_counter=0;
-	}
-	else if(gl_ref.key_power_flag == 1 && KEY_POWER_GetValue()  ==KEY_UP){ //key power key
-
-		gl_ref.key_power_flag++;
-		gl_ref.long_key_power_counter=0;
-		gl_ref.long_key_mode_counter=0;
-		power_on_off_handler();
-
-	}
-	else if(gl_ref.key_mode_flag ==3 &&  KEY_MODE_GetValue() == KEY_UP){
-		gl_ref.key_mode_flag ++;
-
-		gl_ref.long_key_mode_counter=0;
-		gl_ref.long_key_power_counter=0;
-
-
-	}
-	else if(gl_ref.key_mode_flag == 1 && KEY_MODE_GetValue() == KEY_UP){
-		gl_ref.key_mode_flag++;
-
-		gl_ref.long_key_mode_counter=0;
-		gl_ref.long_key_power_counter=0;
-		gl_ref.key_mode_short_flag =1;
-		SendData_Buzzer();
-		tx_thread_sleep(5);
-
-
-	}
-	else if((gl_ref.key_add_flag ==1 && run_t.power_on== power_on && KEY_ADD_GetValue() == KEY_UP)){
-
-		gl_ref.key_add_flag ++;
-		SendData_Buzzer();//SendData_Buzzer_Has_Ack();//SendData_Buzzer();
-		tx_thread_sleep(5);
-
-		add_key_fun();
-
-
-	}
-	else if(gl_ref.key_dec_flag ==1 && run_t.power_on== power_on && KEY_DEC_GetValue()==KEY_UP){
-
-		gl_ref.key_dec_flag ++;
-
-		//SendData_Buzzer_Has_Ack();//SendData_Buzzer();
-		SendData_Buzzer();
-		tx_thread_sleep(5);
-		dec_key_fun();
-
-	}
-
 }
 
 /*************************************************************************

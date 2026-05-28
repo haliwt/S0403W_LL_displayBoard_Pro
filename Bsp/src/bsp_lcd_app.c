@@ -45,7 +45,7 @@ static void wifi_icon_blink_reg0xc5_handler(void)
     if (run_t.wifi_link_net_success == 1) {
         run_t.wifi_led_fast_blink_flag = 0;
         set_wifi_icon(WIFI_Symbol, 2, wifi_num_val);
-        TIM1723_Write_Cmd(LUM_VALUE);
+        //TIM1723_Write_Cmd(LUM_VALUE);
         return;
     }
 
@@ -131,7 +131,7 @@ void power_on_display_temp_handler(void)
 	Display_Kill_Dry_Ster_Icon();
 
 	//display address 0xC3
-	if(run_t.gModel==1){
+	if(run_t.gAI==1){
 	TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high])& 0xff);//display	"AI icon"
 	}
 	else { 
@@ -245,7 +245,7 @@ void display_numbers_one_foure_fun(void)
 			 //TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
 			TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+KILL_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
 			
-			if(run_t.gModel==1){
+			if(run_t.gAI==1){
 			   TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
 			}
 			else{
@@ -262,7 +262,7 @@ void display_numbers_one_foure_fun(void)
 		  // TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
 		  TM1723_Write_Display_Data(0xC2,((0X01+KILL_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
 		  
-		   if(run_t.gModel==1){
+		   if(run_t.gAI==1){
 			   TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
 			}
 			else{
@@ -278,7 +278,7 @@ void display_numbers_one_foure_fun(void)
 		   //TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
 		   TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
 		   
-		if(run_t.gModel==1){
+		if(run_t.gAI==1){
 			   TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
 			}
 			else{
@@ -294,7 +294,7 @@ void display_numbers_one_foure_fun(void)
 		   //TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
 		   TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+KILL_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
 		   
-		if(run_t.gModel==1){
+		if(run_t.gAI==1){
 			   TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
 			}
 			else{
@@ -311,7 +311,7 @@ void display_numbers_one_foure_fun(void)
 		   //TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
 		   TM1723_Write_Display_Data(0xC2,((0X01+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
 		   
-		if(run_t.gModel==1){
+		if(run_t.gAI==1){
 			   TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
 			}
 			else{
@@ -329,7 +329,7 @@ void display_numbers_one_foure_fun(void)
 			   //TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
 			   TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
 			 
-		if(run_t.gModel==1){
+		if(run_t.gAI==1){
 			   TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
 			}
 			else{
@@ -347,7 +347,7 @@ void display_numbers_one_foure_fun(void)
 			//TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
 			TM1723_Write_Display_Data(0xC2,((0X01+KILL_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
 		  
-		 if(run_t.gModel==1){
+		 if(run_t.gAI==1){
 				TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
 			 }
 			 else{
@@ -365,7 +365,7 @@ void display_numbers_one_foure_fun(void)
 			//	TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
 	
 			TM1723_Write_Display_Data(0xC2,((0X01)+lcdNumber1_High[lcd_t.number1_high])&0xff);
-		   if(run_t.gModel==1){
+		   if(run_t.gAI==1){
 			   TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
 			}
 			else{
@@ -502,7 +502,11 @@ static void set_lcd_numbers_from_value(uint8_t value) {
     lcd_t.number2_low  = value % 10;
     lcd_t.number2_high = lcd_t.number2_low;
 }
-
+/**
+*@ brief :
+*@ parame:
+*@ retval:
+**/
 static uint8_t get_dry_plasma_ultra_mask(void) 
 {
     uint8_t mask = 0x01;
@@ -524,11 +528,6 @@ void display_ai_icon(uint8_t data)
 	ai_symbol = data ? AI_Symbol : AI_NO_Symbol;
     TM1723_Write_Display_Data(0xC3, (ai_symbol+lcdNumber1_Low[lcd_t.number1_low] +lcdNumber2_High[lcd_t.number2_high]));
 }
-/**
-*@ brief :
-*@ parame:
-*@ retval:
-**/
 
 /**
 *@ brief :
@@ -590,7 +589,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
 	break;
     }
 
-    wifi_icon_blink_reg0xc5_handler();
+   // wifi_icon_blink_reg0xc5_handler();
    
 }
 

@@ -202,7 +202,7 @@ static void power_on_ref_init(void)
     	run_t.ultrasonic =1;
     
     }
-	 run_t.gModel =1; //WT.EDIT 2022.09.01
+	 run_t.gAI =1; //WT.EDIT 2022.09.01
      run_t.gTimer_seconds_counter=0;
 
 	 run_t.timer_time_hours =0;
@@ -421,7 +421,7 @@ void power_off_handler(void)
         run_t.fan_warning=0;
         run_t.ptc_warning = 0;
 
-        run_t.gModel =0; //WT.EDIT 2022.09.01
+        run_t.gAI =0; //WT.EDIT 2022.09.01
         run_t.plasma=0;
         run_t.dry =0;
         run_t.ultrasonic =0;
@@ -489,7 +489,7 @@ void power_off_handler(void)
  void Power_Off_Fun(void)
 {
 	
-        run_t.gModel =0; //WT.EDIT 2022.09.01
+        run_t.gAI =0; //WT.EDIT 2022.09.01
 		run_t.plasma=0;
 		run_t.dry =0;
 		run_t.ultrasonic =0;
