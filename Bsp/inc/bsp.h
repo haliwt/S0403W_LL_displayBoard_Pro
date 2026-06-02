@@ -26,6 +26,7 @@
 #include "bsp_usart.h"
 #include "bsp_dmatx_usart.h"
 #include "interrupt_manager.h"
+#include "bsp_fan_leaf.h"
 
 
 #include "gpio.h"

@@ -223,7 +223,7 @@ static void vTaskKeyPro(ULONG thread_input)
     static uint16_t down_cnt = 0;
     static uint16_t power_cnt = 0;
 
-    const uint16_t LONG_PRESS_TIME = 80;   //20ms * 100= 2000ms
+    const uint16_t LONG_PRESS_TIME = 30;   //20ms * 100= 2000ms
     
   while(1){
 

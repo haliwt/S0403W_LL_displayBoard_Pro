@@ -22,7 +22,7 @@ void tim16_int_callback_handler(void)
 	
 	 lcd_t.gTimer_leaf_fast_counter++;
      lcd_t.gTimer_leaf_slow_counter++;
-     
+     lcd_t.gTimer_leaf_counter++;
 	
     if(tm1>9){ //100ms 
        tm1=0;
@@ -30,7 +30,7 @@ void tim16_int_callback_handler(void)
 
 	   run_t.gTimer_digital5678_ms++;
        run_t.gTimer_ptc_fan_blink_warning++ ;
-	   lcd_t.gTimer_leaf_counter++;
+	  
 	   gpro_t.gTimer_copy_cmd_counter++;
 	   
     }
