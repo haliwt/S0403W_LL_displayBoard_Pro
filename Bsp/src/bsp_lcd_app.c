@@ -188,7 +188,7 @@ void power_on_display_temp_handler(void)
 
 
 		dsiplay_numbers_one_to_four_fun();
-		
+		TIM1723_Write_Cmd(LUM_VALUE);
 			
 	 }
 		 

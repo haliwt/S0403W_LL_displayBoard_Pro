@@ -186,7 +186,7 @@ void disp_fan_leaf_run_icon(void)
 
 void fan_runing_fun(void)
 {
-
+    display_works_or_timer_timing_fun();
 			
 	switch(gpro_t.disp_fan_switch_flag){
 
