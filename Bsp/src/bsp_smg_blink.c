@@ -276,22 +276,6 @@ void disp_time_colon_fun(void)
 }
 
 
-void counter_time_numbers(void)
-{
-   static uint8_t colon_base;
-   gpro_t.disp_time_colon_flag ^= 1;
-
-   display_works_or_timer_timing_fun();
-	
-  
-	//TM1723_Write_Display_Data(0xC9,(T8_HUM + lcdNumber4_Low[lcd_t.number4_low] + lcdNumber5_High[lcd_t.number5_high]) & 0xFF);
-
-   /* 冒号根据全局标志显示/隐藏 */
-	//colon_base = gpro_t.disp_time_colon_flag ? TIME_COLON : TIME_NO_COLON;
-       //   TM1723_Write_Display_Data(0xCB,
-                ///    colon_base + lcdNumber6_Low[lcd_t.number6_low] + lcdNumber7_High[lcd_t.number7_high]);
-
-}
 
 /**
 * @brief 
@@ -464,4 +448,61 @@ static void donot_disp_T13_icon_fan_speed_level(void)
 
 
 
+void smg_power_on_init(void)
+{
+     TIM1723_Write_Cmd(0x00);
+	 TIM1723_Write_Cmd(0x40);
+	 TIM1723_Write_Cmd(0x44);
 
+ 
+         
+    run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
+    gpro_t.set_temp_value_success = 0;//WT.EDIT 2025.01.15
+    gpro_t.key_set_temperature =0;//WT.EDIT 2025.01.15
+
+   
+
+	    lcd_t.number1_low= gpro_t.temp_real_value / 10;
+	    lcd_t.number1_high =lcd_t.number1_low;
+
+	    lcd_t.number2_low = gpro_t.temp_real_value% 10;
+	    lcd_t.number2_high = lcd_t.number2_low;
+
+
+
+	    lcd_t.number3_low= gpro_t.humidity_real_value /10;
+	    lcd_t.number3_high = lcd_t.number3_low;
+
+	    lcd_t.number4_low = gpro_t.humidity_real_value %10;
+	    lcd_t.number4_high =   lcd_t.number4_low ;
+
+    
+     if(gpro_t.smart_phone_app_timer_power_on_flag == 0){
+           
+          TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+KILL_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);//display digital "temp
+          TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);
+          TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xff);//display "t,c"
+	      TM1723_Write_Display_Data(0xC5,(WIFI_Symbol+lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high]) & 0xfff); //Wifi
+
+	 }
+     else{
+         	
+			TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+KILL_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
+			
+		    TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
+			
+			TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xff);//display "t,c"
+            TM1723_Write_Display_Data(0xC5, (WIFI_Symbol + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
+		
+     }
+	 
+    TM1723_Write_Display_Data(0xC9,(T8_HUM + lcdNumber4_Low[lcd_t.number4_low] + lcdNumber5_High[lcd_t.number5_high]) & 0xFF);
+  
+
+
+
+     TIM1723_Write_Cmd(LUM_VALUE);
+    
+
+
+}

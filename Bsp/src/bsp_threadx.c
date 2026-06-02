@@ -130,7 +130,7 @@ static void vTaskUiPro(ULONG thread_input)
   while(1){
    		
         power_run_handler();
-		tx_thread_sleep(2);//10ms
+		tx_thread_sleep(1);//10ms
    
   }
 
@@ -162,40 +162,44 @@ static void vTaskKeyEvent(ULONG thread_input)
 
            power_on_off_handler();
 
-		}
-	    else if(flags & KEY_POWER_LONG){
+	}
+		
+	if(flags & KEY_POWER_LONG){
 
            SendData_Set_Command(0x05,0x01); // link wifi of command .
 	       tx_thread_sleep(4); //receive tx oxff command of run 
 
-		}
+	}
 	  /* MODE 键 */
-        else if(flags & KEY_MODE_SHORT){
+    if(flags & KEY_MODE_SHORT){
 			SendData_Buzzer();
-		    tx_thread_sleep(4);
+		    tx_thread_sleep(5);
 		    mode_key_short_fun();
            
 
-		}
-	    else if(flags & KEY_MODE_LONG){
+	}
+	
+	  if(flags & KEY_MODE_LONG){
             SendData_Buzzer();
-			tx_thread_sleep(4);
+			tx_thread_sleep(1);
 			mode_key_long_fun();
 
-		}
-        else if(flags & KEY_UP_SHORT){
+	}
+
+	if(flags & KEY_UP_SHORT){
            
-		        SendData_Buzzer();//SendData_Buzzer_Has_Ack();//SendData_Buzzer();
-				tx_thread_sleep(4);
-		
-				add_key_fun();
-		}  
-	    else if(flags & KEY_DOWN_SHORT){
+        SendData_Buzzer();//SendData_Buzzer_Has_Ack();//SendData_Buzzer();
+		tx_thread_sleep(1);
+
+		add_key_fun();
+	}  
+
+	if(flags & KEY_DOWN_SHORT){
           SendData_Buzzer();
-		  tx_thread_sleep(4);
+		  tx_thread_sleep(1);
 		  dec_key_fun();
 
-		}
+	}
 	   
      }
 
@@ -219,7 +223,7 @@ static void vTaskKeyPro(ULONG thread_input)
     static uint16_t down_cnt = 0;
     static uint16_t power_cnt = 0;
 
-    const uint16_t LONG_PRESS_TIME = 120;   //20ms * 100= 2000ms
+    const uint16_t LONG_PRESS_TIME = 80;   //20ms * 100= 2000ms
     
   while(1){
 
@@ -231,7 +235,7 @@ static void vTaskKeyPro(ULONG thread_input)
                 tx_event_flags_set(&key_event, KEY_POWER_LONG, TX_OR);
             }
         }
-        else if(power_cnt > 1){
+        else if(power_cnt > 0){
 			
 			   if(power_cnt < LONG_PRESS_TIME)
 			  	    tx_event_flags_set(&key_event, KEY_POWER_SHORT, TX_OR);
@@ -250,7 +254,7 @@ static void vTaskKeyPro(ULONG thread_input)
                
             }
         }
-        else if(mode_cnt > 1){
+        else if(mode_cnt > 0){
 			 if(mode_cnt < LONG_PRESS_TIME){
                 tx_event_flags_set(&key_event, KEY_MODE_SHORT, TX_OR);
 			 }
@@ -264,7 +268,7 @@ static void vTaskKeyPro(ULONG thread_input)
             up_cnt++;
             
         }
-        else if(up_cnt > 1){
+        else if(up_cnt > 0){
 
 			   if(up_cnt < LONG_PRESS_TIME)
                    tx_event_flags_set(&key_event, KEY_UP_SHORT, TX_OR);
@@ -278,7 +282,7 @@ static void vTaskKeyPro(ULONG thread_input)
             down_cnt++;
            
         }
-        else  if(down_cnt > 1){
+        else  if(down_cnt > 0){
 			    if(down_cnt < LONG_PRESS_TIME)
                 tx_event_flags_set(&key_event, KEY_DOWN_SHORT, TX_OR);
 
@@ -286,7 +290,7 @@ static void vTaskKeyPro(ULONG thread_input)
         }
 
 
-   tx_thread_sleep(2);//2*10ms =20ms
+   tx_thread_sleep(5);//2*10ms =20ms
    }
 }
 

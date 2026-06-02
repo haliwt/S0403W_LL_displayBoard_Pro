@@ -19,7 +19,7 @@ static void display_lowbit_lunmber4_reg0xc9_handler(void);
 
 uint8_t display_wifi_icon_flag ;
 
-//static void display_numbers_one_foure_fun(void);
+
 
 
 /*************************************************************************
@@ -45,7 +45,7 @@ static void wifi_icon_blink_reg0xc5_handler(void)
     if (run_t.wifi_link_net_success == 1) {
         run_t.wifi_led_fast_blink_flag = 0;
         set_wifi_icon(WIFI_Symbol, 2, wifi_num_val);
-        //TIM1723_Write_Cmd(LUM_VALUE);
+        TIM1723_Write_Cmd(LUM_VALUE);
         return;
     }
 
@@ -127,28 +127,7 @@ static void display_temperture_humidity_value(void)
 */
 void power_on_display_temp_handler(void)
 {
-   #if 0
-	disp_kill_dry_ster_temperature_humidity_hanlder();
-
-	//display address 0xC3
-	if(run_t.gAI==1){
-	TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high])& 0xff);//display	"AI icon"
-	}
-	else { 
-	TM1723_Write_Display_Data(0xC3,((lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//don't display "AI icon"
-
-	}
-
-	//display address 0xC4
-	TM1723_Write_Display_Data(0xC4,((0x01+lcdNumber2_Low[lcd_t.number2_low])+lcdNumber3_High[lcd_t.number3_high])&0xff);
-
-	wifi_icon_blink_reg0xc5_handler();//TM1723_Write_Display_Data(0xC5,((0x01+lcdNumber2_Low[lcd_t.number2_low])+lcdNumber3_High[lcd_t.number3_high])&0xff);
-	display_lowbit_lunmber4_reg0xc9_handler();
-	#endif 
-
-	// 显示干燥/杀菌/驱蚊图标 + 数字高位
-   // disp_kill_dry_ster_temperature_humidity_hanlder();
-
+  
   
     // WiFi 图标闪烁处理（0xC5）
     wifi_icon_blink_reg0xc5_handler();
@@ -177,8 +156,8 @@ void power_on_display_temp_handler(void)
 
     if(gpro_t.key_set_temperature !=1 ){
 	
-	  if(temp_value!= gpro_t.temp_real_value){
-		 	temp_value = gpro_t.temp_real_value;
+	  //if(temp_value!= gpro_t.temp_real_value){
+		 ///	temp_value = gpro_t.temp_real_value;
 		
 			 lcd_t.number1_low= gpro_t.temp_real_value/ 10;
 		     lcd_t.number1_high = lcd_t.number1_low;
@@ -194,17 +173,11 @@ void power_on_display_temp_handler(void)
 
 			
 		
-       TIM1723_Write_Cmd(0x00);
-	   TIM1723_Write_Cmd(0x40);
-	   TIM1723_Write_Cmd(0x44);
 
      
-        display_numbers_one_foure_fun();
-      
-
-	}
-
-    }
+        dsiplay_numbers_one_to_four_fun();
+	
+     }
 	else{
 
 		lcd_t.number1_low= run_t.wifi_set_temperature / 10;
@@ -214,7 +187,8 @@ void power_on_display_temp_handler(void)
 		lcd_t.number2_high =  lcd_t.number2_low;
 
 
-		display_numbers_one_foure_fun();
+		dsiplay_numbers_one_to_four_fun();
+		
 			
 	 }
 		 
@@ -228,7 +202,7 @@ void power_on_display_temp_handler(void)
 *   @return 
 */
 
-void display_numbers_one_foure_fun(void)
+void dsiplay_numbers_one_to_four_fun(void)
 {
     static uint8_t  T4,T5,T6,T3=1;
    T4= 0x02; //
@@ -370,8 +344,12 @@ void display_numbers_one_foure_fun(void)
 			TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xff);//display "t,c"
 		
 		}
-		
-
+		if(run_t.wifi_link_net_success == 0 )
+           TM1723_Write_Display_Data(0xC5, (gpro_t.wifi_flag + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
+        else 
+			 TM1723_Write_Display_Data(0xC5, (WIFI_Symbol + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
+			
+		TM1723_Write_Display_Data(0xC9,(T8_HUM + lcdNumber4_Low[lcd_t.number4_low] + lcdNumber5_High[lcd_t.number5_high]) & 0xFF);
 
 
 }
@@ -558,7 +536,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
 	  break;
 
 	  case 1:
-         if (gpro_t.gTimer_set_temp_times < 2 && gpro_t.key_set_temperature==1){
+         if (gpro_t.gTimer_set_temp_times < 3 && gpro_t.key_set_temperature==1){
               set_lcd_numbers_from_value(run_t.wifi_set_temperature);
           
              disp_kill_dry_ster_temperature_humidity_hanlder();
@@ -576,19 +554,18 @@ void disp_temp_humidity_wifi_icon_handler(void)
 
 
      case 2:
-
-	        gpro_t.gTimer_temp_compare_value =10; //at once run compare value fun WT.EDIT 2025.10.31
+	 	   
+         
+	       // gpro_t.gTimer_temp_compare_value =10; //at once run compare value fun WT.EDIT 2025.10.31
 		 
-	       // direct_comparison_temp();
-			
-	        disp_kill_dry_ster_temperature_humidity_hanlder();
+	        //disp_kill_dry_ster_temperature_humidity_hanlder();
 		  
-		    gpro_t.key_set_temperature =0;
-		
+		   
+
+		     sendCmdNote_to_Data(0x2A,run_t.wifi_set_temperature);
+	          tx_thread_sleep(2);
 			
-	        sendCmdNote_to_Data(0x2A,run_t.wifi_set_temperature);
-	         tx_thread_sleep(2);
-			
+			 gpro_t.key_set_temperature =0;
 		 
     break;
 
@@ -600,7 +577,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
 	break;
     }
 
-   // wifi_icon_blink_reg0xc5_handler();
+   
    
 }
 
@@ -608,19 +585,18 @@ void disp_temp_humidity_wifi_icon_handler(void)
 void wifi_icon_blink_faster_handler(void)
 {
 
-     static uint8_t wifi_flag =0,wifi_base;
-	 uint8_t wifi_num_val = lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high];
+    
 
+	
      // 未连接状态
     if (run_t.wifi_led_fast_blink_flag == 1 && run_t.wifi_link_net_success == 0) {
-      
-        // 快闪逻辑
+		// 快闪逻辑
         if(lcd_t.gTimer_wifi_500ms > 9){//10*14=140ms
             lcd_t.gTimer_wifi_500ms=0;
-			wifi_flag = !wifi_flag ;
+			gpro_t.wifi_flag = !gpro_t.wifi_flag ;
 		}
-        wifi_base = wifi_flag ? WIFI_Symbol : WIFI_NO_Symbol;
-        TM1723_Write_Display_Data(0xC5, (wifi_base + wifi_num_val) & 0xff);
+        //gpro_t.wifi_base = gpro_t.wifi_flag ? WIFI_Symbol : WIFI_NO_Symbol;
+        TM1723_Write_Display_Data(0xC5, (gpro_t.wifi_flag + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
 
         // 超时退出快闪
         if (run_t.gTimer_wifi_connect_counter > 120) {
