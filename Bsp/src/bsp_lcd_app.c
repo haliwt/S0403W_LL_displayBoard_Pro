@@ -537,9 +537,14 @@ void disp_temp_humidity_wifi_icon_handler(void)
 
 	  case 1:
          if (gpro_t.gTimer_set_temp_times < 3 && gpro_t.key_set_temperature==1){
-              set_lcd_numbers_from_value(run_t.wifi_set_temperature);
+             set_lcd_numbers_from_value(run_t.wifi_set_temperature);
           
              disp_kill_dry_ster_temperature_humidity_hanlder();
+		    if(gpro_t.key_set_temperature_f == 1){
+		       gpro_t.key_set_temperature_f++;
+               direct_comparison_temp();
+             }
+		    
 		 
         } 
         else{

@@ -103,11 +103,8 @@ void power_run_handler(void)
 */
 void power_on_handler(void)
 {
-    if(gpro_t.key_set_temperature_f == 1){
-		gpro_t.key_set_temperature_f++;
-        direct_comparison_temp();
-    }
-	
+
+
 	if(gpro_t.power_on_step < 10){
 	   power_on_initial();
     }
