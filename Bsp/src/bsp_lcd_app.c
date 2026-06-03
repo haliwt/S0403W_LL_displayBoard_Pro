@@ -590,9 +590,6 @@ void disp_temp_humidity_wifi_icon_handler(void)
 void wifi_icon_blink_faster_handler(void)
 {
 
-    
-
-	
      // 未连接状态
     if (run_t.wifi_led_fast_blink_flag == 1 && run_t.wifi_link_net_success == 0) {
 		// 快闪逻辑

@@ -39,6 +39,7 @@ void power_run_handler(void)
           
            power_on_handler();
 		   disp_time_colon_fun();
+	       wifi_icon_blink_faster_handler();
 
 
        
@@ -231,7 +232,7 @@ static void power_on_cycle(void)
 
 			 
 		 }
-		// wifi_icon_blink_faster_handler();
+		
 
 	break;
 		 
