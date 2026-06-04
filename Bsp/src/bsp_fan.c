@@ -77,6 +77,7 @@ static void works_timer_disp_numaber(void)
  *Return Ref:
  * 
 *****************************************************************************/
+#if 0
 void display_lcd_Icon_init(void)
 {
     
@@ -93,18 +94,18 @@ void display_lcd_Icon_init(void)
 
     if(gpro_t.temp_real_value < 60){
 
-	    lcd_t.number1_low= gpro_t.temp_real_value/ 10;
-	    lcd_t.number1_high =lcd_t.number1_low;
+	    lcd_t.number1_low= 0;//gpro_t.temp_real_value/10;
+	    lcd_t.number1_high =0;//lcd_t.number1_low;
 
-	    lcd_t.number2_low = gpro_t.temp_real_value% 10;
-	    lcd_t.number2_high =  lcd_t.number2_low;
+	    lcd_t.number2_low =0; //gpro_t.temp_real_value%10;
+	    lcd_t.number2_high = 0; //lcd_t.number2_low;
 
 
 
-	    lcd_t.number3_low= gpro_t.humidity_real_value /10;
+	    lcd_t.number3_low= gpro_t.humidity_real_value/10;
 	    lcd_t.number3_high = lcd_t.number3_low;
 
-	    lcd_t.number4_low = gpro_t.humidity_real_value %10;
+	    lcd_t.number4_low = gpro_t.humidity_real_value%10;
 	    lcd_t.number4_high =   lcd_t.number4_low ;
 
     
@@ -113,7 +114,7 @@ void display_lcd_Icon_init(void)
           TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+KILL_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);//display digital "temp
           TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);
           TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xff);//display "t,c"
-	      TM1723_Write_Display_Data(0xC5,(WIFI_Symbol+lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high]) & 0xfff); //Wifi
+	      TM1723_Write_Display_Data(0xC5,(WIFI_Symbol+lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high]) & 0xff); //Wifi
 
 	 }
      else{
@@ -133,7 +134,7 @@ void display_lcd_Icon_init(void)
 
 
 
-
+#endif 
 
 /*************************************************************************************
     *

@@ -181,7 +181,7 @@ void dsiplay_numbers_one_to_four_fun(void)
    T5= 0x04;
    T6= 0x08;
 
-	if(run_t.dry == 1 &&  run_t.plasma ==1 && (run_t.ultrasonic ==1 || run_t.ultrasonic ==2)){//1
+	if(run_t.dry == 1 &&  run_t.plasma ==1 && (run_t.ultrasonic ==1 )){//1
 	
 			 //TM1723_Write_Display_Data(0xC2, ((T3+T4+T5+T6) +lcdNumber1_High[lcd_t.number1_high]));
 			TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+KILL_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);
@@ -316,6 +316,9 @@ void dsiplay_numbers_one_to_four_fun(void)
 			TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xff);//display "t,c"
 		
 		}
+
+
+		
 		if(run_t.wifi_link_net_success == 0 ){
            TM1723_Write_Display_Data(0xC5, (gpro_t.wifi_flag + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
 

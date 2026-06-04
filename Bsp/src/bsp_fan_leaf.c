@@ -94,10 +94,9 @@ void disp_fan_leaf_run_icon(void)
 	            gpro_t.disp_fan_switch_flag  ^= 1;
 	         
 
-			  fan_runing_fun();
-		
-         }
+			 }
 
+	      fan_runing_fun();
 
 
 }
