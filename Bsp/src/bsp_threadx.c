@@ -105,10 +105,7 @@ static void vTaskDecoderPro(ULONG thread_input)
    }
    #else 
    if(tx_semaphore_get(&decoder_semaphore,TX_WAIT_FOREVER)==TX_SUCCESS){
-	  
-
-	   	
-	      decoder_handler();
+	  decoder_handler();
 	
    }
 
