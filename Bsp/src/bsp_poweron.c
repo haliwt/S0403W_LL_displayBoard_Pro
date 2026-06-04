@@ -167,7 +167,7 @@ static void power_on_initial(void)
 
 		 send_two_disp=0;
 	
-         display_numbers_one_foure_fun();
+         dsiplay_numbers_one_to_four_fun();
 		 
 		 gpro_t.power_on_step =0xfe;
 
@@ -234,7 +234,7 @@ static void power_on_cycle(void)
 
 			 
 		 }
-		 wifi_icon_blink_faster_handler();
+		// wifi_icon_blink_faster_handler();
 
 	break;
 		 
@@ -242,10 +242,7 @@ static void power_on_cycle(void)
 
 	    two_hours_recoder_fun();
 
-	   
-	 
-
-	 break;
+	break;
 
 	 case 7:
 	 if(gpro_t.smart_phone_app_timer_power_on_flag ==1 && run_t.gTimer_ptc_fan_warning >6){
@@ -359,7 +356,7 @@ void power_on_off_handler(void)
     
     
         SendData_PowerOnOff(1);
-		tx_thread_sleep(4);
+		tx_thread_sleep(2);
 
 	    gpro_t.gTimer_power_off_on_minute_fan =0;
 		gpro_t.power_on_step =0;
@@ -371,35 +368,11 @@ void power_on_off_handler(void)
 		gpro_t.again_confirm_power_off_flag = 1;
 		gpro_t.gTimer_power_off_on_minute_fan=0;
         SendData_PowerOnOff(0);
-	    tx_thread_sleep(5);
+	    tx_thread_sleep(4);
       }
     
 }
-/**************************************************************************
- * 
- *Function Name:void smartPhone_appTimer_powerOn(void)
- *Function:
- *Input Ref:
- *Return Ref:
- * 
-*****************************************************************************/
-void smartPhone_appTimer_powerOn(void)
-{
 
-      run_t.wifi_set_temperature=40; //WT.EDIT 2025.01.15
-      run_t.time_setting_mode = works_time;//WT.EDIT 2025.01.15
-      run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
-      gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
-
-	  //gpro_t.gTimer_mode_key_long=0;
-	  display_lcd_Icon_init();
-      LCD_BACK_LIGHT_ON();
-	  POWER_ON_LED() ;
-	  LED_MODEL_ON() ;
-      
-      power_on_display_temp_handler();//WT.EDIT 2025.03.28
-
-}
 
 /**************************************************************************
  * 
@@ -453,9 +426,7 @@ static void display_lcd_Icon_init(void)
      //TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xF1);//display "t,c"
      }
 
-	 TM1723_Write_Display_Data(0xC5,(WIFI_Symbol+lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high]) & 0xff); //Wifi
 
-     // disp_fan_leaf_init();
 
 
 

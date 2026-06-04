@@ -21,7 +21,7 @@ void power_off_handler(void);
 
 void Power_Off_Fun(void);
 
-void smartPhone_appTimer_powerOn(void);
+
 
 void power_on_first_again_fun(void);
 

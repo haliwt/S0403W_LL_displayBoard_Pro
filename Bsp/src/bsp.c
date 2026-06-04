@@ -265,8 +265,7 @@ static void handle_timer_time_mode(void)
 	
 	 
        disp_timer_run_times();
-       counter_time_timing_fun();//Works_Counter_Time();
-
+       counter_time_timing_fun(); 
     
 }
 /**

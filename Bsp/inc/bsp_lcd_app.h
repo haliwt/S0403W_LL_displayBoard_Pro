@@ -23,7 +23,7 @@ void display_ai_icon(uint8_t datat) ;
 
 void wifi_icon_blink_faster_handler(void);
 
-void display_numbers_one_foure_fun(void);
+void dsiplay_numbers_one_to_four_fun(void);
 
 
 #endif 

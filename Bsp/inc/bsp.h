@@ -112,6 +112,7 @@ typedef struct _process_state{
    
    uint8_t first_ptc_on;
    uint8_t set_timer_f; 
+   uint8_t wifi_flag ;
 
   
 
