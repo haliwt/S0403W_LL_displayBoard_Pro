@@ -169,11 +169,7 @@ static void power_on_initial(void)
 		 
 		 gpro_t.power_on_step =0xfe;
 
-		 //SendData_Set_Command(0x10,1); //mainboard.WT.EDIT 2026.01.04
-         //tx_thread_sleep(2); //WT.EDIT 2026.01.04
-		
-		
-	  break;
+		 break;
   }
  }
 
@@ -236,13 +232,13 @@ static void power_on_cycle(void)
 
 	break;
 		 
-	case 6:
+	case 4:
 
 	    two_hours_recoder_fun();
 
 	break;
 
-	 case 7:
+	 case 5:
 	 if(gpro_t.smart_phone_app_timer_power_on_flag ==1 && run_t.gTimer_ptc_fan_warning >6){
 	      gpro_t.smart_phone_app_timer_power_on_flag=0;
 
@@ -252,7 +248,7 @@ static void power_on_cycle(void)
       disp_fan_leaf_run_icon();
 	 break;
 
-	 case 8:
+	 case 6:
           wifi_icon_blink_reg0xc5_handler();
 
 	 break;
@@ -262,7 +258,7 @@ static void power_on_cycle(void)
 	 }
 	
    time_slot ++;
-   if(time_slot > 8) time_slot = 0;// 10ms * 9 = 90ms
+   if(time_slot > 6) time_slot = 0;// 10ms * 7 = 90ms
  }
 
    

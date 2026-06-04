@@ -1,7 +1,7 @@
 #include "bsp.h"
 
 
-#define  LEAF_TOGGLE_THRESHOLD   3
+#define  LEAF_TOGGLE_THRESHOLD   0
 
 
 static void display_works_or_timer_timing_fun(void);

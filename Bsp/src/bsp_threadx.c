@@ -204,7 +204,7 @@ static void vTaskKeyPro(ULONG thread_input)
     static uint16_t down_cnt = 0;
     static uint16_t power_cnt = 0;
 
-    const uint16_t LONG_PRESS_TIME = 20;   //20ms * 100= 2000ms
+    const uint16_t LONG_PRESS_TIME = 40;   //20ms * 100= 2000ms
     
   while(1){
 
@@ -347,7 +347,7 @@ void semaphore_isr(void)
 
 void tx_application_stack_error_handler(TX_THREAD *thread_ptr)
 {
-  printf("stack overflow in thread:%s \n", thread_ptr->tx_thread_name );
+  //printf("stack overflow in thread:%s \n", thread_ptr->tx_thread_name );
 }
 
 
