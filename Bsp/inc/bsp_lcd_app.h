@@ -13,7 +13,8 @@ void disp_kill_dry_ster_temperature_humidity_hanlder(void);
 
 void disp_time_colon_ion_handler(void);
 
-void power_on_display_temp_handler(void);
+void wifi_icon_blink_reg0xc5_handler(void);
+
 
 
 

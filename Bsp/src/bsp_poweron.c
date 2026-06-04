@@ -251,13 +251,18 @@ static void power_on_cycle(void)
 	 
       disp_fan_leaf_run_icon();
 	 break;
+
+	 case 8:
+          wifi_icon_blink_reg0xc5_handler();
+
+	 break;
 	 
 	 default:
 	 	break;
 	 }
 	
    time_slot ++;
-   if(time_slot > 7) time_slot = 0;
+   if(time_slot > 8) time_slot = 0;// 10ms * 9 = 90ms
  }
 
    
