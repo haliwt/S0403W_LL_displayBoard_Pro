@@ -108,7 +108,7 @@ void power_on_handler(void)
 */
 static void power_on_initial(void)
 {
-   static uint8_t send_two_disp;
+   static uint8_t dc_disp=0;
    switch(gpro_t.power_on_step){
 
       case 0:
@@ -149,9 +149,14 @@ static void power_on_initial(void)
 	     gpro_t.gTimer_disp_temp_humi_value=20;
 	     run_t.wifi_set_temperature=40;
 
-		 send_two_disp=0;
-	
-         dsiplay_numbers_one_to_four_fun();
+		 if(dc_disp==0){
+			dc_disp++;
+
+            display_lcd_Icon_init();
+		    tx_thread_sleep(100);//stop 1s.
+		 }
+         else 
+		 	dsiplay_numbers_one_to_four_fun();
 		 
 		 gpro_t.power_on_step =0xfe;
 
@@ -291,7 +296,7 @@ static void power_on_ref_init(void)
       }
 
    
-	  display_lcd_Icon_init();
+	//  display_lcd_Icon_init();
       LCD_BACK_LIGHT_ON();
 	  POWER_ON_LED() ;
 	  LED_MODEL_ON() ;
@@ -301,12 +306,7 @@ static void power_on_ref_init(void)
     
 }
 
-void power_on_first_fun(void)
-{
 
-
-
-}
 
 /**************************************************************************
  * 
@@ -370,62 +370,21 @@ static void display_lcd_Icon_init(void)
 {
     
 
-     TIM1723_Write_Cmd(0x00);
+    // TIM1723_Write_Cmd(0x00);
 	 TIM1723_Write_Cmd(0x40);
 	 TIM1723_Write_Cmd(0x44);
 
  
-         
-    run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
-    gpro_t.set_temp_value_success = 0;//WT.EDIT 2025.01.15
-    gpro_t.key_set_temperature =0;//WT.EDIT 2025.01.15
-
-     if(gpro_t.temp_real_value <60){
-
-    lcd_t.number1_low= gpro_t.temp_real_value/ 10;
-    lcd_t.number1_high =lcd_t.number1_low;
-
-    lcd_t.number2_low = gpro_t.humidity_real_value % 10;
-    lcd_t.number2_high = lcd_t.number2_low ;
-
-
-
-    lcd_t.number3_low= gpro_t.humidity_real_value /10;
-    lcd_t.number3_high = lcd_t.number3_low;
-
-    lcd_t.number4_low = gpro_t.humidity_real_value %10;
-    lcd_t.number4_high = lcd_t.number4_low ;
-
-
-    
-     if(gpro_t.smart_phone_app_timer_power_on_flag == 0){
-	 	 
-         
-	         TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+KILL_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);//display digital "temp
-			 TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);
-			 TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xff);//display "t,c"
-			 TM1723_Write_Display_Data(0xC5,(WIFI_Symbol+lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high]) & 0xff); //Wifi
-     }
-     else{
-	 
-         disp_kill_dry_ster_temperature_humidity_hanlder();
-     }
-  
-     
-      TM1723_Write_Display_Data(0xC9,(T8_HUM + lcdNumber4_Low[lcd_t.number4_low] + lcdNumber5_High[lcd_t.number5_high]) & 0xFF);
-
-
-
-
+     TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+KILL_Symbol+BUG_Symbol)+lcdNumber1_High[0])&0xff);//display digital "temp
+	 TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[0])+lcdNumber2_High[0]) & 0xff);
+	 TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[0]+lcdNumber3_High[0])&0xff);//display "t,c"
+	 TM1723_Write_Display_Data(0xC5,(WIFI_Symbol+lcdNumber3_Low[0] + lcdNumber4_High[0]) & 0xff); //Wifi
+     TM1723_Write_Display_Data(0xC9,(T8_HUM + lcdNumber4_Low[0] + lcdNumber5_High[0]) & 0xFF);
      TIM1723_Write_Cmd(LUM_VALUE);
-    }
-}
+ }
 
-void power_on_first_again_fun(void)
-{
-	display_lcd_Icon_init();
 
-}
+
 /**************************************************************************
  * 
  *Function Name:void power_on_off_handler(void)

@@ -194,8 +194,14 @@ void dsiplay_numbers_one_to_four_fun(void)
 			}
 		
 			TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xff);//display "t,c"
-		
-			 
+
+		   if(run_t.wifi_link_net_success == 0 ){
+           	TM1723_Write_Display_Data(0xC5, (gpro_t.wifi_flag + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
+
+		    }
+		    else{ 
+			 TM1723_Write_Display_Data(0xC5, (WIFI_Symbol + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
+		    }
 		}
 		else if(run_t.dry == 0 && run_t.plasma ==1 && run_t.ultrasonic ==1){//2
 	
@@ -211,7 +217,14 @@ void dsiplay_numbers_one_to_four_fun(void)
 			}
 		
 			TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xff);//display "t,c"
-		
+		    if(run_t.wifi_link_net_success == 0 ){
+           		TM1723_Write_Display_Data(0xC5, (gpro_t.wifi_flag + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
+
+		    }
+		    else{ 
+			 	TM1723_Write_Display_Data(0xC5, (WIFI_Symbol + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
+		    }
+
 		}
 		else if(run_t.dry == 1 && run_t.plasma ==0 && run_t.ultrasonic ==1){//3
 	
@@ -227,7 +240,13 @@ void dsiplay_numbers_one_to_four_fun(void)
 			}
 		
 			TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xff);//display "t,c"
-		
+		    if(run_t.wifi_link_net_success == 0 ){
+           		TM1723_Write_Display_Data(0xC5, (gpro_t.wifi_flag + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
+
+		    }
+		    else{ 
+			 	TM1723_Write_Display_Data(0xC5, (WIFI_Symbol + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
+		    }
 		}
 		else if(run_t.dry == 1 && run_t.plasma ==1 && run_t.ultrasonic ==0){//4
 	
@@ -243,7 +262,13 @@ void dsiplay_numbers_one_to_four_fun(void)
 			}
 		
 			TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xff);//display "t,c"
-		
+		    if(run_t.wifi_link_net_success == 0 ){
+           		TM1723_Write_Display_Data(0xC5, (gpro_t.wifi_flag + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
+
+		    }
+		    else{ 
+			 	TM1723_Write_Display_Data(0xC5, (WIFI_Symbol + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
+		    }
 		}
 		else if(run_t.dry == 0 && run_t.plasma ==0 && run_t.ultrasonic ==1){//5
 	
@@ -260,7 +285,13 @@ void dsiplay_numbers_one_to_four_fun(void)
 			}
 		
 			TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xff);//display "t,c"
-		
+		    if(run_t.wifi_link_net_success == 0 ){
+           		TM1723_Write_Display_Data(0xC5, (gpro_t.wifi_flag + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
+
+		    }
+		    else{ 
+			 	TM1723_Write_Display_Data(0xC5, (WIFI_Symbol + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
+		    }
 		}
 		else if(run_t.dry == 1 && run_t.plasma ==0 && run_t.ultrasonic ==0){//6
 		
@@ -278,7 +309,13 @@ void dsiplay_numbers_one_to_four_fun(void)
 			}
 		
 			TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xff);//display "t,c"
-		
+		    if(run_t.wifi_link_net_success == 0 ){
+                TM1723_Write_Display_Data(0xC5, (gpro_t.wifi_flag + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
+
+		    }
+		    else{ 
+			 	TM1723_Write_Display_Data(0xC5, (WIFI_Symbol + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
+		    }
 		}
 		 else if(run_t.dry == 0 && run_t.plasma ==1 && run_t.ultrasonic ==0){//7
 	
@@ -294,9 +331,14 @@ void dsiplay_numbers_one_to_four_fun(void)
 			 else{
 				 TM1723_Write_Display_Data(0xC3,((AI_NO_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
 			 }
-		 
-			 TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xff);//display "t,c"
-		 
+		     TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xff);//display "t,c"
+		    if(run_t.wifi_link_net_success == 0 ){
+           		TM1723_Write_Display_Data(0xC5, (gpro_t.wifi_flag + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
+
+		    }
+		    else{ 
+			 TM1723_Write_Display_Data(0xC5, (WIFI_Symbol + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
+		    }
 		 }
 		else if(run_t.dry == 0 && run_t.plasma ==0 && run_t.ultrasonic ==0){//8
 	   
@@ -314,19 +356,18 @@ void dsiplay_numbers_one_to_four_fun(void)
 			}
 		
 			TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xff);//display "t,c"
-		
+		    if(run_t.wifi_link_net_success == 0 ){
+           		TM1723_Write_Display_Data(0xC5, (gpro_t.wifi_flag + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
+
+		    }
+		    else{ 
+			 	TM1723_Write_Display_Data(0xC5, (WIFI_Symbol + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
+		    }
 		}
 
+       TM1723_Write_Display_Data(0xC9,(T8_HUM + lcdNumber4_Low[lcd_t.number4_low] + lcdNumber5_High[lcd_t.number5_high]) & 0xFF);
 
-		
-		if(run_t.wifi_link_net_success == 0 ){
-           TM1723_Write_Display_Data(0xC5, (gpro_t.wifi_flag + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
-
-		}else 
-			 TM1723_Write_Display_Data(0xC5, (WIFI_Symbol + (lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high])) & 0xff);
-			
-		TM1723_Write_Display_Data(0xC9,(T8_HUM + lcdNumber4_Low[lcd_t.number4_low] + lcdNumber5_High[lcd_t.number5_high]) & 0xFF);
-
+	 TIM1723_Write_Cmd(LUM_VALUE);
 
 }
 
@@ -537,13 +578,7 @@ void disp_temp_humidity_wifi_icon_handler(void)
      case 2:
 	 	   
          
-	       // gpro_t.gTimer_temp_compare_value =10; //at once run compare value fun WT.EDIT 2025.10.31
-		 
-	        //disp_kill_dry_ster_temperature_humidity_hanlder();
-		  
-		   
-
-		     sendCmdNote_to_Data(0x2A,run_t.wifi_set_temperature);
+	    sendCmdNote_to_Data(0x2A,run_t.wifi_set_temperature);
 	          tx_thread_sleep(2);
 			
 			 gpro_t.key_set_temperature =0;

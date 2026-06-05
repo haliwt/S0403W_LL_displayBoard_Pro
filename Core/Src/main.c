@@ -11,7 +11,7 @@
   *
   * data:2026.02.27          
   * modify 0x6C order send to mainboard sync times is local don't beijing time.
-  * 
+  * data:2026-06-05 be used responsed speed . 
   * 
   *
   ******************************************************************************
