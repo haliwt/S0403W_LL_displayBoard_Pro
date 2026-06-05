@@ -311,31 +311,9 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 		}
 		
-//		lcd_t.number1_low= gpro_t.temp_real_value/ 10;
-//	    lcd_t.number1_high =lcd_t.number1_low;
-
-//	    lcd_t.number2_low = gpro_t.temp_real_value% 10;
-//	    lcd_t.number2_high =  lcd_t.number2_low;
-
-
-
-//	    lcd_t.number3_low= gpro_t.humidity_real_value /10;
-//	    lcd_t.number3_high = lcd_t.number3_low;
-
-//	    lcd_t.number4_low = gpro_t.humidity_real_value %10;
-//	    lcd_t.number4_high =   lcd_t.number4_low ;
-			
+        }
 		 
-		 }
-		 
-
-        
-
-
-        
-
-	
-	break;
+    break;
 	
 
 

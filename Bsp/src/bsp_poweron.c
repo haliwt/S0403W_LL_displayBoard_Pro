@@ -153,7 +153,7 @@ static void power_on_initial(void)
 			dc_disp++;
 
             display_lcd_Icon_init();
-		    tx_thread_sleep(100);//stop 1s.
+		    //tx_thread_sleep(100);//stop 1s.
 		 }
          else 
 		 	dsiplay_numbers_one_to_four_fun();
