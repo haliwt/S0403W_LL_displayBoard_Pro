@@ -50,7 +50,7 @@ void tim16_int_callback_handler(void)
 		 gpro_t.gTimer_disp_dry_counter++;
 		 gpro_t.gTimer_counter_one_minute++;
 
-		 gpro_t.gTimer_power_off_on_minute_fan++;
+
 		 gpro_t.gTimer_send_data_counter++;
      
          //

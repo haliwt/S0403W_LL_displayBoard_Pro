@@ -55,24 +55,10 @@ void power_run_handler(void)
            power_off_handler();
 	       gpro_t.fan_run_one_minute=0;
 
-		   counter ++ ;
+		
 		   
-		    if(gpro_t.again_confirm_power_off_flag == 1 && counter > 40 ){
-				counter =0;
-				SendData_Set_Command(0x10,0); //mainboard.WT.EDIT 2026.01.04
-                tx_thread_sleep(2); //WT.EDIT 2026.01.04
-			   // gpro_t.again_confirm_power_off_flag++;
-
-		    }
-
-			if(gpro_t.gTimer_power_off_on_minute_fan > 60){
-
-			    gpro_t.again_confirm_power_off_flag++;
-			    SendData_Set_Command(0x12,1); //turn off fun .mainboard.WT.EDIT 2026.01.04
-			    tx_thread_sleep(2); //WT.EDIT 2026.01.04
-
-
-			}
+		
+	
 
 			if(gpro_t.gTimer_send_data_counter > 1){ //new version 
 			 	 gpro_t.gTimer_send_data_counter =0;
@@ -353,21 +339,20 @@ void power_on_off_handler(void)
 {
     if(run_t.power_on== power_off){
     
-    
+    	gpro_t.power_on_step =0;
         SendData_PowerOnOff(1);
 		tx_thread_sleep(2);
 
-	    gpro_t.gTimer_power_off_on_minute_fan =0;
-		gpro_t.power_on_step =0;
+	
 
 
     }
     else{ //power off .
-        gpro_t.gTimer_power_off_on_minute_fan =0;
-		gpro_t.again_confirm_power_off_flag = 1;
-		gpro_t.gTimer_power_off_on_minute_fan=0;
+  
+
+	
         SendData_PowerOnOff(0);
-	    tx_thread_sleep(4);
+	    tx_thread_sleep(2);
       }
     
 }
@@ -433,8 +418,8 @@ static void display_lcd_Icon_init(void)
 
 
      TIM1723_Write_Cmd(LUM_VALUE);
+    }
 }
-
 
 void power_on_first_again_fun(void)
 {

@@ -40,8 +40,8 @@ void disp_timer_run_times(void)
 	           if(run_t.timer_set_success_flag == timing_success){
 			    run_t.timer_time_hours=0;
 				run_t.timer_time_minutes=0;
-                 gpro_t.again_confirm_power_off_flag = 1;
-				 gpro_t.gTimer_power_off_on_minute_fan=0;
+            
+	
                  run_t.power_on= power_off;
                  SendData_PowerOnOff(0); //send power off cmd to mainboard.WT.EDIT 2024.11.17
                  tx_thread_sleep(5); //WT.EDIT 2026.01.04

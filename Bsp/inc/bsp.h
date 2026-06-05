@@ -88,7 +88,7 @@ typedef struct _process_state{
   
 
 
-   uint8_t again_confirm_power_off_flag ;
+ 
 
   
    uint8_t two_hours_cp_flag ;
@@ -120,21 +120,21 @@ typedef struct _process_state{
 
 
    //
-   uint8_t gTimer_soft_version_counter;
+  volatile uint8_t gTimer_soft_version_counter;
  //  uint8_t gTimer_mode_key_long;
-   uint8_t gTimer_set_temp_times;
-   uint8_t gTimer_temp_compare_value;
-   uint8_t gTimer_fan_to_ptc_warning;
+volatile   uint8_t gTimer_set_temp_times;
+volatile   uint8_t gTimer_temp_compare_value;
+ volatile  uint8_t gTimer_fan_to_ptc_warning;
   
-   uint8_t gTimer_disp_temp_humi_value;
-   uint8_t  gTimer_copy_cmd_counter;
-   uint8_t gTimer_two_hours_second_counter;
-   uint8_t gTimer_two_hours_conter;
+  volatile uint8_t gTimer_disp_temp_humi_value;
+ volatile  uint8_t  gTimer_copy_cmd_counter;
+ volatile  uint8_t gTimer_two_hours_second_counter;
+ volatile  uint8_t gTimer_two_hours_conter;
 
-   uint8_t gTimer_disp_dry_counter;
-   uint8_t gTimer_counter_one_minute;
-   uint8_t gTimer_power_off_on_minute_fan;
-   uint8_t gTimer_send_data_counter;
+ volatile  uint8_t gTimer_disp_dry_counter;
+ volatile  uint8_t gTimer_counter_one_minute;
+  
+volatile   uint8_t gTimer_send_data_counter;
  
    
 
