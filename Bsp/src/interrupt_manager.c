@@ -27,10 +27,11 @@ void tim16_int_callback_handler(void)
     if(tm1>9){ //100ms 
        tm1=0;
        lcd_t.gTimer_colon_ms++ ;
-
+       lcd_t.gTimer_leaf_counter++;
+	
 	   run_t.gTimer_digital5678_ms++;
        run_t.gTimer_ptc_fan_blink_warning++ ;
-	   lcd_t.gTimer_leaf_counter++;
+	  
 	   gpro_t.gTimer_copy_cmd_counter++;
 	   
     }

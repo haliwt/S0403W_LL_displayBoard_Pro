@@ -148,9 +148,7 @@ static void handle_works_time_mode(void)
 	  	
       counter_time_timing_fun(); 
   
-	  
-	 
-      Setup_Timer_Times_Donot_Display();
+	 disp_timer_run_times();
 	  
 
 }
@@ -200,7 +198,7 @@ static void disp_set_timer_timing_value_fun(void)
 		lcd_t.number8_high= tim_bit_1_minutes;
 
         //mask = blink_on ? 0xFF : 0x0F; // 闪烁掩码
-        display_digits(mask, 1);
+        //display_digits(mask, 1);
 	
 
     } 
@@ -572,16 +570,15 @@ void direct_comparison_temp(void)
 
                run_t.dry = 0;
 			 
-			   SendData_Set_Command(0x22,0x00); //close ptc 
-	           //while(!gpro_t.uart1_tx_done);
-	           tx_thread_sleep(2);
+			  SendData_Set_Command(0x22,0x00); //close ptc 
+	          tx_thread_sleep(1);
     }
     else{
 
 	   run_t.dry = 1;
-		SendData_Set_Command(0x22,0x01); //open ptc 
-	    tx_thread_sleep(2);
-	    // while(!gpro_t.uart1_tx_done);
+	    SendData_Set_Command(0x22,0x01); //open ptc 
+	   tx_thread_sleep(1);
+	  
 			    
 	  }
 

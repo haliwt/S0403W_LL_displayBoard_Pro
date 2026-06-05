@@ -527,11 +527,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 			   lcd_t.number7_high =0;
 			   lcd_t.number8_low = 0 ;
 			   lcd_t.number8_high= 0;
-		
-			 
-			   display_digits(0x0F, 1);
-			    tx_thread_sleep(200);
-		       //display_digits(0xFF, 0);
+	
 		 
 			   run_t.timer_set_success_flag = timing_success;
 			   run_t.time_setting_mode=timer_time;
@@ -554,8 +550,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 			   lcd_t.number8_low = 0 ;
 			   lcd_t.number8_high= 0;
 
-               display_digits(0x0F, 1);
-			   tx_thread_sleep(200);
+         
                run_t.timer_set_success_flag = timing_not_definition;
 			   run_t.time_setting_mode=works_time;
 			   run_t.gTimer_again_switch_works = 0;

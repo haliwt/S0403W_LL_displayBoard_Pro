@@ -39,6 +39,7 @@ void power_run_handler(void)
           
            power_on_handler();
 		   disp_time_colon_fun();
+	       wifi_icon_blink_faster_handler();
 
 
        
@@ -103,11 +104,8 @@ void power_run_handler(void)
 */
 void power_on_handler(void)
 {
-    if(gpro_t.key_set_temperature_f == 1){
-		gpro_t.key_set_temperature_f++;
-        direct_comparison_temp();
-    }
-	
+
+
 	if(gpro_t.power_on_step < 10){
 	   power_on_initial();
     }
@@ -171,11 +169,7 @@ static void power_on_initial(void)
 		 
 		 gpro_t.power_on_step =0xfe;
 
-		 //SendData_Set_Command(0x10,1); //mainboard.WT.EDIT 2026.01.04
-         //tx_thread_sleep(2); //WT.EDIT 2026.01.04
-		
-		
-	  break;
+		 break;
   }
  }
 
@@ -234,17 +228,17 @@ static void power_on_cycle(void)
 
 			 
 		 }
-		// wifi_icon_blink_faster_handler();
+		
 
 	break;
 		 
-	case 6:
+	case 4:
 
 	    two_hours_recoder_fun();
 
 	break;
 
-	 case 7:
+	 case 5:
 	 if(gpro_t.smart_phone_app_timer_power_on_flag ==1 && run_t.gTimer_ptc_fan_warning >6){
 	      gpro_t.smart_phone_app_timer_power_on_flag=0;
 
@@ -253,13 +247,18 @@ static void power_on_cycle(void)
 	 
       disp_fan_leaf_run_icon();
 	 break;
+
+	 case 6:
+          wifi_icon_blink_reg0xc5_handler();
+
+	 break;
 	 
 	 default:
 	 	break;
 	 }
 	
    time_slot ++;
-   if(time_slot > 7) time_slot = 0;
+   if(time_slot > 6) time_slot = 0;// 10ms * 7 = 90ms
  }
 
    
@@ -416,16 +415,19 @@ static void display_lcd_Icon_init(void)
     
      if(gpro_t.smart_phone_app_timer_power_on_flag == 0){
 	 	 
-         TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+KILL_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);//display digital "temp
+         
+	         TM1723_Write_Display_Data(0xC2,((0X01+DRY_Symbol+KILL_Symbol+BUG_Symbol)+lcdNumber1_High[lcd_t.number1_high])&0xff);//display digital "temp
+			 TM1723_Write_Display_Data(0xC3,((AI_Symbol+lcdNumber1_Low[lcd_t.number1_low])+lcdNumber2_High[lcd_t.number2_high]) & 0xff);
+			 TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xff);//display "t,c"
+			 TM1723_Write_Display_Data(0xC5,(WIFI_Symbol+lcdNumber3_Low[lcd_t.number3_low] + lcdNumber4_High[lcd_t.number4_high]) & 0xff); //Wifi
      }
      else{
 	 
          disp_kill_dry_ster_temperature_humidity_hanlder();
      }
-     //TM1723_Write_Display_Data(0xC3,(lcdNumber1_Low[lcd_t.number1_low]+AI_Symbol+lcdNumber2_High[lcd_t.number2_high]) & 0xff);//display  "AI icon
-     //TM1723_Write_Display_Data(0xC4,(0x01+lcdNumber2_Low[lcd_t.number2_low]+lcdNumber3_High[lcd_t.number3_high])&0xF1);//display "t,c"
-     }
-
+  
+     
+      TM1723_Write_Display_Data(0xC9,(T8_HUM + lcdNumber4_Low[lcd_t.number4_low] + lcdNumber5_High[lcd_t.number5_high]) & 0xFF);
 
 
 

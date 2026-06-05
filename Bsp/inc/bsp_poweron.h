@@ -23,7 +23,7 @@ void Power_Off_Fun(void);
 
 
 
-void power_on_first_again_fun(void);
+
 
 void two_hours_recoder_fun(void);
 

@@ -100,23 +100,23 @@ typedef struct __RUN{
    uint8_t gTemp_check;
    
 
-   uint8_t  plasma;
-   uint8_t  dry;
+   bool  plasma;
+   bool  dry;
    uint8_t  fan;
-   uint8_t  ultrasonic;
+   bool  ultrasonic;
 
    uint8_t  gAI;
    uint8_t  ptc_on_off_flag ;
    
 
-   uint8_t ptc_warning;
-   uint8_t fan_warning;
+   bool ptc_warning;
+   bool fan_warning;
   
    uint8_t  disp_wind_speed_grade;
  
  
 
-   uint8_t single_data;
+
    
 
    uint8_t wifi_link_net_success;
@@ -206,7 +206,7 @@ extern RUN_T run_t;
 
 
 
-void Setup_Timer_Times_Donot_Display(void);
+
 
 
 void disp_timer_run_times(void);
