@@ -146,6 +146,7 @@ void fan_runing_fun(void)
 
 
 	
+	TIM1723_Write_Cmd(LUM_VALUE);
 
 
 	break;
@@ -184,7 +185,7 @@ void fan_runing_fun(void)
 	TM1723_Write_Display_Data(0xCF,T16+T10+T12);//T12,T11,T10
 	  //T14
 	
-		
+	TIM1723_Write_Cmd(LUM_VALUE);	
 	break;
 
   

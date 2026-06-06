@@ -109,14 +109,14 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 	if(pddata[3] == 0x01){//power on
 		run_t.power_on = power_on;
 		SendWifiData_Answer_Cmd(0x01,0x01);
-		tx_thread_sleep(2);
+		tx_thread_sleep(1);
 	}
 	else{//power off 
-	    gpro_t.again_confirm_power_off_flag =1;
-		gpro_t.gTimer_power_off_on_minute_fan=0;
+	
+	
 		run_t.power_on = power_off;
 		SendWifiData_Answer_Cmd(0x01,0);
-		tx_thread_sleep(2);
+		tx_thread_sleep(1);
 
 	}
 	break;
@@ -304,35 +304,16 @@ static void parse_cmd_or_data_(uint8_t *pddata)
         if(gpro_t.key_set_temperature==0){
 	   
 		if(pddata[6]  < 60){
+			
 			 gpro_t.humidity_real_value = pddata[5];
 
 		     gpro_t.temp_real_value = pddata[6];
+
+		}
 		
-		lcd_t.number1_low= gpro_t.temp_real_value/ 10;
-	    lcd_t.number1_high =lcd_t.number1_low;
-
-	    lcd_t.number2_low = gpro_t.temp_real_value% 10;
-	    lcd_t.number2_high =  lcd_t.number2_low;
-
-
-
-	    lcd_t.number3_low= gpro_t.humidity_real_value /10;
-	    lcd_t.number3_high = lcd_t.number3_low;
-
-	    lcd_t.number4_low = gpro_t.humidity_real_value %10;
-	    lcd_t.number4_high =   lcd_t.number4_low ;
-			
-		 
-		 }
-		 
-
         }
-
-
-        
-
-	
-	break;
+		 
+    break;
 	
 
 
@@ -406,8 +387,8 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 			run_t.power_on = power_on;
 		}
 		else{//power off 
-		    gpro_t.again_confirm_power_off_flag =1;
-			gpro_t.gTimer_power_off_on_minute_fan=0;
+	
+
 		    run_t.wifi_link_net_success=1;
 			run_t.power_on = power_off;
 
@@ -435,8 +416,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 	}
 	else if(pddata[3]==0x0){  //power off by smart phone APP
 		run_t.wifi_link_net_success=1;
-		gpro_t.again_confirm_power_off_flag =1; //WT.EDIT 2026.03.06
-		gpro_t.gTimer_power_off_on_minute_fan=0;//WT.EDIT 2026.03.06
+
 		run_t.power_on= power_off;
 	    Lcd_PowerOff_Fun();
 		SendWifiData_Answer_Cmd(0x021,0x0);
@@ -451,31 +431,10 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 
 	case 0x27 : //AI mode by smart phone of APP be control.
-
-    #if 0
-	if(frame.func_code==2){
-		//timer time + don't has ai item
-	
-			run_t.time_setting_mode = timer_time;
-			run_t.gTimer_again_switch_works = 0; //WT.EDIT ,if don't define timer_time,wait 3s switch to works_time.
-			run_t.gAI=0;
-		    gpro_t.switch_not_ai_mode=1;
-		    display_not_ai_timer_mode();
-		
-	}
-	else{ //AI mode 
-		//beijing time + ai item
-	
-			run_t.time_setting_mode = works_time;
-		
-			run_t.gTimer_again_switch_works = 0;
-			gpro_t.switch_not_ai_mode=0;
-            display_ai_icon(1) ;
-			run_t.gAI=1;
-		
-
-	    }
-     #endif 
+   
+      if(pddata[3]== 0x01 || pddata[3]== 0 ||pddata[3]==0x02){
+         mode_key_short_fun();
+	  }
 
 	break;
 
@@ -588,28 +547,24 @@ static void parse_copy_cmd_or_data_handler(uint8_t *pdata)
         case power_on_off:
 				
 			if(pdata[4] == 0x01){//power on
-			
-		      run_t.power_on= power_on;
+
+			  if(run_t.power_on== power_on){
+
+
+			  }
+			  else{
+		        run_t.power_on= power_on;
+			    gpro_t.power_on_step=0;
+			  }
 		
 			}
-			else if(pdata[4]==0 ){
+			else if(pdata[4]==0 || pdata[4]==2){
 		
                LCD_Display_Wind_Icon_Handler();
-			   gpro_t.gTimer_power_off_on_minute_fan=0;
+		
 			   run_t.power_on = power_off;
 
 			}
-			else if(pdata[4]==2){
-				
-			   if(run_t.power_on != power_off){
-			      LCD_Display_Wind_Icon_Handler();
-			      gpro_t.gTimer_power_off_on_minute_fan=0;
-			      run_t.power_on = power_off;
-			   }
-
-			}
-
-
 	   break;
 
 	   case 0x10:
@@ -624,7 +579,7 @@ static void parse_copy_cmd_or_data_handler(uint8_t *pdata)
 			else if(pdata[4]==0){
 		
           
-			gpro_t.gTimer_power_off_on_minute_fan=0;
+	
 			run_t.power_on = power_off;
 
 			}
