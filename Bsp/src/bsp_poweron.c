@@ -4,7 +4,7 @@
 
 // --- 1. 定义任务的时间周期（单位：毫秒，假设基础Tick为1ms） ---
 #define PERIOD_DISP_TEMP_HUM       3    // 10ms*2 = 
-#define PERIOD_DISP_BEIJING        120    // 10ms*200 = 2000ms = 2s
+#define PERIOD_DISP_BEIJING        10    // 10ms*200 = 2000ms = 2s
 
 #define PERIOD_SET_TEMPERATURE     300    //  10ms*300 = 
 
