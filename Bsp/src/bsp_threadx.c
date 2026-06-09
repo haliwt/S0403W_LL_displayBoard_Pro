@@ -15,7 +15,7 @@
 
 
 
-#define STACK_SIZE_UI     1536//1024 
+#define STACK_SIZE_UI     1792//1536//1024//1664 
 #define STACK_SIZE_KEY    256//512
 #define STACK_SIZE_DEC    512//
 #define STACK_SIZE_EVENT  512

@@ -86,41 +86,6 @@ void disp_time_colon_fun(void)
 
 void display_time_hours_minutes_fun(void)
 {
-   if(run_t.time_setting_mode ==works_time){//switch(run_t.setup_timer_timing_item){
-
-    
-        
-         lcd_t.number5_low=(run_t.dispTime_hours ) /10;
-         lcd_t.number5_high =lcd_t.number5_low;//(run_t.dispTime_hours) /10;
-
-    	 lcd_t.number6_low = (run_t.dispTime_hours ) %10;;
-    	 lcd_t.number6_high =  lcd_t.number6_low ;//(run_t.dispTime_hours ) %10;
-         
-         lcd_t.number7_low = (run_t.dispTime_minutes )/10;
-    	 lcd_t.number7_high = lcd_t.number7_low;//(run_t.dispTime_minutes )/10;
-
-    	 lcd_t.number8_low = (run_t.dispTime_minutes )%10;
-    	 lcd_t.number8_high = lcd_t.number8_low ;//(run_t.dispTime_minutes )%10;
-
-    }
-	else if(run_t.time_setting_mode ==timer_time){
-
-	        lcd_t.number5_low=(run_t.timer_time_hours) /10;
-			lcd_t.number5_high =lcd_t.number5_low;//(run_t.dispTime_hours) /10;
-	
-			lcd_t.number6_low = (run_t.timer_time_hours ) %10;;
-			lcd_t.number6_high =  lcd_t.number6_low ;//(run_t.dispTime_hours ) %10;
-			
-			lcd_t.number7_low = (run_t.timer_time_minutes )/10;
-			lcd_t.number7_high = lcd_t.number7_low;//(run_t.dispTime_minutes )/10;
-	
-			lcd_t.number8_low = (run_t.timer_time_minutes )%10;
-			lcd_t.number8_high = lcd_t.number8_low ;//(run_t.dispTime_minutes )%10;
-
-
-
-	}
-
    fan_runing_fun();
 }
 /************************************************************

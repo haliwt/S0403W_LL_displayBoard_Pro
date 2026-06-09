@@ -2,8 +2,52 @@
 
 
 
-uint8_t counter_flag ;
+// --- 1. 定义任务的时间周期（单位：毫秒，假设基础Tick为1ms） ---
+#define PERIOD_DISP_TEMP_HUM       3    // 10ms*2 = 
+#define PERIOD_DISP_BEIJING        120    // 10ms*200 = 2000ms = 2s
 
+#define PERIOD_SET_TEMPERATURE     300    //  10ms*300 = 
+
+#define PERIOD_TX_VERSION          80    //  10ms*80 = 
+#define PERIOD_WORKS_HOURS         400    //   10ms * 400 = 
+#define PERIOD_DISP_LEAF           2    //   10ms * 3 = 1
+#define PERIOD_WIFI_ICON           100    //   10ms * 130 = 1300ms = 1.3s
+
+
+// --- 2. 定义分时任务控制结构体 ---
+typedef struct {
+    uint32_t last_tick;        // 记录上一次真正运行时的系统绝对时间戳
+    //uint32_t counter;       // 时间计数器
+    uint32_t period;        // 任务运行周期
+    void (*task_handler)(void); // 任务函数指针
+} TimeSharingTask_t;
+
+static void handler_disp_temp_humidity_value(void);
+static void handler_disp_beijing_time(void);
+static void handler_set_temperature(void);
+
+static void handler_works_hours(void);
+
+static void handler_disp_fan_leaf(void);
+static void handler_disp_wifi_icon(void);
+
+static void handler_tx_version(void);
+
+volatile uint8_t time_slot ;
+
+
+// --- 4. 初始化分时任务表 ---
+TimeSharingTask_t g_tasks[] = {
+    {0, PERIOD_DISP_TEMP_HUM,       handler_disp_temp_humidity_value},
+    {0, PERIOD_DISP_BEIJING,        handler_disp_beijing_time},
+    {0, PERIOD_SET_TEMPERATURE,     handler_set_temperature},
+    {0, PERIOD_WORKS_HOURS,         handler_works_hours},
+    {0, PERIOD_DISP_LEAF,           handler_disp_fan_leaf},
+    {0, PERIOD_WIFI_ICON,           handler_disp_wifi_icon}
+  
+};
+
+#define TASK_NUM (sizeof(g_tasks) / sizeof(TimeSharingTask_t))
 
 
 static void power_off_breath_Led(void);
@@ -48,7 +92,7 @@ void power_run_handler(void)
 	 case power_off:
           
 
-           run_t.power_on_disp_smg_number = 0;
+         
 		   gpro_t.gTimer_two_hours_conter=0; //WT.EDIT 2025.10.30
 		   gpro_t.stopTwoHours_flag=0;
 		   gpro_t.first_ptc_on=0;
@@ -108,7 +152,8 @@ void power_on_handler(void)
 */
 static void power_on_initial(void)
 {
-   static uint8_t dc_disp=0;
+   static uint8_t dc_disp=0,i;
+   uint32_t boot_tick;
    switch(gpro_t.power_on_step){
 
       case 0:
@@ -121,7 +166,7 @@ static void power_on_initial(void)
 		  gpro_t.stopTwoHours_flag=0;
 
 		   // gpro_t.long_key_power_counter =0; 
-          run_t.power_on_disp_smg_number = 1;
+ 
 	   //copy
 	      gpro_t.fan_run_one_minute=0;
   
@@ -157,6 +202,16 @@ static void power_on_initial(void)
 		 }
          else 
 		 	dsiplay_numbers_one_to_four_fun();
+
+		 disp_time_four_numbers_init();
+
+#if 1	
+        boot_tick = tx_time_get();
+		for(i=0;i < TASK_NUM;i ++){
+
+		     g_tasks[i].last_tick = boot_tick;
+		}
+#endif 
 		 
 		 gpro_t.power_on_step =0xfe;
 
@@ -169,6 +224,59 @@ static void power_on_initial(void)
 	*@param:
 	*@retval:
 */
+static void power_on_cycle(void)
+{
+
+    // 获取当前系统的绝对时间戳
+      uint32_t current_tick = tx_time_get();
+	  #if 0
+
+      // 第二步：通过时间片轮询核心算法，分时调用各个功能模块
+	   for (uint8_t i = 0; i < TASK_NUM; i++) {
+		   //g_tasks[i].counter++; // 基础 Tick 自增
+		   if ((current_tick - g_tasks[i].last_tick) >= g_tasks[i].period) {
+		   
+		        // 滚动更新该任务的历史时间戳基准
+               //g_tasks[i].last_tick = current_tick;
+               // 改进：滚动累加周期，消除长跑下的时间漂移
+               g_tasks[i].last_tick += g_tasks[i].period;
+			 
+			   g_tasks[i].task_handler(); // 触发对应周期的执行函数
+		   
+	   }
+
+	   }
+	   #else 
+        // 通过时间片轮询核心算法，分时调用各个功能模块
+    for (uint8_t i = 0; i < TASK_NUM; i++) 
+    {
+        if ((current_tick - g_tasks[i].last_tick) >= g_tasks[i].period) 
+        {
+            // 【工业级进化：防轰炸饱和截断】
+            // 如果卡顿/被高优先级抢占的时间超过了 2 个周期，直接对齐当前时间，放弃追赶
+            if ((current_tick - g_tasks[i].last_tick) > (g_tasks[i].period * 2)) 
+            {
+                g_tasks[i].last_tick = current_tick;
+            }
+            else 
+            {
+                // 如果只是正常范围内的轻微抖动，滚动累加周期，死锁锁相，消除长期长跑漂移
+                g_tasks[i].last_tick += g_tasks[i].period;
+            }
+            
+            // 触发对应周期的执行函数（确保不为 NULL，防止空指针崩溃）
+            if (g_tasks[i].task_handler != NULL)
+            {
+                g_tasks[i].task_handler(); 
+            }
+        }
+    }
+	   #endif 
+
+}
+
+
+#if 0
 static void power_on_cycle(void)
 {
     static uint8_t version;
@@ -252,7 +360,114 @@ static void power_on_cycle(void)
    if(time_slot > 6) time_slot = 0;// 10ms * 7 = 90ms
  }
 
-   
+#endif
+/*
+	*@brief :
+	*@param:
+	*@retval:
+*/
+static void handler_disp_temp_humidity_value(void)
+{
+
+	disp_temp_humidity_wifi_icon_handler();
+
+}
+/*
+	*@brief :
+	*@param:
+	*@retval:
+*/
+static void handler_disp_beijing_time(void)
+{
+   display_timer_and_beijing_time_handler();
+}
+/*
+	*@brief :
+	*@param:
+	*@retval:
+*/
+static void handler_set_temperature(void)
+{
+   if(gpro_t.key_set_temperature==0 && gpro_t.gTimer_temp_compare_value > 2 && gpro_t.stopTwoHours_flag==0 && gpro_t.smart_phone_app_timer_power_on_flag ==0){
+	 	gpro_t.gTimer_temp_compare_value =0;
+		
+          set_temperature_compare_value_fun();
+
+     	}
+
+
+}
+/*
+	*@brief :
+	*@param:
+	*@retval:
+*/
+
+static void handler_works_hours(void)
+{
+
+    two_hours_recoder_fun();
+}
+/*
+	*@brief :
+	*@param:
+	*@retval:
+*/
+static void handler_disp_fan_leaf(void)
+{
+disp_fan_leaf_run_icon();
+  
+}
+
+static void handler_disp_wifi_icon(void)
+{
+	wifi_icon_blink_reg0xc5_handler();
+	handler_tx_version();
+
+}
+/*
+	*@brief :
+	*@param:
+	*@retval:
+*/
+
+
+
+/*
+	*@brief :
+	*@param:
+	*@retval:
+*/
+static void handler_tx_version(void)
+{
+    static uint8_t send_two_disp =0,version=0;
+    if(send_two_disp < 5 ){
+			 send_two_disp++;
+
+		    version = version ^ 0x01;
+		     if(version ==1){
+			  SendData_Set_Command(0xF0,0x02);//software version is "2"
+			  tx_thread_sleep(2);
+
+			 }
+			 else{
+			 	SendData_Set_Command(0x11,0x01);
+			 	tx_thread_sleep(2);
+			 }
+
+			 
+		 }
+
+}
+
+/*
+	*@brief :
+	*@param:
+	*@retval:
+*/
+
+
+
 
 /*
 	*@brief :

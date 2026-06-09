@@ -54,6 +54,7 @@ void bsp_init(void)
 
 }
 
+uint8_t timer_time_switch_f ;
 
 void mode_key_long_fun(void)
 {
@@ -85,8 +86,8 @@ void display_timer_and_beijing_time_handler(void)
 
 	switch(run_t.time_setting_mode) {
 		case works_time:		handle_works_time_mode(); break;
-		case setup_timer:		handle_setup_timer_mode(); break;
 		case timer_time:		handle_timer_time_mode(); break;
+		case setup_timer:		handle_setup_timer_mode(); break;
 		case FAN_WARNING:		handle_fan_warning_mode(); break;
 		case PTC_WARNING:		handle_ptc_warning_mode(); break;
 	}
@@ -114,42 +115,14 @@ static void handle_works_time_mode(void)
         gpro_t.power_on_every_times++;
      }
     
-     if(run_t.power_on_disp_smg_number ==1){
-       run_t.power_on_disp_smg_number++; 
-       if(run_t.dispTime_hours> 24){
-          run_t.dispTime_hours=0;
-          run_t.dispTime_minutes =0;
-       }
-         lcd_t.number5_low=(run_t.dispTime_hours ) /10;
-         lcd_t.number5_high =lcd_t.number5_low;//(run_t.dispTime_hours) /10;
-
-    	 lcd_t.number6_low = (run_t.dispTime_hours ) %10;;
-    	 lcd_t.number6_high =  lcd_t.number6_low ;//(run_t.dispTime_hours ) %10;
-         
-         lcd_t.number7_low = (run_t.dispTime_minutes )/10;
-    	 lcd_t.number7_high = lcd_t.number7_low;//(run_t.dispTime_minutes )/10;
-
-    	 lcd_t.number8_low = (run_t.dispTime_minutes )%10;
-    	 lcd_t.number8_high = lcd_t.number8_low ;//(run_t.dispTime_minutes )%10;
-
-     
-          power_on_init_disp_time_numbers();
-	     
-     }
- 
-	  disp_f ++ ;
-	  if(disp_f > 20){ //10ms * 11 = 110ms
-	  	 disp_f=0;
-		display_not_ai_timer_mode();
-	    power_on_init_disp_time_numbers();
-
-	  }
-	  
-	  	
-      counter_time_timing_fun(); 
+     counter_time_timing_fun(); 
   
 	 disp_timer_run_times();
-	  
+//	 if(timer_time_switch_f==2){
+//	 	timer_time_switch_f++;
+//	  display_time_hours_minutes_fun();
+//	 }
+//	 timer_time_switch_f  = 1;
 
 }
 /**
@@ -223,14 +196,14 @@ static void disp_set_timer_timing_value_fun(void)
             run_t.gAI = 1;
 		    gpro_t.add_dec_key_be_pressed++;
 			sendCmdNote_to_Data(0x2B,0);
-            tx_thread_sleep(2);
+            tx_thread_sleep(1);
 
 		}
         else if( run_t.timer_set_success_flag == timing_not_definition){
             run_t.gAI = 1;
             run_t.time_setting_mode = works_time;
 		     sendCmdNote_to_Data(0x2B,0);
-             tx_thread_sleep(2);
+             tx_thread_sleep(1);
 
 			
         }
@@ -254,9 +227,7 @@ static void disp_set_timer_timing_value_fun(void)
 static void handle_timer_time_mode(void)
 {
         
-       // display_not_ai_timer_mode();
-        
-        if(run_t.gTimer_again_switch_works > 2 && run_t.timer_set_success_flag==0){
+     if(run_t.gTimer_again_switch_works > 2 && run_t.timer_set_success_flag==0){
 
             run_t.time_setting_mode = works_time ;
 			run_t.gAI =1;
@@ -264,10 +235,16 @@ static void handle_timer_time_mode(void)
 			display_not_ai_timer_mode();
 	        power_on_init_disp_time_numbers();
 		}
-	
+
+      
 	 
        disp_timer_run_times();
        counter_time_timing_fun(); 
+	   
+//	   if(timer_time_switch_f==1){
+//	 	timer_time_switch_f++;
+//	    display_time_hours_minutes_fun();
+//	   }
     
 }
 /**
@@ -457,7 +434,7 @@ void display_not_ai_timer_mode(void)
      
 
 
-	power_on_init_disp_time_numbers();
+//	power_on_init_disp_time_numbers();
 
 
 }
@@ -498,7 +475,7 @@ void set_temperature_compare_value_fun(void)
 		  ptc_state = PTC_STATE_OFF ;
 	      gpro_t.first_set_ptc_on  = 1;
 		  send_ptc_command(0);
-	    
+	      tx_thread_sleep(1);
   
 		  return ;
 	}
@@ -513,7 +490,7 @@ void set_temperature_compare_value_fun(void)
 			   if(gpro_t.first_ptc_on==1)gpro_t.first_set_ptc_on  = 2;
 			   
 			   send_ptc_command(1);
-			   
+			    tx_thread_sleep(1);
 			}
 		}
 		else{
@@ -522,7 +499,7 @@ void set_temperature_compare_value_fun(void)
                  run_t.dry = 1;
 				ptc_state = PTC_STATE_ON ;
 			   send_ptc_command(1);
-			  
+			   tx_thread_sleep(1);
 
 			}
 
@@ -536,7 +513,7 @@ void set_temperature_compare_value_fun(void)
 
 		   ptc_state = PTC_STATE_OFF ;
 		   send_ptc_command(0);
-	      
+	       tx_thread_sleep(1);
 		}
 
 	}

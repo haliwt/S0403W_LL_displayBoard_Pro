@@ -91,7 +91,7 @@ typedef struct __RUN{
   uint8_t step_run_power_on_tag;
 
   uint8_t power_key_detected;
-  uint8_t power_on_disp_smg_number;
+ 
 
  
   
