@@ -211,6 +211,8 @@ static void disp_set_timer_timing_value_fun(void)
             run_t.time_setting_mode = timer_time;
             run_t.gAI = 0;
 			gpro_t.add_dec_key_be_pressed++;
+			sendCmdNote_to_Data(0x2B,0x01);
+            tx_thread_sleep(2);
             
 
         }
@@ -220,6 +222,8 @@ static void disp_set_timer_timing_value_fun(void)
 	        run_t.timer_time_minutes =0;
             run_t.gAI = 1;
 		    gpro_t.add_dec_key_be_pressed++;
+			sendCmdNote_to_Data(0x2B,0);
+            tx_thread_sleep(2);
 
 		}
         else if( run_t.timer_set_success_flag == timing_not_definition){
