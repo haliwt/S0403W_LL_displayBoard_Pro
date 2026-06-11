@@ -794,7 +794,7 @@ void two_hours_recoder_fun(void)
 
   
   if(gpro_t.fan_run_one_minute==1 && gpro_t.gTimer_counter_one_minute >59){
-       gpro_t.fan_run_one_minute=1;
+       gpro_t.fan_run_one_minute=2;
        SendData_Set_Command(0x18,0x01);//fan stop run .
 	   tx_thread_sleep(2);
 
