@@ -9,7 +9,7 @@
 #define PERIOD_SET_TEMPERATURE     300    //  10ms*300 = 
 
 #define PERIOD_TX_VERSION          80    //  10ms*80 = 
-#define PERIOD_WORKS_HOURS         400    //   10ms * 400 = 
+#define PERIOD_WORKS_HOURS         320    //   10ms * 400 = 
 #define PERIOD_DISP_LEAF           2    //   10ms * 3 = 1
 #define PERIOD_WIFI_ICON           100    //   10ms * 130 = 1300ms = 1.3s
 
@@ -752,9 +752,9 @@ static void power_off_breath_Led(void)
 **/
 void two_hours_recoder_fun(void)
 {
-  static uint8_t counter_send=0,switch_flag=0,counter_time=0;
-  #if 0
-    if(gpro_t.gTimer_two_hours_conter > 12 && gpro_t.stopTwoHours_flag==0){
+  static uint8_t switch_flag=0;
+  #if 1
+    if(gpro_t.gTimer_two_hours_conter > 5 && gpro_t.stopTwoHours_flag==0){
   #else
     if(gpro_t.gTimer_two_hours_conter > 119 && gpro_t.stopTwoHours_flag==0){
   #endif  
@@ -763,9 +763,9 @@ void two_hours_recoder_fun(void)
       gpro_t.stopTwoHours_flag=1;
 	  gpro_t.gTimer_counter_one_minute =0;
 	  gpro_t.fan_run_one_minute=1;
-	  counter_send =0;
+	 
 
-	  counter_time =0;
+	
 	   gpro_t.fan_interval_stop_f = 0xff;
        gpro_t.two_hours_interval_f =  0xff;  
 	  SendData_Set_Command(0x19,0x01);
@@ -773,7 +773,12 @@ void two_hours_recoder_fun(void)
 	  
 
   }
-  else if(gpro_t.stopTwoHours_flag==1 && gpro_t.gTimer_two_hours_conter > 10){//10
+  #if 1
+  	else if(gpro_t.stopTwoHours_flag==1 && gpro_t.gTimer_two_hours_conter > 2){//10
+  #else 
+	 else if(gpro_t.stopTwoHours_flag==1 && gpro_t.gTimer_two_hours_conter > 10){//10
+
+  #endif 
       gpro_t.gTimer_two_hours_conter=0;
 	  gpro_t.gTimer_two_hours_second_counter=0;
       gpro_t.stopTwoHours_flag=0;
@@ -786,21 +791,17 @@ void two_hours_recoder_fun(void)
   }
   
   //others separately 
-  if(gpro_t.stopTwoHours_flag==1){ //10ms 
-  	counter_send++;
-	counter_time ++ ;
 
-  }
   
   if(gpro_t.fan_run_one_minute==1 && gpro_t.gTimer_counter_one_minute >59){
-       gpro_t.fan_run_one_minute++;
+       gpro_t.fan_run_one_minute=1;
        SendData_Set_Command(0x18,0x01);//fan stop run .
 	   tx_thread_sleep(2);
 
 
   }
-  if(gpro_t.stopTwoHours_flag==1 && counter_send > 100 &&  gpro_t.fan_run_one_minute ==2){
-	  counter_send=0;
+  if(gpro_t.stopTwoHours_flag==1 && gpro_t.gTimer_counter > 2 &&  gpro_t.fan_run_one_minute ==2){
+	  gpro_t.gTimer_counter=0;
 
       switch_flag = switch_flag ^ 0x01;
 
@@ -820,42 +821,15 @@ void two_hours_recoder_fun(void)
 
   }
 
-  if(gpro_t.stopTwoHours_flag==1 && counter_time > 100){//100*10ms =1s
-	  counter_time =0;
-
-     if(gpro_t.two_hours_interval_f ==1){
-
-	   counter_time =0;
-
-	 }
-	 else{
-        SendData_Set_Command(0x19,0x01);
-	    tx_thread_sleep(2);
-
-	 }
-
-	 
-
-
-  }
+  
   if(gpro_t.stopTwoHours_flag==0 &&  gpro_t.fan_run_one_minute==3 ){
 
+	 gpro_t.fan_run_one_minute=0;
+	 SendData_Set_Command(0x19,0x0);
+	 tx_thread_sleep(2);
+	
 
-     if(gpro_t.two_hours_interval_f ==0){
-	     gpro_t.fan_run_one_minute ++;
-
-
-	 }
-	 else{
-        SendData_Set_Command(0x19,0);
-	    tx_thread_sleep(2);
-
-	 }
-
-	 
-    // gpro_t.two_hours_interval_f =  0xf;
-
-  	}
+  }
      
 
   

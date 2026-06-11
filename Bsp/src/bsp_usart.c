@@ -152,7 +152,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 			 run_t.plasma = open;
 			 SendWifiData_Answer_Cmd(0x03,0x01); //close ptc 
 			 tx_thread_sleep(2);
-			 gpro_t.gTimer_copy_cmd_counter=0; 
+			
 		     gpro_t.receive_copy_buff[3]=copy_null;
 			
 	     
@@ -163,7 +163,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 				run_t.plasma = close;
 			    SendWifiData_Answer_Cmd(0x03,0x0); //close ptc 
 				tx_thread_sleep(2);
-				 gpro_t.gTimer_copy_cmd_counter=0; 
+				
 			     gpro_t.receive_copy_buff[3]=copy_null;
 				 //disp_kill_dry_ster_temperature_humidity_hanlder();
 		   	
@@ -187,7 +187,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 			run_t.ultrasonic = close;
 			SendWifiData_Answer_Cmd(0x04,0x0); //close ptc 
 			tx_thread_sleep(2);
-			 gpro_t.gTimer_copy_cmd_counter=0; 
+			
 		     gpro_t.receive_copy_buff[4]=copy_null;
 		
 
@@ -400,7 +400,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
    case 0x21: //APP smart phone Timer power on or off that App timer ---new .
 	if(pddata[3]==0x01){ //power on by smart phone APP
 		gpro_t.smart_phone_app_timer_power_on_flag =1;
-		run_t.gTimer_ptc_fan_warning=0;
+		
 		run_t.wifi_link_net_success=1;
 	   
         run_t.power_on= power_on; //WT.EDIT 2025.12.18

@@ -182,18 +182,17 @@ typedef struct __RUN{
 	volatile  int8_t gTimer_disp_time_seconds;
 
 
-    volatile uint8_t gTimer_ptc_fan_warning;
     volatile uint8_t gTimer_again_switch_works ;
 	
-	volatile  uint16_t gTimer_ptc_fan_blink_warning;
+	
 
-	 volatile   uint8_t gTimer_work_break_times;
+
 
      volatile uint8_t  gTimer_fan_counter;
 	   volatile uint8_t gTimer_wifi_connect_counter;
  
 
- volatile  uint8_t gTimer_digital5678_ms;
+
   volatile uint8_t gTimer_key_timing;
   volatile uint8_t gTimer_seconds_counter;
   volatile   uint8_t gTimer_setup_zero;

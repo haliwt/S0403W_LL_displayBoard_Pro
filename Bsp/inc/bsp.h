@@ -119,19 +119,19 @@ typedef struct _process_state{
   
 
 
-   //
-  volatile uint8_t gTimer_soft_version_counter;
+
  //  uint8_t gTimer_mode_key_long;
 volatile   uint8_t gTimer_set_temp_times;
 volatile   uint8_t gTimer_temp_compare_value;
  volatile  uint8_t gTimer_fan_to_ptc_warning;
   
   volatile uint8_t gTimer_disp_temp_humi_value;
- volatile  uint8_t  gTimer_copy_cmd_counter;
+
  volatile  uint8_t gTimer_two_hours_second_counter;
  volatile  uint8_t gTimer_two_hours_conter;
+ volatile  uint8_t gTimer_counter;
 
- volatile  uint8_t gTimer_disp_dry_counter;
+
  volatile  uint8_t gTimer_counter_one_minute;
   
 volatile   uint8_t gTimer_send_data_counter;
