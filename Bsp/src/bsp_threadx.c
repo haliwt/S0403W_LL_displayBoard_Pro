@@ -15,10 +15,13 @@
 
 
 
-#define STACK_SIZE_UI     1792//1536//1024//1664 
+#define STACK_SIZE_UI     512//1792//1536//1024//1664 
 #define STACK_SIZE_KEY    256//512
 #define STACK_SIZE_DEC    512//
 #define STACK_SIZE_EVENT  512
+
+#define DEBUG_ENABLE       1
+
 
 __attribute__((aligned(8)))  static UCHAR stack_ui_pro[STACK_SIZE_UI];
 __attribute__((aligned(8)))  static UCHAR stack_key_pro[STACK_SIZE_KEY];
@@ -45,6 +48,20 @@ TX_EVENT_FLAGS_GROUP key_event;
 TX_SEMAPHORE      decoder_semaphore;
 //TX_SEMAPHORE      uart1_tx_semaphore;
 
+/* 创建任务通信机制 */
+static void tx_thread_stack_error_handler(TX_THREAD *thread_ptr);
+
+
+#if DEBUG_ENABLE
+static void debug_ui_check(void);
+static void debug_key_check(void);
+static void debug_decoder_check(void);
+static void debug_key_event_check(void);
+
+
+volatile uint32_t ui=0,key=0,dec=0,event=0;
+
+#endif 
 
 
 uint8_t error_counter;
@@ -56,6 +73,23 @@ uint8_t error_counter;
 **/
 void tx_application_define(VOID * first_unused_memory)
 {
+
+	  /* 1. 消除参数未引用警告 */
+		(void)first_unused_memory;
+
+
+  #if DEBUG_ENABLE
+	  // --- 关键点：在创建任务之前填充魔术字 ---
+	  memset(stack_ui_pro,0xEF,sizeof(stack_ui_pro));
+
+	  memset(stack_key_pro,0xEF,sizeof(stack_key_pro));
+	  memset(stack_decoder_pro,0xEF,sizeof(stack_decoder_pro));
+	  memset(stack_key_event,0xEF,sizeof(stack_key_event));
+  #endif 
+
+  /* 3. 注册堆栈错误回调（推荐保持） */
+ 
+    tx_thread_stack_error_notify(tx_thread_stack_error_handler);
 
   app_threadx_handler();
 
@@ -87,6 +121,10 @@ static void vTaskDecoderPro(ULONG thread_input)
    #else 
    if(tx_semaphore_get(&decoder_semaphore,TX_WAIT_FOREVER)==TX_SUCCESS){
 	  decoder_handler();
+	    
+   #if DEBUG_ENABLE
+    debug_decoder_check();
+   #endif 
 	
    }
 
@@ -108,6 +146,10 @@ static void vTaskUiPro(ULONG thread_input)
   while(1){
    		
         power_run_handler();
+
+      #if DEBUG_ENABLE
+		    debug_ui_check();
+	  #endif 
 		tx_thread_sleep(1);//10ms
    
   }
@@ -179,6 +221,11 @@ static void vTaskKeyEvent(ULONG thread_input)
 		  dec_key_fun();
 
 	}
+
+	 #if DEBUG_ENABLE
+             debug_key_event_check();
+       #endif 
+	   
 	   
      }
 
@@ -260,7 +307,10 @@ static void vTaskKeyPro(ULONG thread_input)
             down_cnt = 0;
         }
 
-
+        
+   #if DEBUG_ENABLE
+    debug_key_check();
+   #endif 
    tx_thread_sleep(6);//2*10ms =20ms
    }
 }
@@ -346,5 +396,116 @@ void tx_application_stack_error_handler(TX_THREAD *thread_ptr)
 {
   //printf("stack overflow in thread:%s \n", thread_ptr->tx_thread_name );
 }
+
+/****************************************************************
+*
+*	Function Name: vTaskStart
+*	Function:
+*	Input Ref: pvParameters 是在创建该任务时传�?�的形参
+*	Return Ref:
+*	priority: 3  (数�?�越小优先级越低，这个跟uCOS相反)
+*
+******************************************************************/
+void tx_thread_stack_error_handler(TX_THREAD *thread_ptr)
+{
+    /* 栈溢出处理：这里你可以做任何你想做的动作 */
+
+    /* 1. 打印线程名（如果有 UART） */
+    // printf("Stack overflow in thread: %s\n", thread_ptr->tx_thread_name);
+
+    /* 2. 拉高故障指示灯 */
+    // Fault_LED_On();
+ 
+    /* 3. 记录日志（如果有 Flash/EEPROM） */
+    // Log_Fault(FAULT_STACK_OVERFLOW, thread_ptr->tx_thread_name);
+
+    /* 4. 触发系统复位（汽车级） */
+    //NVIC_SystemReset();
+    tx_thread_sleep(20);
+    //while(1);  // 调试阶段可以卡住
+}
+
+
+#if DEBUG_ENABLE
+static void debug_ui_check(void)
+{
+    ULONG i;
+   // ULONG unused = 0;
+   ULONG temp_unused = 0; // 使用局部变量进行统计
+   
+    // 从数组起始位置（栈底/低地址）开始数连续的 0xEF
+    for (i = 0; i < STACK_SIZE_UI; i++)
+    {
+        if (stack_ui_pro[i] == 0xEF)
+            temp_unused++;
+        else
+            break; 
+    }
+	ui= temp_unused;  // 统计完后再赋值给全局变量，方便 Watch 窗口查看
+    // 剩下的 unused 就是你安全的“护城河”
+    // 如果 unused < 100 字节，你的 G030 就危险了！
+}
+
+static void debug_key_check(void)
+{
+	  ULONG i;
+   // ULONG unused = 0;
+   ULONG temp_unused = 0; // 使用局部变量进行统计
+
+    // 从数组起始位置（栈底/低地址）开始数连续的 0xEF
+    for (i = 0; i < STACK_SIZE_KEY; i++)
+    {
+        if (stack_key_pro[i] == 0xEF)
+            temp_unused++;
+        else
+            break; 
+    }
+	key = temp_unused;  // 统计完后再赋值给全局变量，方便 Watch 窗口查看
+    // 剩下的 unused 就是你安全的“护城河”
+    // 如果 unused < 100 字节，你的 G030 就危险了！
+
+}
+
+static void debug_decoder_check(void)
+{
+   ULONG i;
+   // ULONG unused = 0;
+   ULONG temp_unused = 0; // 使用局部变量进行统计
+
+    // 从数组起始位置（栈底/低地址）开始数连续的 0xEF
+    for (i = 0; i < STACK_SIZE_DEC; i++)
+    {
+        if (stack_decoder_pro[i] == 0xEF)
+            temp_unused++;
+        else
+            break; 
+    }
+	dec= temp_unused;  // 统计完后再赋值给全局变量，方便 Watch 窗口查看
+    // 剩下的 unused 就是你安全的“护城河”
+    // 如果 unused < 100 字节，你的 G030 就危险了！
+}
+
+static void debug_key_event_check(void)
+{
+   ULONG i;
+   // ULONG unused = 0;
+   ULONG temp_unused = 0; // 使用局部变量进行统计
+
+
+    // 从数组起始位置（栈底/低地址）开始数连续的 0xEF
+    for (i = 0; i < STACK_SIZE_KEY; i++)
+    {
+        if (stack_key_event[i] == 0xEF)
+            temp_unused++;
+        else
+            break; 
+    }
+	event= temp_unused;  // 统计完后再赋值给全局变量，方便 Watch 窗口查看
+    // 剩下的 unused 就是你安全的“护城河”
+    // 如果 unused < 100 字节，你的 G030 就危险了！
+
+}
+
+#endif 
 
 
