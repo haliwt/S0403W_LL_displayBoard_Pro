@@ -26,42 +26,36 @@ void tim16_int_callback_handler(void)
 	
     if(tm1>9){ //100ms 
        tm1=0;
-       lcd_t.gTimer_colon_ms++ ;
+    
        lcd_t.gTimer_leaf_counter++;
-	
-	   run_t.gTimer_digital5678_ms++;
-       run_t.gTimer_ptc_fan_blink_warning++ ;
-	  
-	   gpro_t.gTimer_copy_cmd_counter++;
-	   
-    }
+	}
 
   if(tm0>99){ //1000 *1ms = 1000ms = 1s
 		tm0=0;
 		
 		
-		// gpro_t.gTimer_mode_key_long++;
          gpro_t.gTimer_set_temp_times++;
          gpro_t.gTimer_temp_compare_value++ ;
          gpro_t.gTimer_fan_to_ptc_warning++ ;
         
 		 gpro_t.gTimer_disp_temp_humi_value++;
-         gpro_t.gTimer_soft_version_counter++;
-		 gpro_t.gTimer_disp_dry_counter++;
+      
+		
 		 gpro_t.gTimer_counter_one_minute++;
 
+	     gpro_t.gTimer_counter ++ ;
 
 		 gpro_t.gTimer_send_data_counter++;
      
-         //
+         
 
         run_t.gTimer_wifi_connect_counter++;
 		run_t.gTimer_disp_time_seconds++;
 		run_t.gTimer_key_timing++;
 
-		run_t.gTimer_ptc_fan_warning++;
+		
         run_t.gTimer_seconds_counter++;
-	    run_t.gTimer_work_break_times++;
+	   
         run_t.gTimer_again_switch_works ++ ;
 		
 		
