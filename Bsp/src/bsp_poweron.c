@@ -107,7 +107,7 @@ void power_run_handler(void)
 			if(gpro_t.gTimer_send_data_counter > 1){ //new version 
 			 	 gpro_t.gTimer_send_data_counter =0;
 				 SendData_Set_Command(0xF0,0x02);//software version is "2"
-				 tx_thread_sleep(2);
+				 //tx_thread_sleep(2);
 
              }
 
@@ -115,7 +115,7 @@ void power_run_handler(void)
 	         if(lcd_t.gTimer_colon_counter > 1 ){
 					lcd_t.gTimer_colon_counter  =0;
 					SendData_Set_Command(0x11,1); //mainboard.WT.EDIT 2026.04.23
-					tx_thread_sleep(2); //WT.EDIT 2026.01.04
+					//tx_thread_sleep(2); //WT.EDIT 2026.01.04
 				   
 	 
 			  }
@@ -317,12 +317,12 @@ static void power_on_cycle(void)
 		    version = version ^ 0x01;
 		     if(version ==1){
 			  SendData_Set_Command(0xF0,0x02);//software version is "2"
-			  tx_thread_sleep(2);
+			  //tx_thread_sleep(2);
 
 			 }
 			 else{
 			 	SendData_Set_Command(0x11,0x01);
-			 	tx_thread_sleep(2);
+			 	//tx_thread_sleep(2);
 			 }
 
 			 
@@ -415,7 +415,7 @@ static void handler_works_hours(void)
 */
 static void handler_disp_fan_leaf(void)
 {
-disp_fan_leaf_run_icon();
+	disp_fan_leaf_run_icon();
   
 }
 
@@ -447,12 +447,12 @@ static void handler_tx_version(void)
 		    version = version ^ 0x01;
 		     if(version ==1){
 			  SendData_Set_Command(0xF0,0x02);//software version is "2"
-			  tx_thread_sleep(2);
+			  //tx_thread_sleep(2);
 
 			 }
 			 else{
 			 	SendData_Set_Command(0x11,0x01);
-			 	tx_thread_sleep(2);
+			 	//tx_thread_sleep(2);
 			 }
 
 			 
@@ -556,7 +556,7 @@ void power_on_off_handler(void)
     
     	gpro_t.power_on_step =0;
         SendData_PowerOnOff(1);
-		tx_thread_sleep(2);
+		//tx_thread_sleep(2);
 
 	
 
@@ -567,7 +567,7 @@ void power_on_off_handler(void)
 
 	
         SendData_PowerOnOff(0);
-	    tx_thread_sleep(2);
+	    //tx_thread_sleep(2);
       }
     
 }
@@ -769,14 +769,14 @@ void two_hours_recoder_fun(void)
 	   gpro_t.fan_interval_stop_f = 0xff;
        gpro_t.two_hours_interval_f =  0xff;  
 	  SendData_Set_Command(0x19,0x01);
-	  tx_thread_sleep(2);
+	  //tx_thread_sleep(2);
 	  
 
   }
   #if 1
   	else if(gpro_t.stopTwoHours_flag==1 && gpro_t.gTimer_two_hours_conter > 2){//10
   #else 
-	 else if(gpro_t.stopTwoHours_flag==1 && gpro_t.gTimer_two_hours_conter > 10){//10
+	 else if(gpro_t.stopTwoHours_flag==1 && gpro_t.gTimer_two_hours_conter > 9){//10
 
   #endif 
       gpro_t.gTimer_two_hours_conter=0;
@@ -784,7 +784,7 @@ void two_hours_recoder_fun(void)
       gpro_t.stopTwoHours_flag=0;
 	  gpro_t.fan_run_one_minute=3;
       SendData_Set_Command(0x19,0x0);
-	  tx_thread_sleep(2);
+	  //tx_thread_sleep(2);
 	
 	    
 
@@ -796,7 +796,7 @@ void two_hours_recoder_fun(void)
   if(gpro_t.fan_run_one_minute==1 && gpro_t.gTimer_counter_one_minute >59){
        gpro_t.fan_run_one_minute=2;
        SendData_Set_Command(0x18,0x01);//fan stop run .
-	   tx_thread_sleep(2);
+	   //tx_thread_sleep(2);
 
 
   }
@@ -808,14 +808,14 @@ void two_hours_recoder_fun(void)
 	  if(switch_flag ==1){
 
            SendData_Set_Command(0x18,0x01);//fan stop run .
-		   tx_thread_sleep(2);
+		   //tx_thread_sleep(2);
 			
 
 	  }
 	  else{
        
         SendData_Set_Command(0x19,0x01);
-	    tx_thread_sleep(2);
+	    //tx_thread_sleep(2);
 	  }
 	  
 
@@ -826,7 +826,7 @@ void two_hours_recoder_fun(void)
 
 	 gpro_t.fan_run_one_minute=0;
 	 SendData_Set_Command(0x19,0x0);
-	 tx_thread_sleep(2);
+	 //tx_thread_sleep(2);
 	
 
   }

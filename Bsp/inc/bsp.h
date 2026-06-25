@@ -95,6 +95,7 @@ typedef struct _process_state{
    uint8_t receive_copy_buff[20];
    /********end*****/
    uint8_t disp_time_colon_flag;
+   volatile uint8_t usart1_dma_sending_flag;
    
 
    

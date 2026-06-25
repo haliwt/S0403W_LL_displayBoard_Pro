@@ -185,7 +185,7 @@ static void disp_set_timer_timing_value_fun(void)
             run_t.gAI = 0;
 			gpro_t.add_dec_key_be_pressed++;
 			sendCmdNote_to_Data(0x2B,0x01);
-            tx_thread_sleep(2);
+            //tx_thread_sleep(2);
             
 
         }
@@ -196,14 +196,14 @@ static void disp_set_timer_timing_value_fun(void)
             run_t.gAI = 1;
 		    gpro_t.add_dec_key_be_pressed++;
 			sendCmdNote_to_Data(0x2B,0);
-            tx_thread_sleep(1);
+            //tx_thread_sleep(1);
 
 		}
         else if( run_t.timer_set_success_flag == timing_not_definition){
             run_t.gAI = 1;
             run_t.time_setting_mode = works_time;
 		     sendCmdNote_to_Data(0x2B,0);
-             tx_thread_sleep(1);
+             //tx_thread_sleep(1);
 
 			
         }
@@ -328,7 +328,7 @@ static void counter_time_timing_fun(void)
 		}
       if(lcd_t.display_beijing_time_flag == 0){
 	      sendCmdNote_to_threeData(0x6C,run_t.dispTime_hours, run_t.dispTime_minutes,run_t.gTimer_disp_time_seconds);
-	      tx_thread_sleep(2);
+	      //tx_thread_sleep(2);
 	  }
    	}
    
@@ -475,7 +475,7 @@ void set_temperature_compare_value_fun(void)
 		  ptc_state = PTC_STATE_OFF ;
 	      gpro_t.first_set_ptc_on  = 1;
 		  send_ptc_command(0);
-	      tx_thread_sleep(1);
+	      //tx_thread_sleep(1);
   
 		  return ;
 	}
@@ -490,7 +490,7 @@ void set_temperature_compare_value_fun(void)
 			   if(gpro_t.first_ptc_on==1)gpro_t.first_set_ptc_on  = 2;
 			   
 			   send_ptc_command(1);
-			    tx_thread_sleep(1);
+			    //tx_thread_sleep(1);
 			}
 		}
 		else{
@@ -499,7 +499,7 @@ void set_temperature_compare_value_fun(void)
                  run_t.dry = 1;
 				ptc_state = PTC_STATE_ON ;
 			   send_ptc_command(1);
-			   tx_thread_sleep(1);
+			   //tx_thread_sleep(1);
 
 			}
 
@@ -513,7 +513,7 @@ void set_temperature_compare_value_fun(void)
 
 		   ptc_state = PTC_STATE_OFF ;
 		   send_ptc_command(0);
-	       tx_thread_sleep(1);
+	       //tx_thread_sleep(1);
 		}
 
 	}
@@ -530,7 +530,7 @@ void set_temperature_compare_value_fun(void)
 static void send_ptc_command(uint8_t on_off)
 {
   SendData_Set_Command(0x22,on_off); //open ptc  
-  tx_thread_sleep(2);
+  //tx_thread_sleep(2);
   //while(!gpro_t.uart1_tx_done);
   //uart1_tx_get();
 
@@ -552,13 +552,13 @@ void direct_comparison_temp(void)
                run_t.dry = 0;
 			 
 			  SendData_Set_Command(0x23,0x00); //close ptc 
-	          tx_thread_sleep(1);
+	          //tx_thread_sleep(1);
     }
     else{
 
 	   run_t.dry = 1;
 	    SendData_Set_Command(0x23,0x01); //open ptc 
-	   tx_thread_sleep(1);
+	   //tx_thread_sleep(1);
 	  
 			    
 	  }

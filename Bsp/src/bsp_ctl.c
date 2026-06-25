@@ -24,8 +24,8 @@ void disp_timer_run_times(void)
       if(run_t.gTimer_seconds_counter > 59){ //
         
         run_t.gTimer_seconds_counter =0;
-		#if  1   //TEST_UNIT
-		  run_t.timer_time_minutes = run_t.timer_time_minutes -30;
+		#if  0   //TEST_UNIT
+		  run_t.timer_time_minutes = run_t.timer_time_minutes -40;
         #else 
           run_t.timer_time_minutes --;
         
@@ -66,7 +66,7 @@ void disp_timer_run_times(void)
                 }
               }
            sendCmdNote_to_threeData(0x6B,run_t.timer_time_hours,run_t.timer_time_minutes,run_t.gTimer_seconds_counter) ;
-		   tx_thread_sleep(2);
+		   //tx_thread_sleep(2);
      }
      }
   

@@ -132,7 +132,7 @@ void add_key_fun(void)
 			run_t.timer_time_hours++ ;//run_t.dispTime_minutes = run_t.dispTime_minutes + 60;
 		    if(run_t.timer_time_hours > 24){ //if(run_t.dispTime_minutes > 59){
 
-                 run_t.timer_time_hours=0;//run_t.dispTime_hours =0;
+                 run_t.timer_time_hours=24;//run_t.dispTime_hours =0;
                 
 
 			}
@@ -189,7 +189,7 @@ void dec_key_fun(void)
 				run_t.timer_time_hours -- ;//run_t.dispTime_minutes = run_t.dispTime_minutes - 1;
 				if(run_t.timer_time_hours < 0){//if(run_t.dispTime_minutes < 0){
 
-				    run_t.timer_time_hours =24;//run_t.dispTime_hours --;
+				    run_t.timer_time_hours =0;//run_t.dispTime_hours --;
 					
 					
 				}

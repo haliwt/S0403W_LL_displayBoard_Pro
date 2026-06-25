@@ -15,7 +15,7 @@
 
 
 
-#define STACK_SIZE_UI     512//1792//1536//1024//1664 
+#define STACK_SIZE_UI     768//512//1792//1536//1024//1664 
 #define STACK_SIZE_KEY    256//512
 #define STACK_SIZE_DEC    512//
 #define STACK_SIZE_EVENT  512
@@ -150,7 +150,7 @@ static void vTaskUiPro(ULONG thread_input)
       #if DEBUG_ENABLE
 		    debug_ui_check();
 	  #endif 
-		tx_thread_sleep(1);//10ms
+		//tx_thread_sleep(1);//10ms
    
   }
 
@@ -186,19 +186,19 @@ static void vTaskKeyEvent(ULONG thread_input)
 	else if(flags & KEY_POWER_LONG){
 
            SendData_Set_Command(0x05,0x01); // link wifi of command .
-	       tx_thread_sleep(2); //receive tx oxff command of run 
+	       //tx_thread_sleep(2); //receive tx oxff command of run 
 
 	}
 	else if(flags & KEY_MODE_SHORT){/* MODE 键 */
 			SendData_Buzzer();
-		    tx_thread_sleep(2);
+		    //tx_thread_sleep(2);
 		    mode_key_short_fun();
            
 
 	}
 	else if(flags & KEY_MODE_LONG){
             SendData_Buzzer();
-			tx_thread_sleep(2);
+			//tx_thread_sleep(2);
 			mode_key_long_fun();
 
 	}
@@ -206,7 +206,7 @@ static void vTaskKeyEvent(ULONG thread_input)
 	  
        
         SendData_Buzzer();//SendData_Buzzer_Has_Ack();//SendData_Buzzer();
-		tx_thread_sleep(2);
+		//tx_thread_sleep(2);
 	     gpro_t.buzzer_sound_f =1;
 	    add_key_fun();	
 
@@ -216,7 +216,7 @@ static void vTaskKeyEvent(ULONG thread_input)
          
 		  //SendData_Buzzer_Has_Ack();//
 		  SendData_Buzzer();
-		  tx_thread_sleep(2);
+		  //tx_thread_sleep(2);
 	      gpro_t.buzzer_sound_f =1;
 		  dec_key_fun();
 
