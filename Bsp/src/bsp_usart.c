@@ -459,11 +459,11 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 		if(run_t.wifi_set_temperature <= gpro_t.temp_real_value){// && gpro_t.smart_phone_turn_off_ptc_flag ==0){
              run_t.dry = 0;
-			 SendWifiData_Answer_Cmd(0x22,0);
+			 SendData_Set_Command(0x23,0);//SendWifiData_Answer_Cmd(0x23,0);
 		}
 		else{
 		   run_t.dry = 1;
-		   SendWifiData_Answer_Cmd(0x22,1);
+		   SendData_Set_Command(0x23,1);//SendWifiData_Answer_Cmd(0x23,1);
 
 		}
        }
