@@ -261,36 +261,35 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
   
 	case 0x15: //传递三个参数 ---通知
-      
-	   if(pddata[4]==0x03){ //power on by smart phone APP
-	
-		run_t.dry =pddata[5];
-		if(run_t.dry == 0){
 
-
-		}
+	   run_t.dry =pddata[3];
+	   run_t.plasma=pddata[4];
+       run_t.ultrasonic=pddata[5];
+      #if 0
+	   if(pddata[3]==1){ //power on by smart phone APP
+          run_t.dry = 1;
+	    }
 		else{
+		run_t.dry = 0;
 
 		}
 
-		run_t.plasma=pddata[6];
-		if(run_t.plasma ==1){
-
-		}
+		if(pddata[4]==1){ //power on by smart phone APP
+          run_t.plasma= 1;
+	    }
 		else{
-		 
+		run_t.plasma= = 0;
 
 		}
 
-		run_t.ultrasonic =pddata[7];
-		if(run_t.ultrasonic==1){
-		 
-		}
+		if(pddata[5]==1){ //power on by smart phone APP
+          run_t.ultrasonic =1
+	    }
 		else{
-
+		run_t.ultrasonic = 0;
 
 		}
-	  }
+    #endif 
 	
    break;
 
