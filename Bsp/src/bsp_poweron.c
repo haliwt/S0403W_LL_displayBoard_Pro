@@ -11,7 +11,7 @@
 #define PERIOD_TX_VERSION          80    //  10ms*80 = 
 #define PERIOD_WORKS_HOURS         320    //   10ms * 400 = 
 #define PERIOD_DISP_LEAF           2    //   10ms * 3 = 1
-#define PERIOD_WIFI_ICON           100    //   10ms * 130 = 1300ms = 1.3s
+#define PERIOD_WIFI_ICON           100    //   10ms * 100 = 1300ms = 1.s
 
 
 // --- 2. 定义分时任务控制结构体 ---
@@ -229,30 +229,23 @@ static void power_on_cycle(void)
 
     // 获取当前系统的绝对时间戳
       uint32_t current_tick = tx_time_get();
-	  #if 0
-
-      // 第二步：通过时间片轮询核心算法，分时调用各个功能模块
-	   for (uint8_t i = 0; i < TASK_NUM; i++) {
-		   //g_tasks[i].counter++; // 基础 Tick 自增
-		   if ((current_tick - g_tasks[i].last_tick) >= g_tasks[i].period) {
-		   
-		        // 滚动更新该任务的历史时间戳基准
-               //g_tasks[i].last_tick = current_tick;
-               // 改进：滚动累加周期，消除长跑下的时间漂移
-               g_tasks[i].last_tick += g_tasks[i].period;
-			 
-			   g_tasks[i].task_handler(); // 触发对应周期的执行函数
-		   
-	   }
-
-	   }
-	   #else 
+	
         // 通过时间片轮询核心算法，分时调用各个功能模块
     for (uint8_t i = 0; i < TASK_NUM; i++) 
     {
         if ((current_tick - g_tasks[i].last_tick) >= g_tasks[i].period) 
         {
-            // 【工业级进化：防轰炸饱和截断】
+
+//            // 【关键对齐】：将配置表的 ms 转换为当前硬件环境的 Tick 数
+//            // 既然 1 Tick = 10ms，那么 Tick数 = ms / 10
+//            uint32_t period_tick = g_tasks[i].period_ms / 10;
+        
+//	        // 防止配置错误：如果误填了小于 10ms 的周期，强制算作 1 个 Tick
+//	        if (period_tick == 0) {
+//	            period_tick = 1; 
+//	        }
+
+		   // 【工业级进化：防轰炸饱和截断】
             // 如果卡顿/被高优先级抢占的时间超过了 2 个周期，直接对齐当前时间，放弃追赶
             if ((current_tick - g_tasks[i].last_tick) > (g_tasks[i].period * 2)) 
             {
@@ -271,7 +264,7 @@ static void power_on_cycle(void)
             }
         }
     }
-	   #endif 
+	
 
 }
 
