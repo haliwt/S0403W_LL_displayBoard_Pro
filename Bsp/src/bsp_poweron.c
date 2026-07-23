@@ -743,7 +743,7 @@ static void power_off_breath_Led(void)
 *@notice :
 *@param:
 **/
-void two_hours_recoder_fun(void)
+void  SendWifiData_Answer_Cmd(0x01,0x0); //power off .(void)
 {
   static uint8_t switch_flag=0;
   #if 0
