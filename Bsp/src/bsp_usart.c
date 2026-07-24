@@ -259,6 +259,20 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 	break;
 
+
+	case 0x0B: //风扇打开和关闭
+       
+	if(pddata[3] == 0x01){// 风扇打开
+
+	}
+	else if(pddata[3] == 0){// 风扇关闭
+
+
+	}
+       
+
+	break;
+
   
 	case 0x15: //传递三个参数 ---通知
 

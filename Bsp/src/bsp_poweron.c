@@ -801,14 +801,14 @@ void two_hours_recoder_fun(void)
 	  if(switch_flag ==1){
 
            SendData_Set_Command(0x0B,0);//fan stop run . C
-		   //tx_thread_sleep(2);
+		   tx_thread_sleep(1);
 			
 
 	  }
 	  else{
        
         SendData_Set_Command(0x19,0x01);//两个小时，休息十分钟。
-	    //tx_thread_sleep(2);
+	    tx_thread_sleep(1);
 	  }
 	  
 

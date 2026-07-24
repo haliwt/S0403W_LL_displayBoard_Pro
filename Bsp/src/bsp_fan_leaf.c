@@ -101,7 +101,7 @@ void disp_fan_speed_and_time_handler(void)
 
 
 	display_works_or_timer_timing_fun();
-	fan_leaf_counter ++;	
+		
 	//tx_thread_sleep(10);//WT.EDIT 2026.07.24
 	switch(gpro_t.disp_fan_switch_flag){
 
@@ -127,12 +127,13 @@ void disp_fan_speed_and_time_handler(void)
 	if(run_t.disp_wind_speed_grade >66){//T13
 		TM1723_Write_Display_Data(0xCE,(T13+lcdNumber8_Low[lcd_t.number8_low]+ WIND_SPEED_FULL) & 0xff);
 	}
-	else if(run_t.wifi_link_net_success ==1){ //WT.EDIT 2025.04.16 logic is not rigorous.
-		if(run_t.disp_wind_speed_grade >33 && run_t.disp_wind_speed_grade <67){
+	else if(run_t.wifi_link_net_success ==1 && run_t.disp_wind_speed_grade >33 && run_t.disp_wind_speed_grade <67){ //WT.EDIT 2025.04.16 logic is not rigorous.
+		
 		TM1723_Write_Display_Data(0xCE,(T13+lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_TWO) & 0xff);
-		}
+		
 	}
-	else if(run_t.disp_wind_speed_grade <34){
+	else if(run_t.wifi_link_net_success ==1  &&  run_t.disp_wind_speed_grade <34){
+		fan_leaf_counter ++;
 		TM1723_Write_Display_Data(0xCE,(T13+lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_ONE) & 0xff);
 	}
 
@@ -168,7 +169,7 @@ void disp_fan_speed_and_time_handler(void)
 		TM1723_Write_Display_Data(0xCE,(T13_NO+lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_TWO) & 0xff);
 		
 	}
-	else if(run_t.wifi_link_net_success ==1 && run_t.disp_wind_speed_grade <34){
+	else if(run_t.wifi_link_net_success ==1 && run_t.disp_wind_speed_grade < 34){
 		
 		TM1723_Write_Display_Data(0xCE,(T13_NO+lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_ONE) & 0xff);
 	}

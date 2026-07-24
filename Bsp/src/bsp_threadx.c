@@ -185,7 +185,7 @@ static void key_event_thread_entry(ULONG thread_input)
 	else if(flags & KEY_POWER_LONG){
 
            SendData_Set_Command(0x05,0x01); // link wifi of command .
-	       //tx_thread_sleep(2); //receive tx oxff command of run 
+	       tx_thread_sleep(2); //receive tx oxff command of run 
 
 	}
 	else if(flags & KEY_MODE_SHORT){/* MODE 键 */
