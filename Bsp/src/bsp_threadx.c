@@ -31,7 +31,6 @@ __attribute__((aligned(8)))  static UCHAR stack_key_event[STACK_SIZE_EVENT];
 
 
 
-
 static TX_THREAD  thread_ui;
 static TX_THREAD  thread_key;
 static TX_THREAD  thread_decoder;

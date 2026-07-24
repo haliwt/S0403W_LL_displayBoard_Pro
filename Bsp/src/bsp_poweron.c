@@ -42,8 +42,8 @@ TimeSharingTask_t g_tasks[] = {
     {0, 16,          handler_disp_beijing_time},
     {0, 340,         handler_set_temperature},
     {0, 320,         handler_works_hours},
-    {0, 12,          handler_disp_fan_leaf},//10ms*2 
-    {0, 100,         handler_disp_wifi_icon}
+    {0, 10,          handler_disp_fan_leaf},//10ms*10 
+    {0, 98,          handler_disp_wifi_icon}
   
 };
 

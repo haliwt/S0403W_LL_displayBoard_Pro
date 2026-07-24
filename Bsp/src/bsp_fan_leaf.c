@@ -1,7 +1,7 @@
 #include "bsp.h"
 
 
-#define  LEAF_TOGGLE_THRESHOLD   0
+#define  LEAF_TOGGLE_THRESHOLD   1
 
 
 static void display_works_or_timer_timing_fun(void);
@@ -71,32 +71,10 @@ void disp_fan_leaf_run_icon(void)
     if (run_t.fan_warning == 1 || run_t.ptc_warning == 1) return ;
 
 	 
-       #if 0
-        if (run_t.time_setting_mode == setup_timer){
+   
+	disp_fan_speed_and_time_handler();
 
-		     if(lcd_t.gTimer_leaf_counter> 4){ //10*20
-                   lcd_t.gTimer_leaf_counter=0;
-			 
-					lcd_t.gTimer_leaf_counter = 0;
-					gpro_t.disp_fan_switch_flag	^= 1;
-			
-		
-			   fan_runing_fun();
-		    }
-
-		}
-		else 
-      #endif
-
-		if(lcd_t.gTimer_leaf_counter > LEAF_TOGGLE_THRESHOLD){ //10ms *3 
-	              
-	            lcd_t.gTimer_leaf_counter = 0;
-	            gpro_t.disp_fan_switch_flag = gpro_t.disp_fan_switch_flag ^1;
-	         
-
-			 }
-
-	      fan_runing_fun();
+	
 
 
 }
@@ -107,11 +85,24 @@ void disp_fan_leaf_run_icon(void)
 * @return
 */
 uint8_t fan_leaf_counter;
-void fan_runing_fun(void)
+void disp_fan_speed_and_time_handler(void)
 {
-    display_works_or_timer_timing_fun();
+      /* 主显示更新：仅当无风扇/ptc 报警时执行 */
+     if (run_t.fan_warning == 1 || run_t.ptc_warning == 1) return ;
+
+	 
+     if(lcd_t.gTimer_leaf_counter > LEAF_TOGGLE_THRESHOLD){ //10ms *3 
+	              
+	       lcd_t.gTimer_leaf_counter = 0;
+	       gpro_t.disp_fan_switch_flag = gpro_t.disp_fan_switch_flag ^1;
+	         
+
+	 }
+
+
+	display_works_or_timer_timing_fun();
 	fan_leaf_counter ++;	
-	tx_thread_sleep(10);
+	//tx_thread_sleep(10);//WT.EDIT 2026.07.24
 	switch(gpro_t.disp_fan_switch_flag){
 
 	case 0: //T15 ,T11 ,T13 ->ON
@@ -172,16 +163,15 @@ void fan_runing_fun(void)
 	if(run_t.disp_wind_speed_grade >66){//T13
 		TM1723_Write_Display_Data(0xCE,(T13_NO+lcdNumber8_Low[lcd_t.number8_low]+ WIND_SPEED_FULL) & 0xff);
 	}
-	else if(run_t.wifi_link_net_success ==1){ //WT.EDIT 2025.04.16 logic is not rigorous.
-	if(run_t.disp_wind_speed_grade >33 && run_t.disp_wind_speed_grade <67){
+	else if(run_t.wifi_link_net_success ==1 && run_t.disp_wind_speed_grade >33 && run_t.disp_wind_speed_grade <67){ //WT.EDIT 2025.04.16 logic is not rigorous.
+	
 		TM1723_Write_Display_Data(0xCE,(T13_NO+lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_TWO) & 0xff);
+		
 	}
-	}
-	else if(run_t.disp_wind_speed_grade <34){
+	else if(run_t.wifi_link_net_success ==1 && run_t.disp_wind_speed_grade <34){
+		
 		TM1723_Write_Display_Data(0xCE,(T13_NO+lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_ONE) & 0xff);
 	}
-
-
 
 	TM1723_Write_Display_Data(0xCF,(T16+T10+T12)& 0xff);//T12,T11,T10
 	  //T14
@@ -194,7 +184,15 @@ void fan_runing_fun(void)
 	}
  }
    
+/**
 
+*@brief 
+*@param
+*@reference
+*
+*
+
+**/
 void disp_time_four_numbers_init(void)
 {
   
@@ -225,10 +223,12 @@ void disp_time_four_numbers_init(void)
 		TM1723_Write_Display_Data(0xCE,(T13+lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_TWO) & 0xff);
 		}
 	}
-	else if(run_t.disp_wind_speed_grade <34){
-		TM1723_Write_Display_Data(0xCE,(T13+lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_ONE) & 0xff);
-	}
+	else if(run_t.wifi_link_net_success ==1){
 
+		if(run_t.disp_wind_speed_grade <34){
+		TM1723_Write_Display_Data(0xCE,(T13+lcdNumber8_Low[lcd_t.number8_low]+WIND_SPEED_ONE) & 0xff);
+	   }
+	}
 
 	
 	TIM1723_Write_Cmd(LUM_VALUE);

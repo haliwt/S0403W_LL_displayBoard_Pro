@@ -86,7 +86,7 @@ void disp_time_colon_fun(void)
 
 void display_time_hours_minutes_fun(void)
 {
-   fan_runing_fun();
+   disp_fan_speed_and_time_handler();
 }
 /************************************************************
 *

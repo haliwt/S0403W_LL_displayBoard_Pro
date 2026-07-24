@@ -65,8 +65,11 @@ void disp_timer_run_times(void)
                 
                 }
               }
+
+		  
            sendCmdNote_to_threeData(0x6B,run_t.timer_time_hours,run_t.timer_time_minutes,run_t.gTimer_seconds_counter) ;
 		   //tx_thread_sleep(2);
+		   disp_fan_speed_and_time_handler();
      }
      }
   

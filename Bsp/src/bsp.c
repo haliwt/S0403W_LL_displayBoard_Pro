@@ -118,11 +118,7 @@ static void handle_works_time_mode(void)
      counter_time_timing_fun(); 
   
 	 disp_timer_run_times();
-//	 if(timer_time_switch_f==2){
-//	 	timer_time_switch_f++;
-//	  display_time_hours_minutes_fun();
-//	 }
-//	 timer_time_switch_f  = 1;
+
 
 }
 /**
@@ -241,10 +237,7 @@ static void handle_timer_time_mode(void)
        disp_timer_run_times();
        counter_time_timing_fun(); 
 	   
-//	   if(timer_time_switch_f==1){
-//	 	timer_time_switch_f++;
-//	    display_time_hours_minutes_fun();
-//	   }
+
     
 }
 /**
@@ -330,6 +323,7 @@ static void counter_time_timing_fun(void)
 	      sendCmdNote_to_threeData(0x6C,run_t.dispTime_hours, run_t.dispTime_minutes,run_t.gTimer_disp_time_seconds);
 	      //tx_thread_sleep(2);
 	  }
+	   disp_fan_speed_and_time_handler();
    	}
    
 
