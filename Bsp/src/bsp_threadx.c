@@ -20,7 +20,7 @@
 #define STACK_SIZE_DEC    512//
 #define STACK_SIZE_EVENT  512
 
-#define DEBUG_ENABLE       1
+#define DEBUG_ENABLE       0
 
 
 __attribute__((aligned(8)))  static UCHAR stack_ui_pro[STACK_SIZE_UI];
@@ -37,10 +37,10 @@ static TX_THREAD  thread_key;
 static TX_THREAD  thread_decoder;
 static TX_THREAD  thread_key_event;
 
-static void vTaskUiPro(ULONG thread_input);
-static void vTaskKeyPro(ULONG thread_input);
-static void vTaskDecoderPro(ULONG thread_input);
-static void vTaskKeyEvent(ULONG thread_input);
+static void ui_thread_entry(ULONG thread_input);
+static void key_thread_entry(ULONG thread_input);
+static void decoder_thread_entry(ULONG thread_input);
+static void key_event_thread_entry(ULONG thread_input);
 
 
 TX_EVENT_FLAGS_GROUP key_event;
@@ -91,7 +91,7 @@ void tx_application_define(VOID * first_unused_memory)
  
     tx_thread_stack_error_notify(tx_thread_stack_error_handler);
 
-  app_threadx_handler();
+    app_threadx_handler();
 
 }
 
@@ -102,7 +102,7 @@ void tx_application_define(VOID * first_unused_memory)
 *@notice
 *@retval
 **/
-static void vTaskDecoderPro(ULONG thread_input)
+static void decoder_thread_entry(ULONG thread_input)
 {
    (void)thread_input;
 
@@ -140,7 +140,7 @@ static void vTaskDecoderPro(ULONG thread_input)
 *@notice
 *@retval
 **/
-static void vTaskUiPro(ULONG thread_input)
+static void ui_thread_entry(ULONG thread_input)
 {
   (void)thread_input;
   while(1){
@@ -162,7 +162,7 @@ static void vTaskUiPro(ULONG thread_input)
 *@notice
 *@retval
 **/
-static void vTaskKeyEvent(ULONG thread_input)
+static void key_event_thread_entry(ULONG thread_input)
 {
   (void)thread_input;
   ULONG flags;
@@ -238,7 +238,7 @@ static void vTaskKeyEvent(ULONG thread_input)
 *@notice
 *@retval
 **/
-static void vTaskKeyPro(ULONG thread_input)
+static void key_thread_entry(ULONG thread_input)
 {
   (void)thread_input;
   static uint8_t power_on_key;
@@ -330,7 +330,7 @@ void app_threadx_handler(void)
 
   tx_thread_create(&thread_decoder,
   					"DecoderPro",
-  					vTaskDecoderPro,
+  					decoder_thread_entry,
   					0,
   					stack_decoder_pro,
   					STACK_SIZE_DEC,
@@ -342,7 +342,7 @@ void app_threadx_handler(void)
 
    tx_thread_create(&thread_ui,
    					"MsgPro",
-   					vTaskUiPro,
+   					ui_thread_entry,
    					0,
    					stack_ui_pro,
    					STACK_SIZE_UI,
@@ -353,7 +353,7 @@ void app_threadx_handler(void)
 
 	tx_thread_create(&thread_key,
 					"KeyPro",
-					vTaskKeyPro,
+					key_thread_entry,
 					0,
 					stack_key_pro,
 					STACK_SIZE_KEY,
@@ -364,7 +364,7 @@ void app_threadx_handler(void)
 	
 	 tx_thread_create(&thread_key_event, 		   /* 任务控制块地址 */	  
 					 "KeyEvent",				    /* 任务名 */
-					  vTaskKeyEvent,				/* 启动任务函数地址 */
+					  key_event_thread_entry,				/* 启动任务函数地址 */
 					  0,							/* 传递给任务的参数 */
 					  stack_key_event,				/* 堆栈基地址 */
 					  STACK_SIZE_EVENT,				/* 堆栈空间大小 */  

@@ -38,12 +38,12 @@ volatile uint8_t time_slot ;
 
 // --- 4. 初始化分时任务表 ---
 TimeSharingTask_t g_tasks[] = {
-    {0, PERIOD_DISP_TEMP_HUM,       handler_disp_temp_humidity_value},
-    {0, PERIOD_DISP_BEIJING,        handler_disp_beijing_time},
-    {0, PERIOD_SET_TEMPERATURE,     handler_set_temperature},
-    {0, PERIOD_WORKS_HOURS,         handler_works_hours},
-    {0, PERIOD_DISP_LEAF,           handler_disp_fan_leaf},
-    {0, PERIOD_WIFI_ICON,           handler_disp_wifi_icon}
+    {0, 33,          handler_disp_temp_humidity_value},//10ms*33= 330ms
+    {0, 16,          handler_disp_beijing_time},
+    {0, 340,         handler_set_temperature},
+    {0, 320,         handler_works_hours},
+    {0, 12,          handler_disp_fan_leaf},//10ms*2 
+    {0, 100,         handler_disp_wifi_icon}
   
 };
 
@@ -99,12 +99,7 @@ void power_run_handler(void)
            power_off_handler();
 	       gpro_t.fan_run_one_minute=0;
 
-		
-		   
-		
-	
-
-			if(gpro_t.gTimer_send_data_counter > 1){ //new version 
+		   if(gpro_t.gTimer_send_data_counter > 1){ //new version 
 			 	 gpro_t.gTimer_send_data_counter =0;
 				 SendData_Set_Command(0xF0,0x02);//software version is "2"
 				 //tx_thread_sleep(2);
