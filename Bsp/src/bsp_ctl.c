@@ -44,12 +44,12 @@ void disp_timer_run_times(void)
 	
                  run_t.power_on= power_off;
                  SendData_PowerOnOff(0); //send power off cmd to mainboard.WT.EDIT 2024.11.17
-                 tx_thread_sleep(5); //WT.EDIT 2026.01.04
+                 tx_thread_sleep(2); //WT.EDIT 2026.01.04
                 
 		         Power_Off_Fun();
 				 
 				 SendData_Set_Command(0x10,0); //turn off-> don't buzzer sound :mainboard.WT.EDIT 2026.01.04
-                 tx_thread_sleep(5); //WT.EDIT 2026.01.04
+                 tx_thread_sleep(2); //WT.EDIT 2026.01.04
 				 
 			
 				}

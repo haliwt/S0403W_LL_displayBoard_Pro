@@ -102,7 +102,7 @@ void power_run_handler(void)
 		   if(gpro_t.gTimer_send_data_counter > 1){ //new version 
 			 	 gpro_t.gTimer_send_data_counter =0;
 				 SendData_Set_Command(0xF0,0x02);//software version is "2"
-				 //tx_thread_sleep(2);
+				 tx_thread_sleep(2);
 
              }
 
@@ -110,7 +110,7 @@ void power_run_handler(void)
 	         if(lcd_t.gTimer_colon_counter > 1 ){
 					lcd_t.gTimer_colon_counter  =0;
 					SendData_Set_Command(0x11,1); //mainboard.WT.EDIT 2026.04.23
-					//tx_thread_sleep(2); //WT.EDIT 2026.01.04
+					tx_thread_sleep(2); //WT.EDIT 2026.01.04
 				   
 	 
 			  }
@@ -305,7 +305,7 @@ static void power_on_cycle(void)
 		    version = version ^ 0x01;
 		     if(version ==1){
 			  SendData_Set_Command(0xF0,0x02);//software version is "2"
-			  //tx_thread_sleep(2);
+			  tx_thread_sleep(2);
 
 			 }
 			 else{
@@ -435,12 +435,12 @@ static void handler_tx_version(void)
 		    version = version ^ 0x01;
 		     if(version ==1){
 			  SendData_Set_Command(0xF0,0x02);//software version is "2"
-			  //tx_thread_sleep(2);
+			  tx_thread_sleep(2);
 
 			 }
 			 else{
 			 	SendData_Set_Command(0x11,0x01);
-			 	//tx_thread_sleep(2);
+			 	tx_thread_sleep(2);
 			 }
 
 			 
@@ -544,7 +544,7 @@ void power_on_off_handler(void)
     
     	gpro_t.power_on_step =0;
         SendData_PowerOnOff(1);
-		//tx_thread_sleep(2);
+		tx_thread_sleep(2);
 
 	
 
@@ -555,7 +555,7 @@ void power_on_off_handler(void)
 
 	
         SendData_PowerOnOff(0);
-	    //tx_thread_sleep(2);
+	    tx_thread_sleep(2);
       }
     
 }
@@ -717,7 +717,7 @@ void power_off_handler(void)
 static void power_off_breath_Led(void)
  {
     static uint8_t led_flag;
-	#if 0
+	
 	if(gpro_t.gTimer_disp_temp_humi_value> 1){
 	    gpro_t.gTimer_disp_temp_humi_value=0;
 
@@ -732,10 +732,7 @@ static void power_off_breath_Led(void)
 		}
 	  
 	}
-   #else 
-	  POWER_OFF_LED();
-	 
-  #endif 
+ 
 	      
 }
 /**
@@ -746,7 +743,7 @@ static void power_off_breath_Led(void)
 void two_hours_recoder_fun(void)
 {
   static uint8_t switch_flag=0;
-  #if 0
+  #if 1
     if(gpro_t.gTimer_two_hours_conter > 5 && gpro_t.stopTwoHours_flag==0){
   #else
     if(gpro_t.gTimer_two_hours_conter > 119 && gpro_t.stopTwoHours_flag==0){
@@ -762,11 +759,11 @@ void two_hours_recoder_fun(void)
 	   gpro_t.fan_interval_stop_f = 0xff;
        gpro_t.two_hours_interval_f =  0xff;  
 	  SendData_Set_Command(0x19,0x01); //两个小时休息 10分钟，到了。
-	  //tx_thread_sleep(2);
+	 tx_thread_sleep(2);
 	  
 
   }
-  #if 0
+  #if 1
   	else if(gpro_t.stopTwoHours_flag==1 && gpro_t.gTimer_two_hours_conter > 2){//10
   #else 
 	 else if(gpro_t.stopTwoHours_flag==1 && gpro_t.gTimer_two_hours_conter > 10){
@@ -777,7 +774,7 @@ void two_hours_recoder_fun(void)
       gpro_t.stopTwoHours_flag=0;
 	  gpro_t.fan_run_one_minute=3;
       SendData_Set_Command(0x19,0x0); //两个小时休息10分钟，结束通知。
-	  //tx_thread_sleep(2);
+	  tx_thread_sleep(2);
 	
 	    
 
@@ -789,7 +786,7 @@ void two_hours_recoder_fun(void)
   if(gpro_t.fan_run_one_minute==1 && gpro_t.gTimer_counter_one_minute >59){
        gpro_t.fan_run_one_minute=2;
        SendData_Set_Command(0x0B,0);//fan stop run .1. OPEN ,0- CLOSE 
-	   //tx_thread_sleep(2);
+	   tx_thread_sleep(2);
 
 
   }
@@ -801,14 +798,14 @@ void two_hours_recoder_fun(void)
 	  if(switch_flag ==1){
 
            SendData_Set_Command(0x0B,0);//fan stop run . C
-		   tx_thread_sleep(1);
+		   tx_thread_sleep(2);
 			
 
 	  }
 	  else{
        
         SendData_Set_Command(0x19,0x01);//两个小时，休息十分钟。
-	    tx_thread_sleep(1);
+	    tx_thread_sleep(2);
 	  }
 	  
 
@@ -819,7 +816,7 @@ void two_hours_recoder_fun(void)
 
 	 gpro_t.fan_run_one_minute=0;
 	 SendData_Set_Command(0x19,0x0);
-	 tx_thread_sleep(1);
+	 tx_thread_sleep(2);
 	
 
   }

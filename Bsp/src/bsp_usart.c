@@ -109,14 +109,14 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 	if(pddata[3] == 0x01){//power on
 		run_t.power_on = power_on;
 		SendWifiData_Answer_Cmd(0x01,0x01);
-		//tx_thread_sleep(1);
+		//tx_thread_sleep(2);
 	}
 	else{//power off 
 	
 	
 		run_t.power_on = power_off;
 		SendWifiData_Answer_Cmd(0x01,0);
-		//tx_thread_sleep(1);
+		//tx_thread_sleep(2);
 
 	}
 	break;
@@ -186,7 +186,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		
 			run_t.ultrasonic = close;
 			SendWifiData_Answer_Cmd(0x04,0x0); //close ptc 
-			//tx_thread_sleep(2);
+		  //tx_thread_sleep(2);
 			
 		     gpro_t.receive_copy_buff[4]=copy_null;
 		
@@ -202,16 +202,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 	break;
 
-	case fan_on_off:
-	if(pddata[3] == 0x01){//ptc on
-		run_t.fan = open;
 
-		}
-		else{//power off 
-		run_t.fan = close;
-	}
-
-	break;
 
 	
 
@@ -262,13 +253,15 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 	case 0x0B: //风扇打开和关闭
        
-	if(pddata[3] == 0x01){// 风扇打开
+	 if(pddata[3] == 0x01){//ptc on
+		run_t.fan = open;
 
-	}
-	else if(pddata[3] == 0){// 风扇关闭
+		}
+		else{//power off 
+		run_t.fan = close;
+	 }
 
-
-	}
+	
        
 
 	break;
@@ -377,14 +370,14 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 		run_t.wifi_link_net_success =1 ; 
 		SendWifiData_Answer_Cmd(0x1F,0x01);
-		//tx_thread_sleep(2);
+		///tx_thread_sleep(2);
 
 	}
 	else{ //don't link wifi 
 
 		run_t.wifi_link_net_success =0 ;     
 	    SendWifiData_Answer_Cmd(0x1F,0);
-		//tx_thread_sleep(2);
+		///tx_thread_sleep(2);
 
 	}
 
@@ -421,7 +414,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 
 		 SendWifiData_Answer_Cmd(0x21,0x01);
-		 //tx_thread_sleep(2);
+		 ///tx_thread_sleep(2);
 		
          
        
@@ -433,7 +426,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		run_t.power_on= power_off;
 	    Lcd_PowerOff_Fun();
 		SendWifiData_Answer_Cmd(0x21,0x0);
-		//tx_thread_sleep(2);
+		///tx_thread_sleep(2);
 		   
 	}
 
@@ -473,11 +466,13 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 		if(run_t.wifi_set_temperature <= gpro_t.temp_real_value){// && gpro_t.smart_phone_turn_off_ptc_flag ==0){
              run_t.dry = 0;
-			 SendData_Set_Command(0x23,0);//SendWifiData_Answer_Cmd(0x23,0);
+			 SendData_Set_Command(0x23,0);//SendWifiData_Answer_Cmd(0x23,0)
+			 tx_thread_sleep(2);
 		}
 		else{
 		   run_t.dry = 1;
 		   SendData_Set_Command(0x23,1);//SendWifiData_Answer_Cmd(0x23,1);
+		tx_thread_sleep(2);
 
 		}
        }

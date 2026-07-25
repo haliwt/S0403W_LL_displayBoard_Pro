@@ -524,7 +524,7 @@ void set_temperature_compare_value_fun(void)
 static void send_ptc_command(uint8_t on_off)
 {
   SendData_Set_Command(0x22,on_off); //open ptc  
-  //tx_thread_sleep(2);
+  tx_thread_sleep(2);
   //while(!gpro_t.uart1_tx_done);
   //uart1_tx_get();
 
@@ -546,13 +546,13 @@ void direct_comparison_temp(void)
                run_t.dry = 0;
 			 
 			  SendData_Set_Command(0x23,0x00); //close ptc 
-	          //tx_thread_sleep(1);
+	          tx_thread_sleep(2);
     }
     else{
 
 	   run_t.dry = 1;
 	    SendData_Set_Command(0x23,0x01); //open ptc 
-	   //tx_thread_sleep(1);
+	   tx_thread_sleep(1);
 	  
 			    
 	  }

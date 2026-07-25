@@ -190,14 +190,14 @@ static void key_event_thread_entry(ULONG thread_input)
 	}
 	else if(flags & KEY_MODE_SHORT){/* MODE 键 */
 			SendData_Buzzer();
-		    //tx_thread_sleep(2);
+		    tx_thread_sleep(2);
 		    mode_key_short_fun();
            
 
 	}
 	else if(flags & KEY_MODE_LONG){
             SendData_Buzzer();
-			//tx_thread_sleep(2);
+			tx_thread_sleep(2);
 			mode_key_long_fun();
 
 	}
@@ -205,7 +205,7 @@ static void key_event_thread_entry(ULONG thread_input)
 	  
        
         SendData_Buzzer();//SendData_Buzzer_Has_Ack();//SendData_Buzzer();
-		//tx_thread_sleep(2);
+		tx_thread_sleep(2);
 	     gpro_t.buzzer_sound_f =1;
 	    add_key_fun();	
 
@@ -215,7 +215,7 @@ static void key_event_thread_entry(ULONG thread_input)
          
 		  //SendData_Buzzer_Has_Ack();//
 		  SendData_Buzzer();
-		  //tx_thread_sleep(2);
+		  tx_thread_sleep(2);
 	      gpro_t.buzzer_sound_f =1;
 		  dec_key_fun();
 
