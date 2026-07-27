@@ -310,7 +310,7 @@ static void key_thread_entry(ULONG thread_input)
    #if DEBUG_ENABLE
     debug_key_check();
    #endif 
-   tx_thread_sleep(6);//2*10ms =20ms
+   tx_thread_sleep(3);//2*10ms =20ms
    }
 }
 

@@ -122,6 +122,7 @@ void add_key_fun(void)
 		run_t.ptc_on_off_flag = 0; //WT.EDIT 2025.10.31
 	    gpro_t.first_set_ptc_on=0;
 		gpro_t.key_set_temperature_f = 1;
+		
 	
 	   break;
 
