@@ -445,7 +445,7 @@ void set_temperature_compare_value_fun(void)
 {
     static uint8_t counter;
 
-    if(run_t.fan_warning ==1 || run_t.ptc_warning ==1 || gpro_t.stopTwoHours_flag==1 || run_t.ptc_on_off_flag == 1\
+    if(run_t.fan_warning ==1 || run_t.ptc_warning ==1 || run_t.ptc_on_off_flag == 1\
 		|| gpro_t.key_set_temperature==1)return ;
 
 	if(gpro_t.temp_real_value > 60)return ; //WT.EDIT 2026.01.19
@@ -461,7 +461,7 @@ void set_temperature_compare_value_fun(void)
 	else{
 	   target_temp = DEFAULT_TEMP;
 
-      }
+    }
 
 	if(real_temp >= DEFAULT_TEMP){
 
@@ -469,7 +469,7 @@ void set_temperature_compare_value_fun(void)
 		  ptc_state = PTC_STATE_OFF ;
 	      gpro_t.first_set_ptc_on  = 1;
 		  send_ptc_command(0);
-	      //tx_thread_sleep(1);
+	      tx_thread_sleep(2);
   
 		  return ;
 	}
@@ -484,7 +484,7 @@ void set_temperature_compare_value_fun(void)
 			   if(gpro_t.first_ptc_on==1)gpro_t.first_set_ptc_on  = 2;
 			   
 			   send_ptc_command(1);
-			    //tx_thread_sleep(1);
+			   tx_thread_sleep(2);
 			}
 		}
 		else{
@@ -493,7 +493,7 @@ void set_temperature_compare_value_fun(void)
                  run_t.dry = 1;
 				ptc_state = PTC_STATE_ON ;
 			   send_ptc_command(1);
-			   //tx_thread_sleep(1);
+			   tx_thread_sleep(2);
 
 			}
 
@@ -507,7 +507,7 @@ void set_temperature_compare_value_fun(void)
 
 		   ptc_state = PTC_STATE_OFF ;
 		   send_ptc_command(0);
-	       //tx_thread_sleep(1);
+	       tx_thread_sleep(2);
 		}
 
 	}

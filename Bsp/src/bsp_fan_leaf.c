@@ -70,12 +70,7 @@ void disp_fan_leaf_run_icon(void)
    /* 主显示更新：仅当无风扇/ptc 报警时执行 */
     if (run_t.fan_warning == 1 || run_t.ptc_warning == 1) return ;
 
-	 
-   
-	disp_fan_speed_and_time_handler();
-
-	
-
+	 disp_fan_speed_and_time_handler();
 
 }
 /**

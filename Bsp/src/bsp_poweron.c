@@ -376,12 +376,11 @@ static void handler_disp_beijing_time(void)
 */
 static void handler_set_temperature(void)
 {
-   if(gpro_t.key_set_temperature==0 && gpro_t.gTimer_temp_compare_value > 2 && gpro_t.stopTwoHours_flag==0 && gpro_t.smart_phone_app_timer_power_on_flag ==0){
+   if(gpro_t.key_set_temperature==0 && gpro_t.gTimer_temp_compare_value > 2 && gpro_t.smart_phone_app_timer_power_on_flag ==0){
 	 	gpro_t.gTimer_temp_compare_value =0;
 		
-          set_temperature_compare_value_fun();
-
-     	}
+        set_temperature_compare_value_fun();
+   }
 
 
 }
@@ -758,8 +757,8 @@ void two_hours_recoder_fun(void)
 	
 	   gpro_t.fan_interval_stop_f = 0xff;
        gpro_t.two_hours_interval_f =  0xff;  
-	  SendData_Set_Command(0x19,0x01); //两个小时休息 10分钟，到了。
-	 tx_thread_sleep(2);
+	   SendData_Set_Command(0x19,0x01); //两个小时休息 10分钟，到了。
+	   tx_thread_sleep(2);
 	  
 
   }
