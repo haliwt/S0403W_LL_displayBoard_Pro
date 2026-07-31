@@ -109,14 +109,14 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 	if(pddata[3] == 0x01){//power on
 		run_t.power_on = power_on;
 		SendWifiData_Answer_Cmd(0x01,0x01);
-		//tx_thread_sleep(2);
+		tx_thread_sleep(2);
 	}
 	else{//power off 
 	
 	
 		run_t.power_on = power_off;
 		SendWifiData_Answer_Cmd(0x01,0);
-		//tx_thread_sleep(2);
+		tx_thread_sleep(2);
 
 	}
 	break;
@@ -128,7 +128,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		    run_t.dry = open;
             run_t.ptc_on_off_flag = 0;
 			SendWifiData_Answer_Cmd(0x02,0x01); //close ptc 
-			//tx_thread_sleep(2);
+			tx_thread_sleep(2);
 			
 			//disp_kill_dry_ster_temperature_humidity_hanlder();
 	        
@@ -138,7 +138,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 			run_t.dry = close;
 			run_t.ptc_on_off_flag = 1;
 			SendWifiData_Answer_Cmd(0x02,0x0); //close ptc 
-		    //tx_thread_sleep(2);
+		    tx_thread_sleep(2);
 		
 			//disp_kill_dry_ster_temperature_humidity_hanlder();
 	        
@@ -151,7 +151,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 			 run_t.plasma = open;
 			 SendWifiData_Answer_Cmd(0x03,0x01); //close ptc 
-			 //tx_thread_sleep(2);
+			 tx_thread_sleep(2);
 			
 		     gpro_t.receive_copy_buff[3]=copy_null;
 			
@@ -162,7 +162,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		   
 				run_t.plasma = close;
 			    SendWifiData_Answer_Cmd(0x03,0x0); //close ptc 
-				//tx_thread_sleep(2);
+				tx_thread_sleep(2);
 				
 			     gpro_t.receive_copy_buff[3]=copy_null;
 				 //disp_kill_dry_ster_temperature_humidity_hanlder();
@@ -176,7 +176,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 	        run_t.ultrasonic = open;
 			SendWifiData_Answer_Cmd(0x04,0x01); //close ptc 
-			//tx_thread_sleep(2);
+			tx_thread_sleep(2);
 			
 	    
 
@@ -186,7 +186,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		
 			run_t.ultrasonic = close;
 			SendWifiData_Answer_Cmd(0x04,0x0); //close ptc 
-		  //tx_thread_sleep(2);
+		    tx_thread_sleep(2);
 			
 		     gpro_t.receive_copy_buff[4]=copy_null;
 		
@@ -217,8 +217,8 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		run_t.dry=0;
 	
 
-		SendWifiData_Answer_Cmd(0x08,0x01);
-	   //tx_thread_sleep(2);
+	   SendWifiData_Answer_Cmd(0x08,0x01);
+	   tx_thread_sleep(2);
 
 	}
 	else if(pddata[3]== 0x0){ //close 
@@ -240,7 +240,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		run_t.dry =0;
 	
 		SendWifiData_Answer_Cmd(0x09,0x01);
-		//tx_thread_sleep(2);
+		tx_thread_sleep(2);
 
 	}
 	else if(pddata[3] == 0x0){ //close 
@@ -370,14 +370,14 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 		run_t.wifi_link_net_success =1 ; 
 		SendWifiData_Answer_Cmd(0x1F,0x01);
-		///tx_thread_sleep(2);
+		tx_thread_sleep(2);
 
 	}
 	else{ //don't link wifi 
 
 		run_t.wifi_link_net_success =0 ;     
 	    SendWifiData_Answer_Cmd(0x1F,0);
-		///tx_thread_sleep(2);
+		tx_thread_sleep(2);
 
 	}
 
@@ -414,7 +414,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 
 		 SendWifiData_Answer_Cmd(0x21,0x01);
-		 ///tx_thread_sleep(2);
+		 tx_thread_sleep(2);
 		
          
        
@@ -426,7 +426,7 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 		run_t.power_on= power_off;
 	    Lcd_PowerOff_Fun();
 		SendWifiData_Answer_Cmd(0x21,0x0);
-		///tx_thread_sleep(2);
+		tx_thread_sleep(2);
 		   
 	}
 
@@ -683,10 +683,10 @@ static void parse_copy_cmd_or_data_handler(uint8_t *pdata)
 	   case 0x19:
 	   	    if(pdata[4]== 0x01){
 	   	
-                gpro_t.two_hours_interval_f =  1;  
+               // gpro_t.two_hours_interval_f =  1;  
 	       	 }
 			 else{
-	             gpro_t.two_hours_interval_f =  0;  
+	           //  gpro_t.two_hours_interval_f =  0;  
 			}
 
 	   break;
@@ -730,6 +730,22 @@ void USART1_IRQHandler(void)
 {
    volatile uint8_t data ;
 
+
+    if(LL_USART_IsActiveFlag_ORE(USART1) ||LL_USART_IsActiveFlag_FE(USART1) ||LL_USART_IsActiveFlag_NE(USART1)){
+
+	  // 【核心修复】强行读走 RDR 寄存器里的脏数据，彻底释放硬件锁
+		 volatile uint8_t dummy_read = LL_USART_ReceiveData8(USART1);
+		 ((void)dummy_read); // 防止部分编译器报 “变量未引用” 的警告
+		 
+		 // 然后再清除错误标志
+		 LL_USART_ClearFlag_ORE(USART1);
+	     LL_USART_ClearFlag_FE(USART1);
+	     LL_USART_ClearFlag_NE(USART1);
+
+	}
+
+   
+
 	if (LL_USART_IsActiveFlag_RXNE_RXFNE(USART1))
     {
         data = LL_USART_ReceiveData8(USART1); 
@@ -741,6 +757,8 @@ void USART1_IRQHandler(void)
        
      
     }
+}
+#if 0
 
     // 清除错误标志
   // 2. 溢出错误（ORE）防御性闭环处理
@@ -755,7 +773,7 @@ void USART1_IRQHandler(void)
   }
   if (LL_USART_IsActiveFlag_FE(USART1))  LL_USART_ClearFlag_FE(USART1);
   if (LL_USART_IsActiveFlag_NE(USART1))  LL_USART_ClearFlag_NE(USART1);
-}
+#endif 
 
 /**
 *@brief
