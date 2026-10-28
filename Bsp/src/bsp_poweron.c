@@ -264,91 +264,7 @@ static void power_on_cycle(void)
 }
 
 
-#if 0
-static void power_on_cycle(void)
-{
-    static uint8_t version;
-    static uint8_t time_slot=0;
-	
-	switch(time_slot){
-		
-	  case 0:
-  
-	    disp_temp_humidity_wifi_icon_handler();
-	   
 
-	  break;
-
-	  case 1:
-	  	display_timer_and_beijing_time_handler();
-       
-	  break;
-
-	
-     case 2:
-	 	
-     if(gpro_t.key_set_temperature==0 && gpro_t.gTimer_temp_compare_value > 2 && gpro_t.stopTwoHours_flag==0 && gpro_t.smart_phone_app_timer_power_on_flag ==0){
-	 	gpro_t.gTimer_temp_compare_value =0;
-		
-          set_temperature_compare_value_fun();
-
-     	}
-	  
-
-	 break;
-
-	 case 3:
-	 	
-		 if(send_two_disp < 5 ){
-			 send_two_disp++;
-
-		    version = version ^ 0x01;
-		     if(version ==1){
-			  SendData_Set_Command(0xF0,0x02);//software version is "2"
-			  tx_thread_sleep(2);
-
-			 }
-			 else{
-			 	SendData_Set_Command(0x11,0x01);
-			 	//tx_thread_sleep(2);
-			 }
-
-			 
-		 }
-		
-
-	break;
-		 
-	case 4:
-
-	    two_hours_recoder_fun();
-
-	break;
-
-	 case 5:
-	 if(gpro_t.smart_phone_app_timer_power_on_flag ==1 && run_t.gTimer_ptc_fan_warning >6){
-	      gpro_t.smart_phone_app_timer_power_on_flag=0;
-
-
-	  }
-	 
-      disp_fan_leaf_run_icon();
-	 break;
-
-	 case 6:
-          wifi_icon_blink_reg0xc5_handler();
-
-	 break;
-	 
-	 default:
-	 	break;
-	 }
-	
-   time_slot ++;
-   if(time_slot > 6) time_slot = 0;// 10ms * 7 = 90ms
- }
-
-#endif
 /*
 	*@brief :
 	*@param:
@@ -757,6 +673,8 @@ void two_hours_recoder_fun(void)
 	
 	   gpro_t.fan_interval_stop_f = 0xff;
        gpro_t.two_hours_interval_f =  0xff;  
+	   gpro_t.send_cmd_0x19_waiting_ack = 1;
+	   gpro_t.gTimer_waiting_ack = 0;
 	   SendData_Set_Command(0x19,0x01); //两个小时休息 10分钟，到了。
 	   tx_thread_sleep(2);
 	  
@@ -772,6 +690,8 @@ void two_hours_recoder_fun(void)
 	  gpro_t.gTimer_two_hours_second_counter=0;
       gpro_t.stopTwoHours_flag=0;
 	  gpro_t.fan_run_one_minute=3;
+	  gpro_t.send_cmd_0x19_waiting_ack = 2;
+	  gpro_t.gTimer_waiting_ack = 0;
       SendData_Set_Command(0x19,0x0); //两个小时休息10分钟，结束通知。
 	  tx_thread_sleep(2);
 	
@@ -786,9 +706,9 @@ void two_hours_recoder_fun(void)
        gpro_t.fan_run_one_minute=2;
        SendData_Set_Command(0x0B,0);//fan stop run .1. OPEN ,0- CLOSE 
 	   tx_thread_sleep(2);
-
-
   }
+  
+ #if 0
   if(gpro_t.stopTwoHours_flag==1 && gpro_t.gTimer_counter > 2 &&  gpro_t.fan_run_one_minute ==2){
 	  gpro_t.gTimer_counter=0;
 
@@ -810,7 +730,8 @@ void two_hours_recoder_fun(void)
 
   }
 
-  
+ #endif 
+ 
   if(gpro_t.stopTwoHours_flag==0 &&  gpro_t.fan_run_one_minute==3 ){
 
 	 gpro_t.fan_run_one_minute=0;

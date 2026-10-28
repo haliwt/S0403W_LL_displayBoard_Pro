@@ -681,12 +681,12 @@ static void parse_copy_cmd_or_data_handler(uint8_t *pdata)
 	   break;
 
 	   case 0x19:
-	   	    if(pdata[4]== 0x01){
-	   	
-               // gpro_t.two_hours_interval_f =  1;  
+	   	    if(pdata[4]==1){
+	   	       gpro_t.send_cmd_0x19_waiting_ack = 0xfe;
+              
 	       	 }
-			 else{
-	           //  gpro_t.two_hours_interval_f =  0;  
+			 else if(pdata[4]==0){
+	           gpro_t.send_cmd_0x19_waiting_ack = 0xfd;
 			}
 
 	   break;

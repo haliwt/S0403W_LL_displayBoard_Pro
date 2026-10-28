@@ -149,7 +149,7 @@ static void ui_thread_entry(ULONG thread_input)
       #if DEBUG_ENABLE
 		    debug_ui_check();
 	  #endif 
-		//tx_thread_sleep(1);//10ms
+		tx_thread_sleep(1);//10ms
    
   }
 

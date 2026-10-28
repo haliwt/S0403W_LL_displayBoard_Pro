@@ -116,12 +116,11 @@ typedef struct _process_state{
    uint8_t set_timer_f; 
    uint8_t wifi_flag ;
    uint8_t buzzer_sound_f;
+
+   uint8_t send_cmd_0x19_waiting_ack ;
+	
  
-  
-
-
-
- //  uint8_t gTimer_mode_key_long;
+  //  uint8_t gTimer_mode_key_long;
 volatile   uint8_t gTimer_set_temp_times;
 volatile   uint8_t gTimer_temp_compare_value;
  volatile  uint8_t gTimer_fan_to_ptc_warning;
@@ -136,7 +135,7 @@ volatile   uint8_t gTimer_temp_compare_value;
  volatile  uint8_t gTimer_counter_one_minute;
   
 volatile   uint8_t gTimer_send_data_counter;
- 
+  volatile uint8_t  gTimer_waiting_ack ;
    
 
 

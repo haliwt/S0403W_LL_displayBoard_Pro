@@ -73,6 +73,18 @@ void disp_time_colon_fun(void)
          // TM1723_Write_Display_Data(0xCB,
                //   gpro_t.disp_time_colon_flag + lcdNumber6_Low[lcd_t.number6_low] + lcdNumber7_High[lcd_t.number7_high]);
     }
+    if(gpro_t.send_cmd_0x19_waiting_ack ==1 && gpro_t.gTimer_waiting_ack > 0){
+	     gpro_t.gTimer_waiting_ack = 0;
+		 SendData_Set_Command(0x19,0x01); //两个小时休息 10分钟，到了。
+	     tx_thread_sleep(2);
+
+    }
+	else if(gpro_t.send_cmd_0x19_waiting_ack ==2 && gpro_t.gTimer_waiting_ack > 0){
+	     gpro_t.gTimer_waiting_ack = 0;
+		 SendData_Set_Command(0x19,0); //两个小时休息 10分钟，到了。
+	     tx_thread_sleep(2);
+
+    }
             	
 }
 
