@@ -488,7 +488,7 @@ void set_temperature_compare_value_fun(void)
 			}
 		}
 		else{
-            if(real_temp < (target_temp -2)){
+            if(real_temp < (target_temp -2)){//if(real_temp < (target_temp -4)){
 
                  run_t.dry = 1;
 				ptc_state = PTC_STATE_ON ;

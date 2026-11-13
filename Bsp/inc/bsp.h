@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include "iwdg.h"
 
 #include "bsp_cmd_link.h"
 #include "bsp_delay.h"

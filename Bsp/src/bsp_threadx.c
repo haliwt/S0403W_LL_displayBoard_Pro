@@ -146,11 +146,13 @@ static void ui_thread_entry(ULONG thread_input)
    		
         power_run_handler();
 
+        LL_IWDG_ReloadCounter(IWDG);//WT.EDTI 2026.11.13
+
       #if DEBUG_ENABLE
 		    debug_ui_check();
 	  #endif 
-		tx_thread_sleep(1);//10ms
-   
+		tx_thread_sleep(10);//10ms*10 =100ms
+     
   }
 
 

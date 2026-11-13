@@ -15,7 +15,7 @@
 
 
 // --- 2. 定义分时任务控制结构体 ---
-typedef struct {
+typedef struct { 
     uint32_t last_tick;        // 记录上一次真正运行时的系统绝对时间戳
     //uint32_t counter;       // 时间计数器
     uint32_t period;        // 任务运行周期
@@ -701,14 +701,14 @@ void two_hours_recoder_fun(void)
   
   //others separately 
 
-  
+  #if 0 
   if(gpro_t.fan_run_one_minute==1 && gpro_t.gTimer_counter_one_minute >59){
        gpro_t.fan_run_one_minute=2;
        SendData_Set_Command(0x0B,0);//fan stop run .1. OPEN ,0- CLOSE 
 	   tx_thread_sleep(2);
   }
   
- #if 0
+
   if(gpro_t.stopTwoHours_flag==1 && gpro_t.gTimer_counter > 2 &&  gpro_t.fan_run_one_minute ==2){
 	  gpro_t.gTimer_counter=0;
 
