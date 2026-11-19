@@ -105,7 +105,7 @@ typedef struct _process_state{
    uint8_t fan_run_one_minute;
    
    uint8_t key_set_temperature ;
-   uint8_t set_temp_value_success;
+
    uint8_t humidity_real_value;
    uint8_t  temp_real_value;
    uint8_t  smart_phone_app_timer_power_on_flag;

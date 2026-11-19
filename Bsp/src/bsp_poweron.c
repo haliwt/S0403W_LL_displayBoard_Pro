@@ -75,7 +75,7 @@ static uint8_t send_two_disp =0;
 **************************************************************************/
 void power_run_handler(void)
 {
-     static uint8_t counter;
+     static uint8_t counter,send_data_f;
      switch(run_t.power_on){
 
 	 case power_on:
@@ -109,9 +109,15 @@ void power_run_handler(void)
 			
 	         if(lcd_t.gTimer_colon_counter > 1 ){
 					lcd_t.gTimer_colon_counter  =0;
-					SendData_Set_Command(0x11,1); //mainboard.WT.EDIT 2026.04.23
-					tx_thread_sleep(2); //WT.EDIT 2026.01.04
-				   
+					send_data_f = send_data_f ^ 0x01;
+			        if(send_data_f){
+						SendData_Set_Command(0x11,1); //mainboard.WT.EDIT 2026.04.23
+						tx_thread_sleep(2); //WT.EDIT 2026.01.04
+			        }
+				    else{
+			        SendData_Set_Command(0xF0,0x02);//software version is "2"
+					tx_thread_sleep(2);
+				    }
 	 
 			  }
 
@@ -171,7 +177,7 @@ static void power_on_initial(void)
         run_t.wifi_set_temperature=40; //WT.EDIT 2025.01.15
         run_t.time_setting_mode = works_time;//WT.EDIT 2025.01.15
         run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
-        gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
+       // gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
         
 		gpro_t.first_set_ptc_on =0;
 		gpro_t.first_rcoder_ptc_on_flag=0;
@@ -521,7 +527,7 @@ void power_off_handler(void)
         //cp_end 
         run_t.wifi_set_temperature =40;//WT.EDIT 2025.01.15
         run_t.smart_phone_set_temp_value_flag =0;//WT.EDIT 2025.01.15
-        gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
+       // gpro_t.set_temp_value_success=0;//WT.EDIT 2025.01.15
         Lcd_PowerOff_Fun();
         //lcd_donot_disp_screen();
         Power_Off_Fun();
@@ -657,9 +663,11 @@ static void power_off_breath_Led(void)
 **/
 void two_hours_recoder_fun(void)
 {
-  static uint8_t switch_flag=0;
+  static uint8_t switch_flag=0,version_send;
+
+  version_send++;
   #if 0
-    if(gpro_t.gTimer_two_hours_conter > 5 && gpro_t.stopTwoHours_flag==0){
+    if(gpro_t.gTimer_two_hours_conter > 4 && gpro_t.stopTwoHours_flag==0){
   #else
     if(gpro_t.gTimer_two_hours_conter > 119 && gpro_t.stopTwoHours_flag==0){
   #endif  
@@ -731,6 +739,11 @@ void two_hours_recoder_fun(void)
   }
 
  #endif 
+   if(version_send > 5){
+   	 version_send=0;  
+   	SendData_Set_Command(0xF0,0x02);//software version is "2"
+   	tx_thread_sleep(2);
+   }
  
   if(gpro_t.stopTwoHours_flag==0 &&  gpro_t.fan_run_one_minute==3 ){
 

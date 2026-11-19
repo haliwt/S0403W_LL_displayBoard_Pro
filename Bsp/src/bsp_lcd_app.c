@@ -553,36 +553,39 @@ void disp_temp_humidity_wifi_icon_handler(void)
 	  break;
 
 	  case 1:
-         if (gpro_t.gTimer_set_temp_times < 3 && gpro_t.key_set_temperature==1){
+         if ((gpro_t.gTimer_set_temp_times < 3 )&& gpro_t.key_set_temperature==1){
              set_lcd_numbers_from_value(run_t.wifi_set_temperature);
           
              disp_kill_dry_ster_temperature_humidity_hanlder();
+
+	
 		    if(gpro_t.key_set_temperature_f == 1){
 		       gpro_t.key_set_temperature_f++;
-               direct_comparison_temp();
+               direct_comparison_temp(); //WT.EDIT 2026-11-16
              }
-		    
+		   
 		 
         } 
-        else{
-			 gpro_t.set_temp_value_success=1;
-			 
-
-		     gpro_t.key_set_temperature=2;
+        else  if(gpro_t.key_set_temperature_f==2 && gpro_t.gTimer_set_temp_times >3){
+		
+			 gpro_t.gTimer_set_temp_times=0;
+             gpro_t.key_set_temperature++;
 
         }
 
      break;
 
 
-     case 2:
-	 	   
-        if(gpro_t.key_set_temperature_f==2){
-			gpro_t.key_set_temperature_f++;
-	         sendCmdNote_to_Data(0x2A,run_t.wifi_set_temperature);
-	          //tx_thread_sleep(2);
-        }	
-			 gpro_t.key_set_temperature =0;
+     case 3:
+	 	if(gpro_t.gTimer_set_temp_times > 2){  //WT.EDIT 2026-11-16
+	      
+			gpro_t.key_set_temperature_f=0;
+		     sendCmdNote_to_Data(0x2A,run_t.wifi_set_temperature);
+		     tx_thread_sleep(2);
+	        	
+			gpro_t.key_set_temperature =0;
+
+	 	}
 		 
     break;
 

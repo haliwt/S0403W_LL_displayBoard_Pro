@@ -455,15 +455,11 @@ void set_temperature_compare_value_fun(void)
 
 
 	
-	if(gpro_t.set_temp_value_success==1){
-          target_temp = run_t.wifi_set_temperature ;//gpro_t.key_set_temperature;
-    }
-	else{
-	   target_temp = DEFAULT_TEMP;
+	
+     target_temp = run_t.wifi_set_temperature ;//gpro_t.key_set_temperature;
+    
 
-    }
-
-	if(real_temp >= DEFAULT_TEMP){
+	if(real_temp >= target_temp){
 
           run_t.dry = 0;
 		  ptc_state = PTC_STATE_OFF ;

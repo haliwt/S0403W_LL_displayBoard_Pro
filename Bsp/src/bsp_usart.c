@@ -60,6 +60,7 @@ typedef struct
    // uint8_t tail;        // 帧尾 0xFE
     uint8_t rx_data_num;
    // uint8_t bcc;         // BCC 校验
+   bool  decoder_copy_cmd_flag ;
 
 } S03Frame_t;
 
@@ -69,7 +70,9 @@ S03Frame_t frame;
  typedef enum {
 	 S03_STATE_WAIT_HEADER = 0,
 	 S03_STATE_DATA,
-	 S03_STATE_BCC
+	 S03_STATE_BCC,
+	 S03_STATE_COPY_CMD,
+	 S03_STATE_COPY_BCC
  } S03_State_e;
 
  S03_State_e s_state;
@@ -533,12 +536,13 @@ static void parse_cmd_or_data_(uint8_t *pddata)
 
 	break;
 
+   #if 0
 	case 0xFF:
 		
 	    parse_copy_cmd_or_data_handler(pddata);
 
 	break;
-
+    #endif 
 	
 	}
 
@@ -804,8 +808,13 @@ static void read_usart1_data(uint8_t data)
 			  frame.count_numbers++;
 							   
 			  frame.data[frame.count_numbers]= data;
-						   
-               if(frame.data[frame.count_numbers] == 0xFE && frame.count_numbers > 4){
+
+			   if(frame.count_numbers == 0x02 &&  frame.data[frame.count_numbers]==0xFF){
+
+		         s_state = S03_STATE_COPY_CMD;
+
+		       }
+			   else if(frame.data[frame.count_numbers] == 0xFE && frame.count_numbers > 4){
 			     s_state= S03_STATE_BCC;
 
 
@@ -824,11 +833,47 @@ static void read_usart1_data(uint8_t data)
 			   s_state= S03_STATE_WAIT_HEADER;
 
 			   frame.bcc_code = data;
+			   frame.decoder_copy_cmd_flag = false;
 			 
                 gpro_t.decoder_flag = 1;
 				semaphore_isr();
 
 		    break;
+
+
+			case S03_STATE_COPY_CMD:
+
+			  frame.count_numbers++;
+							   
+			  frame.data[frame.count_numbers]= data;
+
+			  if(frame.data[frame.count_numbers] == 0xFE && frame.count_numbers > 4){
+			     s_state= S03_STATE_COPY_BCC;
+
+
+			   }
+
+
+			break;
+
+			case S03_STATE_COPY_BCC:
+
+			   frame.count_numbers++;
+							   
+			   frame.data[frame.count_numbers]= data;
+
+			   frame.data_len =  frame.count_numbers;
+			    
+			   s_state= S03_STATE_WAIT_HEADER;
+
+			   frame.bcc_code = data;
+			    frame.decoder_copy_cmd_flag = true;
+			 
+                gpro_t.decoder_flag = 1;
+				semaphore_isr();
+
+
+			break;
 
     	}
 }
@@ -848,9 +893,14 @@ void decoder_handler(void)
     
 	frame.check_code = bcc_check(frame.data,frame.data_len);
 
-	if(frame.check_code == frame.bcc_code){
+	if(frame.check_code == frame.bcc_code && frame.decoder_copy_cmd_flag == false){
 	
        parse_cmd_or_data_(frame.data);
+
+	}
+	else if(frame.check_code == frame.bcc_code && frame.decoder_copy_cmd_flag == true){
+	
+       parse_copy_cmd_or_data_handler(frame.data);
 
 	}
        

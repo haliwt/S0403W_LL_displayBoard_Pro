@@ -109,7 +109,7 @@ void add_key_fun(void)
 
     case works_time: //set temperature value add number
     
-    case timer_time: //set  
+    case timer_time: // 设置 温度值
 
 		
 		run_t.wifi_set_temperature= run_t.wifi_set_temperature+1;
@@ -122,6 +122,10 @@ void add_key_fun(void)
 		run_t.ptc_on_off_flag = 0; //WT.EDIT 2025.10.31
 	    gpro_t.first_set_ptc_on=0;
 		gpro_t.key_set_temperature_f = 1;
+		
+		 //direct_comparison_temp(); //WT.EDIT 2026-11-16
+           
+		   
 		
 	
 	   break;
@@ -178,6 +182,7 @@ void dec_key_fun(void)
 		
 			 gpro_t.first_set_ptc_on=0;
 			 gpro_t.key_set_temperature_f = 1;
+			
 	
 		    break;
 
